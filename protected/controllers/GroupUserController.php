@@ -15,10 +15,11 @@ use app\components\MagnusLog;
 use app\models\GroupUser;
 use app\models\GroupModule;
 use app\models\GroupUserGroup;
+use Exception;
 
 class GroupUserController extends CController
 {
-    public $attributeOrder          = 't.id';
+    public $attributeOrder          = 'id';
     public $titleReport             = 'GroupUser';
     public $subTitleReport          = 'GroupUser';
     public $nameModelRelated        = 'GroupModule';
@@ -41,10 +42,9 @@ class GroupUserController extends CController
     public function extraFilterCustomAdmin($filter)
     {
 
-        $modelGroupUserGroup = GroupUserGroup::model()->find(
-            'id_group_user = :key',
-            [':key' => Yii::$app->session['id_group']]
-        );
+        $modelGroupUserGroup = GroupUserGroup::find()
+            ->where(['id_group_user' => Yii::$app->session['id_group']])
+            ->one();
 
         if (isset($modelGroupUserGroup->id)) {
             $filter .= ' AND t.id IN (SELECT id_group FROM pkg_group_user_group WHERE id_group_user = ' . Yii::$app->session['id_group'] . ') ';
@@ -71,13 +71,8 @@ class GroupUserController extends CController
     {
         $filter       = isset($_POST['filter']) ? $_POST['filter'] : null;
         $this->filter = $filter ? $this->createCondition(json_decode($filter)) : $this->defaultFilter;
-        //AND t.id_user_type = 2
-        $modelGroupUser = $this->abstractModel->findAll([
-            'condition' => $this->filter,
-            'params'    => $this->paramsFilter,
-        ]);
+        $modelGroupUser = $this->abstractModel->where($this->filter, $this->paramsFilter)->all();
         $ids = [];
-
         foreach ($modelGroupUser as $value) {
             $ids[] = $value->id;
         }

@@ -1253,12 +1253,19 @@ class BaseController extends Controller
                 }
             }
 
-            if (! is_array($namePk) && $this->nameOtherFkRelated && get_class($this->abstractModel) === get_class($item)) {
+            $modelName  = isset($this->abstractModel) ? substr(strrchr(get_class($this->instanceModel), "\\"), 1) : '';
+            $itemName  = isset($item) ? substr(strrchr(get_class($item), "\\"), 1) : '';
+
+
+
+            if (! is_array($namePk) && $this->nameOtherFkRelated && $modelName === $itemName) {
                 if (count($this->extraFieldsRelated)) {
-                    $resultSubRecords = $this->abstractModelRelated->findAll([
-                        'select'    => implode(',', $this->extraFieldsRelated),
-                        'condition' => $this->nameFkRelated . ' = ' . $attributes[$key][$namePk],
-                    ]);
+
+
+                    $resultSubRecords = $this->abstractModelRelated
+                        ->select(implode(',', $this->extraFieldsRelated))
+                        ->where([$this->nameFkRelated => $attributes[$key][$namePk]])
+                        ->all();
 
                     $subRecords = [];
 
@@ -1283,10 +1290,11 @@ class BaseController extends Controller
                         }
                     }
                 } else {
-                    $resultSubRecords = $this->abstractModelRelated->findAll([
-                        'select'    => $this->nameOtherFkRelated,
-                        'condition' => $this->nameFkRelated . ' = ' . $attributes[$key][$namePk],
-                    ]);
+                    echo 'teste2';
+                    $resultSubRecords = $this->abstractModelRelated
+                        ->select($this->nameOtherFkRelated)
+                        ->where([$this->nameFkRelated => $attributes[$key][$namePk]])
+                        ->all();
 
                     $subRecords = [];
                     foreach ($resultSubRecords as $keyModelSubRecords => $modelSubRecords) {

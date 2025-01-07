@@ -26,6 +26,7 @@ namespace app\controllers;
 use Yii;
 use app\components\CController;
 use app\models\Module;
+use app\components\Util;
 
 class ModuleController extends CController
 {
@@ -34,7 +35,7 @@ class ModuleController extends CController
     public $fixedWhere     = null;
     public $extraValues    = ['idModule' => 'text'];
 
-    public $attributeOrder = 't.id_module ASC, priority ASC';
+    public $attributeOrder = 'id_module ASC, priority ASC';
     public $titleReport    = 'Module';
     public $subTitleReport = 'Module';
     public $rendererReport = [
@@ -54,7 +55,8 @@ class ModuleController extends CController
         $res            = $this->actionRead(false);
         $modules        = $res['rows'];
         $result['rows'] = $this->getModuleTree($modules);
-        echo CCJSON::encode($result);
+        echo \yii\helpers\Json::encode($result);
+        exit;
     }
 
     private function getModuleTree($modules)
@@ -119,7 +121,7 @@ class ModuleController extends CController
 
         if (isset($values['text'])) {
 
-            $modelModel = Module::model()->findByPk($values['id']);
+            $modelModel = Module::findOne($values['id']);
 
             if ($modelModel->id_module == null) {
                 $values['text'] = preg_replace('/^Menu |^Menú | Module/', '', $values['text']);

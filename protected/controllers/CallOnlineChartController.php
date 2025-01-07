@@ -68,16 +68,18 @@ class CallOnlineChartController extends CController
             $group = "UNIX_TIMESTAMP(date) DIV 720";
         } else {
             $dateFormat = 'DATE_FORMAT( date, \'%H:%i\' ) date';
-            $select     = 'id, ' . $dateFormat . ', total, answer';
+            $select     = "id, DATE_FORMAT( date, '%H:%i' ) AS date, total, `answer`";
             $group      = 1;
         }
 
-        $modelCallOnlineChart = CallOnlineChart::model()->findAll([
-            'select'    => $select,
-            'order'     => 'id DESC',
-            'group'     => $group,
-            'condition' => $filter,
-        ]);
+        $query = CallOnlineChart::find();
+        $query->select([$select]);
+        $query->where($filter);
+        if ($group != 1) {
+            $query->groupBy($group);
+        }
+        $query->orderBy(['id' => SORT_DESC]);
+        $modelCallOnlineChart = $query->all();
 
         # envia o json requisitado
         echo json_encode([

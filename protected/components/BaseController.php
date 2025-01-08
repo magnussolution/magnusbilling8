@@ -17,12 +17,11 @@ use app\components\SqlInject;
 use app\components\LoadConfig;
 use app\components\AccessManager;
 use app\components\MagnusLog;
-use Exception;
-use yii\db\Expression;
+use app\components\Report;
 use app\models\User;
 use app\models\Sip;
-use app\components\Report;
-
+use Exception;
+use yii\db\Expression;
 
 
 class BaseController extends Controller
@@ -102,6 +101,7 @@ class BaseController extends Controller
     public $fieldsNotUpdateAgent     = [];
     public $config;
     public $addInCondition = '';
+    public $instanceModelRelated;
     public function init()
     {
         //Yii::$app->clientScript->registerCssFile(Yii::$app->baseUrl . '/resources/init.css');
@@ -653,6 +653,7 @@ class BaseController extends Controller
             $this->nameRoot    => $this->attributes,
             $this->nameMsg     => $this->msg,
         ]);
+        exit;
     }
 
     public function beforeSave($values)
@@ -1701,8 +1702,16 @@ class BaseController extends Controller
     public function saveRelated($id, $subRecords = [])
     {
         if (! $this->isNewRecord) {
+
+
+            /*
+            INSERT INTO `pkg_group_module` VALUES (1,1,'crud',1,0,0),(1,3,'crud',1,0,0),(1,4,'ru',1,0,0),(1,5,'crud',1,0,0),(1,6,'crud',1,0,0),(1,7,'crud',1,0,0),(1,8,'crud',1,0,0),(1,9,'crud',1,0,0),(1,10,'crud',1,0,0),(1,12,'crud',1,0,0),(1,14,'crud',1,0,0),(1,15,'crud',1,1,1),(1,16,'crud',1,0,0),(1,17,'crud',1,1,1),(1,19,'crud',1,1,1),(1,20,'crud',1,0,0),(1,21,'crud',1,1,1),(1,22,'crud',1,0,0),(1,23,'crud',1,1,1),(1,25,'crud',1,0,0),(1,26,'crud',1,0,0),(1,27,'crud',1,0,0),(1,28,'crud',1,0,0),(1,29,'crud',1,1,1),(1,30,'rud',1,1,1),(1,31,'crud',1,0,0),(1,32,'crud',1,0,0),(1,33,'crud',1,0,0),(1,34,'crud',1,0,0),(1,36,'crud',1,0,0),(1,40,'crud',1,1,1),(1,45,'crud',1,0,0),(1,46,'crud',1,0,0),(1,48,'crud',1,0,0),(1,50,'crud',1,0,0)
+
+            */
             try {
-                $sql = 'DELETE FROM ' . $this->instanceModel::tableName() . ' WHERE ' . $this->nameFkRelated . ' = ' . $id;
+                $sql = 'DELETE FROM ' . $this->instanceModelRelated::tableName() . ' WHERE ' . $this->nameFkRelated . ' = ' . $id;
+
+
                 Yii::$app->db->createCommand($sql)->execute();
             } catch (Exception $e) {
                 $this->success = false;
@@ -1714,13 +1723,15 @@ class BaseController extends Controller
             foreach ($subRecords as $item) {
                 $nameFkRelated        = $this->nameFkRelated;
                 $nameOtherFkRelated   = $this->nameOtherFkRelated;
-                $instanceModelRelated = new $this->nameModelRelated;
 
-                $instanceModelRelated->$nameFkRelated = $id;
+                $this->instanceModelRelated->setIsNewRecord(true);
+
+
+                $this->instanceModelRelated->$nameFkRelated = $id;
 
                 if (count($this->extraFieldsRelated)) {
                     foreach ($this->extraFieldsRelated as $field) {
-                        $instanceModelRelated->$field = $item[$field];
+                        $this->instanceModelRelated->$field = $item[$field];
                     }
 
                     $valueOtherFkRelated = $item[$nameOtherFkRelated];
@@ -1728,11 +1739,14 @@ class BaseController extends Controller
                     $valueOtherFkRelated = $item;
                 }
 
-                $instanceModelRelated->$nameOtherFkRelated = $valueOtherFkRelated;
+                $this->instanceModelRelated->$nameOtherFkRelated = $valueOtherFkRelated;
 
                 try {
-                    $this->success = $instanceModelRelated->save();
+                    $this->success = $this->instanceModelRelated->save();
                 } catch (Exception $e) {
+
+
+
                     $this->success = false;
                     $this->msg     = $this->getErrorMySql($e);
                 }

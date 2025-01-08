@@ -129,11 +129,10 @@ class CallSummaryDayTrunkController extends CController
     public function actionChart()
     {
 
-        $records = CallSummaryDayTrunk::model()->findAll([
-            'condition' => 'day = :key',
-            'params'    => array(':key' => date('Y-m-d')),
-            'limit'     => 3,
-        ]);
+        $records = CallSummaryDayTrunk::find()
+            ->where(['day' => date('Y-m-d')])
+            ->limit(3)
+            ->all();
 
         $recordsSum = $this->recordsExtraSum($records);
 

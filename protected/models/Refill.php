@@ -102,6 +102,6 @@ class  Refill extends Model
 
     public function countRefill($code, $id_user)
     {
-        return Refill::model()->count('description LIKE :key AND id_user = :key1', [':key' => '%' . $code . '%', ':key1' => (int) $id_user]);
+        return Refill::model('description LIKE :key AND id_user = :key1', [':key' => '%' . $code . '%', ':key1' => (int) $id_user])->count();
     }
 }

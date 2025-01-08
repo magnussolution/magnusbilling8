@@ -127,7 +127,7 @@ class SmtpsController extends CController
     public function actionTestMail()
     {
 
-        $modelUser = User::model()->findByPk((int) Yii::$app->session['id_user']);
+        $modelUser = User::findOne((int) Yii::$app->session['id_user']);
 
         if (! preg_match("/@/", $modelUser->email)) {
 

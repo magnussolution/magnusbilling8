@@ -21,6 +21,18 @@
 
 namespace app\components;
 
+use Yii;
+use app\components\UserCreditManager;
+use app\components\AsteriskAccess;
+use app\components\Mail;
+use app\models\Sip;
+use app\models\User;
+use app\models\Services;
+use app\models\ServicesUse;
+use app\models\Refill;
+
+use Exception;
+
 class ServicesProcess
 {
 
@@ -30,12 +42,12 @@ class ServicesProcess
         $msg     = 'Error';
         foreach ($values['id_services'] as $key => $id_service) {
 
-            $modelServicesUse = ServicesUse::model()->find(
+            $modelServicesUse = ServicesUse::find(
                 'id = :key AND status = 2',
                 [
                     ':key' => (int) $id_service,
                 ]
-            );
+            )->one();
             if (! isset($modelServicesUse->id)) {
                 continue;
             }
@@ -60,7 +72,7 @@ class ServicesProcess
 
     public static function release($id_services)
     {
-        $modelServicesUse = ServicesUse::model()->findOne((int) $id_services);
+        $modelServicesUse = ServicesUse::find((int) $id_services)->one();
         if ($modelServicesUse->status == 1) {
 
             if ($modelServicesUse->idServices->return_credit == 1) {
@@ -69,7 +81,7 @@ class ServicesProcess
                 if ($priceToreturn > 0) {
                     //expired
                     //have days yet.
-                    $modelUser                           = User::model()->findOne((int) $modelServicesUse->id_user);
+                    $modelUser                           = User::find((int) $modelServicesUse->id_user)->one();
                     $modelServicesUse->idServices->price = $priceToreturn;
 
                     $description              = Yii::t('zii', 'Return credit after cancellation') . '. ' . Yii::t('zii', 'Service') . ' ' . Yii::t('zii', 'name') . ' ' . $modelServicesUse->idServices->name;
@@ -99,11 +111,11 @@ class ServicesProcess
     public static function buyService($values)
     {
         if ($values['isClient']) {
-            $modelUser = User::model()->findOne((int) $values['id_user']);
+            $modelUser = User::find((int) $values['id_user'])->one();
             $id_agent  = is_null($modelUser->id_user) ? 1 : $modelUser->id_user;
         }
 
-        $modelServices = Services::model()->findOne((int) $values['id_services']);
+        $modelServices = Services::find((int) $values['id_services'])->one();
 
         return [
             'amount' => $modelServices->price,
@@ -138,7 +150,7 @@ class ServicesProcess
     public static function updateUser($method, $modelServicesUse, $updateUserCredit = true)
     {
 
-        $modelUser = User::model()->findOne((int) $modelServicesUse->id_user);
+        $modelUser = User::find((int) $modelServicesUse->id_user)->one();
 
         switch ($modelServicesUse->idServices->type) {
             case 'disk_space':
@@ -165,26 +177,27 @@ class ServicesProcess
 
                 break;
             case 'sipAccountLimit':
-                Yii::log('sipAccountLimit', 'error');
+                Yii::error('sipAccountLimit', 'error');
                 if ($modelServicesUse->idUser->sipaccountlimit < 0 && $method == 'activation') {
                     $modelServicesUse->idServices->sipaccountlimit = 0;
                 }
                 //deleta as contas voip que superam o limite do servico comprado.
                 if ($method != 'activation') {
-                    $modelSip         = Sip::model()->findAll('id_user = :key', [':key' => $modelServicesUse->id_user]);
+                    $modelSip         = Sip::find('id_user = :key', [':key' => $modelServicesUse->id_user])->all();
                     $totalSipAccounts = isset($modelSip->id);
                     $newLimit         = $modelServicesUse->idUser->sipaccountlimit - $modelServicesUse->idServices->sipaccountlimit;
                     $limitToDelete    = $totalSipAccounts - $newLimit - 1;
                     //deleta as contas voip que superam o limite do servico comprado.
                     if ($limitToDelete > 0) {
 
-                        $criteria = new CDbCriteria();
-                        $criteria->addCondition('id_user = :key');
-                        $criteria->params[':key'] = $modelServicesUse->id_user;
-                        $criteria->limit          = $limitToDelete;
-                        $criteria->order          = 'id DESC';
-
-                        Sip::model()->deleteAll($criteria);
+                        $sipsToDelete = Sip::find()
+                            ->where(['id_user' => $modelServicesUse->id_user])
+                            ->orderBy(['id' => SORT_DESC])
+                            ->limit($limitToDelete)
+                            ->all();
+                        foreach ($sipsToDelete as $sip) {
+                            $sip->delete();
+                        }
                     }
                     AsteriskAccess::instance()->sipReload();
                 }
@@ -233,7 +246,7 @@ class ServicesProcess
 
         if ($updateUserCredit == true) {
             //add or remove user credit
-            $modelUser = User::model()->findOne($modelServicesUse->id_user);
+            $modelUser = User::find($modelServicesUse->id_user)->one();
 
             if (preg_match('/\-\-/', $credit)) {
                 $modelUser->credit = $modelUser->credit + ($modelServicesUse->idServices->price * -1);
@@ -293,14 +306,11 @@ class ServicesProcess
     }
     public static function checkIfServiceToPayAfterRefill($id_user)
     {
-        $criteria = new CDbCriteria();
-        $criteria->addCondition('status = 2');
-        $criteria->addCondition('id_user = :id_user');
-        $criteria->params[':id_user'] = $id_user;
-        $modelServicesUse             = ServicesUse::model()->findAll($criteria);
+
+        $modelServicesUse             = ServicesUse::find('status = 2 AND id_user = :id_user ', [':id_user' => $id_user])->all();
 
         foreach ($modelServicesUse as $key => $service) {
-            $modelUser = User::model()->findOne((int) $id_user);
+            $modelUser = User::find((int) $id_user)->one();
 
             //se o cliente tem credito para pagar o servico, cobrar imediatamente.
             if ($modelUser->credit >= $service->idServices->price) {

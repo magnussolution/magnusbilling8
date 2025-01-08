@@ -164,7 +164,7 @@ class AuthenticationController extends CController
                 }
                 Yii::$app->session->set('googleAuthenticatorKey', $ga->getQRCodeGoogleUrl('VoIP-' . $modelUser->username . '-' . $modelUser->id, $secret));
 
-                $modelLogUsers = LogUsers::model()->count(
+                $modelLogUsers = LogUsers::find(
                     'id_user = :key AND ip = :key1 AND description = :key2 AND date > :key3',
                     [
                         ':key'  => $modelUser->id,
@@ -172,7 +172,7 @@ class AuthenticationController extends CController
                         ':key2' => 'Username Login on the panel - User ' . $modelUser->username,
                         ':key3' => date('Y-m-d'),
                     ]
-                );
+                )->count();
                 if ($modelLogUsers > 0) {
                     Yii::$app->session->set('checkGoogleAuthenticator', false);
                 } else {

@@ -80,8 +80,8 @@ class QueueMemberController extends CController
 
         if ($this->isNewRecord) {
 
-            $modelSip   = Sip::model()->findByPk((int) $values['interface']);
-            $modelQueue = Queue::model()->findByPk((int) $values['queue_name']);
+            $modelSip   = Sip::findOne((int) $values['interface']);
+            $modelQueue = Queue::findOne((int) $values['queue_name']);
 
             if ($modelSip->id_user != $modelQueue->id_user) {
                 echo json_encode([
@@ -94,9 +94,9 @@ class QueueMemberController extends CController
         } else {
             if (isset($values['id']) && isset($values['interface'])) {
 
-                $modelQueueMember = QueueMember::model()->findByPk((int) $values['id']);
+                $modelQueueMember = QueueMember::findOne((int) $values['id']);
 
-                $modelSip   = Sip::model()->findByPk((int) $values['interface']);
+                $modelSip   = Sip::findOne((int) $values['interface']);
                 $modelQueue = Queue::model()->find('name = :key', [':key' => $modelQueueMember['queue_name']]);
 
                 if ($modelSip->id_user != $modelQueue->id_user) {

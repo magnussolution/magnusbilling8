@@ -26,6 +26,9 @@ namespace app\controllers;
 use Yii;
 use app\components\CController;
 use app\models\Call;
+use PharData;
+use Phar;
+use app\models\Campaign;
 
 class CallController extends CController
 {
@@ -168,9 +171,9 @@ class CallController extends CController
         if (isset($_GET['id'])) {
 
             if (Yii::$app->session['isClient']) {
-                $modelCall = Call::model()->find('id = :key AND id_user = :key1', [':key' => $_GET['id'], ':key1' => Yii::$app->session['id_user']]);
+                $modelCall = Call::find('id = :key AND id_user = :key1', [':key' => $_GET['id'], ':key1' => Yii::$app->session['id_user']])->one();
             } else {
-                $modelCall = Call::model()->findByPk((int) $_GET['id']);
+                $modelCall = Call::findOne((int) $_GET['id']);
             }
 
             if (! isset($modelCall->id)) {
@@ -264,15 +267,11 @@ class CallController extends CController
 
             $this->filter = $this->extraFilter($filter);
 
-            $criteria = new CDbCriteria([
-                'condition' => $this->filter,
-                'params'    => $this->paramsFilter,
-                'with'      => $this->relationFilter,
-            ]);
+            $query = Call::find()->where($this->filter)->params($this->paramsFilter)->with($this->relationFilter);
             if (count($ids)) {
-                $criteria->addInCondition('t.id', $ids);
+                $query->andWhere(['in', 'id', $ids]);
             }
-            $modelCdr = Call::model()->findAll($criteria);
+            $modelCdr = $query->all();
 
             $folder = $this->magnusFilesDirectory . 'monitor';
 
@@ -352,7 +351,7 @@ class CallController extends CController
                 $id = $f->value[0];
             }
 
-            $modelCampaign = Campaign::model()->findByPk($id);
+            $modelCampaign = Campaign::findOne($id);
             $nameCampaign  = $modelCampaign->name;
             $timeCampaign  = $modelCampaign->nb_callmade;
 

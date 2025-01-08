@@ -9,12 +9,14 @@ namespace app\controllers;
 use Yii;
 use app\components\CController;
 use app\components\AccessManager;
+use app\components\ServicesProcess;
+use app\components\Mail;
+use app\components\SLUserSave;
 use app\models\Methodpay;
 use app\models\ServicesUse;
 use app\models\User;
 use app\models\Plan;
-use app\models\SLUserSave;
-
+use Exception;
 
 class BuyCreditController extends CController
 {
@@ -45,8 +47,8 @@ class BuyCreditController extends CController
             Yii::$app->session['currency'] = $this->config['global']['base_currency'];
         }
 
-        $modelUser = User::model()->findByPk((int) Yii::$app->session['id_user']);
-        $modelPlan = Plan::model()->findByPk(Yii::$app->session['id_plan']);
+        $modelUser = User::findOne((int) Yii::$app->session['id_user']);
+        $modelPlan = Plan::findOne(Yii::$app->session['id_plan']);
 
         if (isset($_GET['mobile'])) {
 
@@ -61,13 +63,13 @@ class BuyCreditController extends CController
             } else {
 
                 if (isset($_POST['id_method']) && $_POST['id_method'] > 0) {
-                    $modelMethodPay = Methodpay::model()->findByPK((int) $_POST['id_method']);
+                    $modelMethodPay = Methodpay::findOne((int) $_POST['id_method']);
                     $plan_parts     = explode(' ', $modelPlan->name);
                     if (is_numeric(end($plan_parts))) {
                         $modelMethodPay->min = end($plan_parts);
                     }
                 } else {
-                    $modelMethodPay = Methodpay::model()->findAll('active = 1');
+                    $modelMethodPay = Methodpay::find('active = 1')->one();
                 }
 
                 $this->render('mobile', [
@@ -79,7 +81,7 @@ class BuyCreditController extends CController
             }
         }
 
-        $modelMethodPay = Methodpay::model()->findByPK((int) $_GET['id_method']);
+        $modelMethodPay = Methodpay::findOne((int) $_GET['id_method']);
         if (! isset($modelMethodPay->id)) {
             exit;
         }
@@ -125,29 +127,19 @@ class BuyCreditController extends CController
     {
 
         $model    = new ServicesUse();
-        $criteria = new CDbCriteria();
         if (isset($_GET['id_service_use'])) {
             $ids = json_decode($_GET['id_service_use']);
-            $criteria->addCondition('status = 2');
+            $filter = 'status = 2';
         } else if (isset($_GET['id_user'])) {
-            $criteriaUser = new CDbCriteria();
-            $id_user      = (int) $_GET['id_user'];
-            $criteriaUser->addCondition('id_user = :id_user');
-            //$criteriaUser->addInCondition('reminded', array(2,3));
-            $criteriaUser->params[':id_user'] = $id_user;
-            $modelServicesUse                 = ServicesUse::model()->findAll($criteriaUser);
+            $modelServicesUse                 = ServicesUse::find('id_user = :id_user', [':id_user' => (int) $_GET['id_user']])->all();
             $ids                              = [];
             foreach ($modelServicesUse as $key => $value) {
                 $ids[] = $value->id;
             }
-
-            $criteria->addCondition('status = 1');
-            //$criteria->addCondition('reminded = 2 OR reminded= 3');
+            $filter = 'status = 1';
         }
 
-        $criteria->addInCondition('id', $ids);
-
-        $modelServicesUse = ServicesUse::model()->findAll($criteria);
+        $modelServicesUse = ServicesUse::find($filter . ' AND id IN ($ids)')->all();
 
         if (Yii::$app->session['isAdmin']) {
             $total = 0;
@@ -251,7 +243,7 @@ class BuyCreditController extends CController
                     }
                 }
 
-                $modelMethodPay = Methodpay::model()->findByPk((int) $_POST['ServicesUse']['id_method']);
+                $modelMethodPay = Methodpay::findOne((int) $_POST['ServicesUse']['id_method']);
                 $total          = $modelMethodPay->payment_method == 'Pagseguro' ? intval($total) : $total;
 
                 $this->redirect(
@@ -265,10 +257,10 @@ class BuyCreditController extends CController
             }
         }
 
-        $modelMethodPay = Methodpay::model()->findAll(
+        $modelMethodPay = Methodpay::find(
             'id_user = :key AND active = 1',
             [':key' => $modelServicesUse[0]->idUser->id_user]
-        );
+        )->all();
 
         if ($modelServicesUse[0]->idUser->typepaid == 1) {
             $modelServicesUse[0]->idUser->credit = $modelServicesUse[0]->idUser->credit + $modelServicesUse[0]->idUser->creditlimit;

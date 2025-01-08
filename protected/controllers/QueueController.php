@@ -92,10 +92,7 @@ class QueueController extends CController
             $model->save();
         }
 
-        $modelQueue = Queue::model()->findAll([
-            'condition' => 'musiconhold != "default"',
-            'group'     => 'musiconhold',
-        ]);
+        $modelQueue = Queue::find('musiconhold != "default"')->group('musiconhold')->all();
 
         $file = '/etc/asterisk/musiconhold_magnus.conf';
         $line = '';
@@ -119,7 +116,7 @@ class QueueController extends CController
 
     public function actionDeleteMusicOnHold()
     {
-        $modelQueue = Queue::model()->findByPk((int) $_POST['id_queue']);
+        $modelQueue = Queue::findOne((int) $_POST['id_queue']);
         if (isset($modelQueue->id)) {
             rmdir('/var/lib/asterisk/moh/' . $modelQueue->name);
             echo json_encode([

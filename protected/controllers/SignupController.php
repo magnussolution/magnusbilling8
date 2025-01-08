@@ -167,7 +167,7 @@ class SignupController extends CController
             $signup->attributes   = $_POST['Signup'];
             $signup->company_name = isset($_POST['Signup']['company_name']) ? $_POST['Signup']['company_name'] : '';
 
-            $modelPlan = Plan::model()->findByPk((int) $_POST['Signup']['id_plan']);
+            $modelPlan = Plan::findOne((int) $_POST['Signup']['id_plan']);
 
             $signup->credit = $modelPlan->ini_credit;
 

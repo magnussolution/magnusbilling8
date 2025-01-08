@@ -189,7 +189,7 @@ class DidController extends CController
     {
         $ids = isset($_POST['ids']) ? json_decode($_POST['ids']) : null;
 
-        $modelUser = User::model()->findByPK(Yii::$app->session['id_user']);
+        $modelUser = User::findOne(Yii::$app->session['id_user']);
 
         if ($modelUser->id_user > 1) {
             echo json_encode([
@@ -203,7 +203,7 @@ class DidController extends CController
         }
         $priceDidTotal = 0;
         foreach ($ids as $key => $id) {
-            $modelDid = Did::model()->findByPk($id);
+            $modelDid = Did::findOne($id);
 
             if ($modelDid->reserved == 1) {
                 echo json_encode([
@@ -233,7 +233,7 @@ class DidController extends CController
         $id_user = $modelUser->id;
 
         foreach ($ids as $key => $id) {
-            $modelDid  = Did::model()->findByPk($id);
+            $modelDid  = Did::findOne($id);
             $id_did    = $modelDid->id;
             $modelUser = $modelDid->idUser;
             $totalDid  = $modelDid->fixrate + $modelDid->connection_charge;
@@ -300,9 +300,9 @@ class DidController extends CController
         $id_did  = isset($_POST['id']) ? json_decode($_POST['id']) : null;
         $id_user = isset($_POST['id_user']) ? json_decode($_POST['id_user']) : Yii::$app->session['id_user'];
 
-        $modelDid = Did::model()->findByPk($id_did);
+        $modelDid = Did::findOne($id_did);
 
-        $modelUser = User::model()->findByPK($id_user);
+        $modelUser = User::findOne($id_user);
 
         $totalDid = $modelDid->fixrate + $modelDid->connection_charge;
 
@@ -454,7 +454,7 @@ class DidController extends CController
             $ids = json_decode($_POST['ids']);
 
             foreach ($ids as $key => $id) {
-                $modelDid = Did::model()->findByPk((int) $id);
+                $modelDid = Did::findOne((int) $id);
 
                 if (isset($modelDid->id) && isset($modelDid->idUser->did_days) && $modelDid->idUser->did_days > 0) {
                     $didUse = DidUse::model()->find('id_did = :key AND releasedate = :key1 AND status = 1', [
@@ -475,7 +475,7 @@ class DidController extends CController
             }
 
             foreach ($ids as $key => $id) {
-                $modelDid = Did::model()->findByPk((int) $id);
+                $modelDid = Did::findOne((int) $id);
                 if ($modelDid->reserved == 1 && $modelDid->id_user > 0) {
                     Did::model()->updateByPk(
                         $id,
@@ -542,14 +542,14 @@ class DidController extends CController
 
         if (is_array($values) && count($values) > 1) {
             foreach ($values as $key => $value) {
-                $modelDid = Did::model()->findByPK($value['id']);
+                $modelDid = Did::findOne($value['id']);
                 if ($modelDid->reserved == 0) {
                     CallSummaryMonthDid::model()->deleteAll("id_did = :key", [':key' => $modelDid->id]);
                     DidUse::model()->deleteAll("id_did = :key", [':key' => $modelDid->id]);
                 }
             }
         } else {
-            $modelDid = Did::model()->findByPK($values['id']);
+            $modelDid = Did::findOne($values['id']);
             if ($modelDid->reserved == 0) {
                 CallSummaryMonthDid::model()->deleteAll("id_did = :key", [':key' => $modelDid->id]);
                 DidUse::model()->deleteAll("id_did = :key", [':key' => $modelDid->id]);

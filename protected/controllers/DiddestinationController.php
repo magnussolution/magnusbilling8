@@ -34,6 +34,7 @@ use app\models\Sip;
 use app\models\Ivr;
 use app\models\Queue;
 use app\models\DidUse;
+use app\components\Mail;
 
 class DiddestinationController extends CController
 {
@@ -92,8 +93,8 @@ class DiddestinationController extends CController
 
             $values['voip_call'] = isset($values['voip_call']) ? $values['voip_call'] : 1;
 
-            $did       = Did::model()->findByPk($values['id_did']);
-            $modelUser = User::model()->findByPk($values['id_user']);
+            $did       = Did::findOne($values['id_did']);
+            $modelUser = User::findOne($values['id_user']);
 
             if (isset($modelUser->idGroup->idUserType->id) && $modelUser->idGroup->idUserType->id != 3) {
                 echo json_encode([
@@ -128,15 +129,15 @@ class DiddestinationController extends CController
 
             switch ($values['voip_call']) {
                 case '1':
-                    $model = Sip::model()->findByPk((int) $values['id_sip']);
+                    $model = Sip::findOne((int) $values['id_sip']);
                     $name  = 'SIP ACCOUNT';
                     break;
                 case '2':
-                    $model = Ivr::model()->findByPk((int) $values['id_ivr']);
+                    $model = Ivr::findOne((int) $values['id_ivr']);
                     $name  = 'IVR';
                     break;
                 case '7':
-                    $model = Queue::model()->findByPk((int) $values['id_queue']);
+                    $model = Queue::findOne((int) $values['id_queue']);
                     $name  = 'QUEUE';
                     break;
             }
@@ -151,7 +152,7 @@ class DiddestinationController extends CController
             }
         } else {
 
-            $modelDiddestination = Diddestination::model()->findByPk((int) $values['id']);
+            $modelDiddestination = Diddestination::findOne((int) $values['id']);
 
             $id_user = $modelDiddestination->id_user;
 
@@ -160,17 +161,17 @@ class DiddestinationController extends CController
             switch ($voip_call) {
                 case '1':
                     $id_sip = isset($values['id_sip']) ? $values['id_sip'] : $modelDiddestination->id_sip;
-                    $model  = Sip::model()->findByPk((int) $id_sip);
+                    $model  = Sip::findOne((int) $id_sip);
                     $name   = 'SIP ACCOUNT';
                     break;
                 case '2':
                     $id_ivr = isset($values['id_ivr']) ? $values['id_ivr'] : $modelDiddestination->id_ivr;
-                    $model  = Ivr::model()->findByPk((int) $id_ivr);
+                    $model  = Ivr::findOne((int) $id_ivr);
                     $name   = 'IVR';
                     break;
                 case '7':
                     $id_queue = isset($values['id_queue']) ? $values['id_queue'] : $modelDiddestination->id_queue;
-                    $model    = Queue::model()->findByPk((int) $id_queue);
+                    $model    = Queue::findOne((int) $id_queue);
                     $name     = 'QUEUE';
                     break;
             }
@@ -197,7 +198,7 @@ class DiddestinationController extends CController
 
         $this->setfilter($_GET);
 
-        $modelDid = Did::model()->findAll($this->filter, $this->paramsFilter);
+        $modelDid = Did::find($this->filter, $this->paramsFilter)->all();
 
         foreach ($modelDid as $key => $did) {
 
@@ -292,7 +293,7 @@ class DiddestinationController extends CController
         AsteriskAccess::instance()->writeDidContext();
 
         if ($this->isNewRecord) {
-            $modelDid = Did::model()->findByPk($model->id_did);
+            $modelDid = Did::findOne($model->id_did);
 
             if ($modelDid->id_user == null && $modelDid->reserved == 0) //se for ativaçao adicionar o pagamento e cobrar
             {
@@ -306,7 +307,7 @@ class DiddestinationController extends CController
                 if ($priceDid > 0) // se tiver custo
                 {
 
-                    $modelUser = User::model()->findByPk($model->id_user);
+                    $modelUser = User::findOne($model->id_user);
 
                     if ($modelUser->id_user == 1) //se for cliente do master
                     {
@@ -334,7 +335,7 @@ class DiddestinationController extends CController
                         $mail->send();
                     } else {
                         //charge the agent
-                        $modelUser         = User::model()->findByPk($modelUser->id_user);
+                        $modelUser         = User::findOne($modelUser->id_user);
                         $modelUser->credit = $modelUser->credit - $priceDid;
                         $modelUser->save();
                     }

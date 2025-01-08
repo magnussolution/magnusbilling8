@@ -55,7 +55,7 @@ class MercadoPagoController extends CController
 
                     $code        = $payment_info["response"]['id'];
                     $description = "Pagamento confirmado, MERCADOPAGO:" . $code;
-                    $modelUser   = User::model()->findByPk((int) $id_user);
+                    $modelUser   = User::findOne((int) $id_user);
 
                     if (isset($modelUser->id)) {
                         Yii::error($modelUser->id . ' ' . $amount . ' ' . $description . ' ' . $code, 'error');

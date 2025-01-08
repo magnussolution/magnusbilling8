@@ -112,7 +112,7 @@ class IvrController extends CController
                     if (! is_numeric($id_sip)) {
                         $this->showError(0, $values, 'SIP ACCOUNT', 'id_sip' . $i, $i);
                     } else {
-                        $model = Sip::model()->findByPk((int) $id_sip);
+                        $model = Sip::findOne((int) $id_sip);
                         $this->showError($model->id_user, $values, 'SIP ACCOUNT', 'id_sip' . $i, $i);
                     }
                 } else if ($type == 'ivr') {
@@ -120,7 +120,7 @@ class IvrController extends CController
                     if (! is_numeric($id_ivr)) {
                         $this->showError(0, $values, 'IRV', 'id_ivr' . $i, $i);
                     } else {
-                        $model = Ivr::model()->findByPk((int) $id_ivr);
+                        $model = Ivr::findOne((int) $id_ivr);
                         $this->showError($model->id_user, $values, 'IVR', 'id_ivr' . $i, $i);
                     }
                 } else if ($type == 'queue') {
@@ -128,7 +128,7 @@ class IvrController extends CController
                     if (! is_numeric($id_queue)) {
                         $this->showError(0, $values, 'QUEUE', 'id_queue' . $i, $i);
                     } else {
-                        $model = Queue::model()->findByPk((int) $id_queue);
+                        $model = Queue::findOne((int) $id_queue);
                         $this->showError($model->id_user, $values, 'QUEUE', 'id_queue' . $i, $i);
                     }
                 }
@@ -145,7 +145,7 @@ class IvrController extends CController
                     if (! is_numeric($id_sip)) {
                         $this->showError(0, $values, 'SIP ACCOUNT', 'id_sip_out' . $i, $i, 'out_');
                     } else {
-                        $model = Sip::model()->findByPk((int) $id_sip);
+                        $model = Sip::findOne((int) $id_sip);
                         $this->showError($model->id_user, $values, 'SIP ACCOUNT', 'id_sip_out' . $i, $i, 'out_');
                     }
                 } else if ($type == 'ivr') {
@@ -153,7 +153,7 @@ class IvrController extends CController
                     if (! is_numeric($id_ivr)) {
                         $this->showError(0, $values, 'IRV', 'id_ivr_out' . $i, $i, 'out_');
                     } else {
-                        $model = Ivr::model()->findByPk((int) $id_ivr);
+                        $model = Ivr::findOne((int) $id_ivr);
                         $this->showError($model->id_user, $values, 'IVR', 'id_ivr_out' . $i, $i, 'out_');
                     }
                 } else if ($type == 'queue') {
@@ -161,7 +161,7 @@ class IvrController extends CController
                     if (! is_numeric($id_queue)) {
                         $this->showError(0, $values, 'QUEUE', 'id_queue_out' . $i, $i, 'out_');
                     } else {
-                        $model = Queue::model()->findByPk((int) $id_queue);
+                        $model = Queue::findOne((int) $id_queue);
                         $this->showError($model->id_user, $values, 'QUEUE', 'id_queue_out' . $i, $i, 'out_');
                     }
                 }
@@ -212,7 +212,7 @@ class IvrController extends CController
                         $attributes[$i]['id_' . $itemOption[0] . '_out_' . end($itemKey)] = end($itemOption);
                         if (is_numeric($itemOption[1])) {
                             $model = ucfirst($itemOption[0]);
-                            $model = $model::model()->findByPk(end($itemOption));
+                            $model = $model::findOne(end($itemOption));
 
                             $attributes[$i]['id_' . $itemOption[0] . '_out_' . end($itemKey) . '_name'] = isset($model->name) ? $model->name : '';
                         } else {
@@ -233,7 +233,7 @@ class IvrController extends CController
                         $attributes[$i]['id_' . $itemOption[0] . '_' . end($itemKey)] = end($itemOption);
                         if (is_numeric($itemOption[1])) {
                             $model = ucfirst($itemOption[0]);
-                            $model = $model::model()->findByPk(end($itemOption));
+                            $model = $model::findOne(end($itemOption));
 
                             $attributes[$i]['id_' . $itemOption[0] . '_' . end($itemKey) . '_name'] = isset($model->name) ? $model->name : '';
                         } else {

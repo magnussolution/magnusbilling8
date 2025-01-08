@@ -10,9 +10,16 @@
 namespace app\components;
 
 use Yii;
+use app\components\LoadConfig;
+use app\components\Util;
 use app\models\Queue;
 use app\models\QueueMember;
 use app\models\Sip;
+use app\models\Iax;
+use app\models\Servers;
+use app\models\Diddestination;
+use AGI_AsteriskManager;
+use PDO;
 
 class AsteriskAccess
 {
@@ -269,7 +276,7 @@ class AsteriskAccess
                 }
 
                 if (fwrite($fd, $line) === false) {
-                    echo "Impossible to write to the file ($buddyfile)";
+                    echo "Impossible to write to the file ($line)";
                     break;
                 }
             }
@@ -313,7 +320,7 @@ class AsteriskAccess
                     }
 
                     if (fwrite($fd, $line) === false) {
-                        echo "Impossible to write to the file ($buddyfile)";
+                        echo "Impossible to write to the file ($line)";
                         break;
                     }
                 }
@@ -370,7 +377,14 @@ class AsteriskAccess
     {
         $channelsData = AsteriskAccess::instance()->coreShowChannelsConcise();
         $channelsData = explode("\n", $channelsData["data"]);
-        $modelSip     = Sip::model()->findAll('id_user = ( SELECT id FROM pkg_user WHERE username = :key)', [':key' => $accountcode]);
+
+        $modelSip = Sip::find()
+            ->where(['id_user' => (new \yii\db\Query())
+                ->select('id')
+                ->from('pkg_user')
+                ->where(['username' => $accountcode])])
+            ->all();
+
         $sipAccounts  = '';
         foreach ($modelSip as $key => $sip) {
             $sipAccounts .= $sip->name . '|';
@@ -428,7 +442,7 @@ class AsteriskAccess
     public static function getSipShowPeers()
     {
         $sql          = "SELECT * FROM pkg_servers WHERE type = 'asterisk' AND status IN (1,4) AND host != 'localhost'";
-        $modelServers = Yii::app()->db->createCommand($sql)->queryAll();
+        $modelServers = Yii::$app->db->createCommand($sql)->queryAll();
 
         array_push($modelServers, [
             'host'     => 'localhost',
@@ -472,7 +486,7 @@ class AsteriskAccess
     {
 
         $sql          = "SELECT * FROM pkg_servers WHERE type = 'asterisk' AND status IN (1,4) AND host != 'localhost'";
-        $modelServers = Yii::app()->db->createCommand($sql)->queryAll();
+        $modelServers = Yii::$app->db->createCommand($sql)->queryAll();
 
         array_push($modelServers, [
             'host'     => 'localhost',
@@ -516,7 +530,7 @@ class AsteriskAccess
     {
 
         $sql          = "SELECT * FROM pkg_servers WHERE type = 'asterisk' AND status IN (1,4) AND host != 'localhost'";
-        $modelServers = Yii::app()->db->createCommand($sql)->queryAll();
+        $modelServers = Yii::$app->db->createCommand($sql)->queryAll();
 
         array_push($modelServers, [
             'host'     => 'localhost',
@@ -556,7 +570,7 @@ class AsteriskAccess
     {
 
         $sql          = "SELECT * FROM pkg_servers WHERE type = 'asterisk' AND status IN (1,4) AND host != 'localhost'";
-        $modelServers = Yii::app()->db->createCommand($sql)->queryAll();
+        $modelServers = Yii::$app->db->createCommand($sql)->queryAll();
 
         array_push($modelServers, [
             'host'     => 'localhost',
@@ -603,7 +617,7 @@ class AsteriskAccess
             if (isset($agi->engine)) {
                 $modelServers = $agi->query($sql)->fetchAll(PDO::FETCH_ASSOC);
             } else {
-                $modelServers = Yii::app()->db->createCommand($sql)->queryAll();
+                $modelServers = Yii::$app->db->createCommand($sql)->queryAll();
             }
 
             array_push($modelServers, [
@@ -660,7 +674,7 @@ class AsteriskAccess
     {
         ini_set('memory_limit', '-1');
 
-        $modelSip = Sip::model()->findAll();
+        $modelSip = Sip::find()->all();
 
         $buddyfile = '/etc/asterisk/sip_magnus_user.conf';
 
@@ -850,7 +864,7 @@ class AsteriskAccess
     public function generateIaxPeers()
     {
 
-        $modelIax = Iax::model()->findAll();
+        $modelIax = Iax::find()->all();
 
         $buddyfile = '/etc/asterisk/iax_magnus_user.conf';
 
@@ -944,7 +958,7 @@ class AsteriskAccess
                         }
 
                         if (fwrite($fd, $line) === false) {
-                            echo gettext("Impossible to write to the file") . " ($buddyfile)";
+                            echo gettext("Impossible to write to the file") . " ($line)";
                             break;
                         }
                     }
@@ -958,7 +972,7 @@ class AsteriskAccess
 
     public function writeDidContext()
     {
-        $modeDidDestination = Diddestination::model()->findAll('voip_call = 10 AND context != ""');
+        $modeDidDestination = Diddestination::find('voip_call = 10 AND context != ""')->all();
         $context_file       = '';
         foreach ($modeDidDestination as $key => $destination) {
             $context_file .= "[did-" . $destination->idDid->did . "]\n";

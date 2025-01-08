@@ -62,7 +62,7 @@ class BDServiceController extends CController
     public function actionRead($asJson = true, $condition = null)
     {
 
-        $resultUser = User::model()->findByPk(Yii::$app->session['id_user']);
+        $resultUser = User::findOne(Yii::$app->session['id_user']);
         if ($resultUser->address == 'no') {
             exit('Service inactive');
         }

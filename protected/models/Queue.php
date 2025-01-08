@@ -174,7 +174,7 @@ class  Queue extends Model
     public function beforeSave($insert)
     {
         if (! $this->getIsNewRecord()) {
-            $model = Queue::model()->findByPk($this->id);
+            $model = Queue::findOne($this->id);
 
             QueueMember::model()->updateAll(['queue_name' => $this->name], 'queue_name = :key', [':key' => $model->name]);
         }

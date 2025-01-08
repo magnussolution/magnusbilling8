@@ -64,7 +64,7 @@ class Object ( [status] => OK
             if ($data->status == "OK" || $data->status == "OPEN") {
                 echo '<h1>Thank You! You have successfully completed the payment!</h1>';
 
-                $modelRefillIcepay = RefillIcepay::model()->findByPk((int) (int) $data->orderID);
+                $modelRefillIcepay = RefillIcepay::findOne((int) (int) $data->orderID);
 
                 RefillIcepay::model()->deleteByPk((int) (int) $data->orderID);
 

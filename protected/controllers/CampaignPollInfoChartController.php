@@ -21,10 +21,14 @@ namespace app\controllers;
 use Yii;
 use app\components\CController;
 use app\models\CampaignPollInfo;
+use app\models\CampaignPhonebook;
+use app\models\PhoneNumber;
+use app\models\CampaignPoll;
+
 
 class CampaignPollInfoChartController extends CController
 {
-    public $attributeOrder = 't.id';
+    public $attributeOrder = 'id';
 
     public function actionRead($asJson = true, $condition = null)
     {
@@ -41,15 +45,15 @@ class CampaignPollInfoChartController extends CController
             exit;
         }
 
-        $records = CampaignPollInfo::model()->findAll(array(
-            'select'    => 'id, resposta AS resposta2, COUNT( resposta ) AS sumresposta, id_campaign_poll',
-            'join'      => $this->join,
-            'condition' => $this->filter,
-            'params'    => $this->paramsFilter,
-            'order'     => 'resposta DESC',
-            'group'     => 'resposta',
-
-        ));
+        $query = CampaignPollInfo::find();
+        $query->select(['id', 'resposta AS resposta2', 'COUNT(resposta) AS sumresposta', 'id_campaign_poll']);
+        if (strlen($$this->join)) {
+            $query->joinWith($this->join);
+        }
+        $query->where($this->filter, $this->paramsFilter);
+        $query->orderBy(['resposta' => SORT_DESC]);
+        $query->groupBy(['resposta']);
+        $records = $query->all();
 
         echo json_encode(array(
             $this->nameRoot  => $this->getAttributesModels($records),
@@ -79,7 +83,7 @@ class CampaignPollInfoChartController extends CController
         $total_poll = count($filterCampaignPoll[0]->value);
 
         if (isset($records[0]['id_campaign_poll'])) {
-            $model = CampaignPoll::model()->findAll($condition);
+            $model = CampaignPoll::find($condition)->all();
 
             $ids_campaign_poll = array();
             foreach ($model as $key => $campaign_poll) {
@@ -87,29 +91,20 @@ class CampaignPollInfoChartController extends CController
             }
 
             //get all campaign phonebook
-            $criteria = new CDbCriteria();
-            $criteria->addInCondition('id_campaign', $ids_campaign_poll);
-
-            $modelCampaignPhonebook = CampaignPhonebook::model()->findAll($criteria);
+            $modelCampaignPhonebook = CampaignPhonebook::find('id_campaign IN (' . $ids_campaign_poll . ')')->all();
             $ids_phone_books        = array();
             foreach ($modelCampaignPhonebook as $key => $phonebook) {
                 $ids_phone_books[] = $phonebook->id_phonebook;
             }
 
-            $criteria = new CDbCriteria();
-            $criteria->addInCondition('id_phonebook', $ids_phone_books);
-            $criteria->addCondition('status = :key');
-            $criteria->params[':key'] = 3;
-            $modelPhoneNumber         = PhoneNumber::model()->count($criteria);
+
+            $modelPhoneNumber         = PhoneNumber::find('status = 3 AND id_phonebook IN (' . $ids_phone_books . ') ')->count();
 
             if ($modelPhoneNumber == 0) {
                 $modelPhoneNumber = 1;
             }
 
-            $totalVotes = CampaignPollInfo::model()->count(array(
-                'condition' => $this->filter,
-                'params'    => $this->paramsFilter,
-            ));
+            $totalVotes = CampaignPollInfo::find($this->filter, $this->paramsFilter)->count();;
 
             for ($i = 0; $i < count($records); $i++) {
                 $records[$i]['percentage']    = Yii::t('app', 'Votes') . ': ' . $records[$i]['sumresposta'] . ' - ' . number_format(($records[$i]['sumresposta'] * 100) / $totalVotes, 2) . '%';

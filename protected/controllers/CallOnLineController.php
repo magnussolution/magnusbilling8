@@ -21,6 +21,11 @@ namespace app\controllers;
 use Yii;
 use app\components\CController;
 use app\models\CallOnLine;
+use app\models\PhoneNumber;
+use app\models\Servers;
+use app\models\Sip;
+use app\components\AsteriskAccess;
+use app\components\AccessManager;
 
 class CallOnLineController extends CController
 {
@@ -143,7 +148,7 @@ class CallOnLineController extends CController
         } elseif (! isset($_POST['id_sip'])) {
             $dialstr = 'SIP/' . $this->config['global']['channel_spy'];
         } else {
-            $modelSip = Sip::model()->findByPk((int) $_POST['id_sip']);
+            $modelSip = Sip::findOne((int) $_POST['id_sip']);
             $dialstr  = 'SIP/' . $modelSip->name;
         }
 
@@ -169,8 +174,8 @@ class CallOnLineController extends CController
     {
 
         if (isset($attributes[0])) {
-            $modelSip     = Sip::model()->findAll();
-            $modelServers = Servers::model()->findAll('type != :key1 AND status IN (1,4) AND host != :key', [':key' => 'localhost', ':key1' => 'sipproxy']);
+            $modelSip     = Sip::find()->all();;
+            $modelServers = Servers::find('type != :key1 AND status IN (1,4) AND host != :key', [':key' => 'localhost', ':key1' => 'sipproxy'])->all();
 
             if (! isset($modelServers[0])) {
                 array_push($modelServers, [
@@ -190,9 +195,9 @@ class CallOnLineController extends CController
                     $server['host'] = 'localhost';
                 }
 
-                $modelCallOnLine = CallOnLine::model()->count('server = :key', ['key' => $server['host']]);
+                $modelCallOnLine = CallOnLine::find('server = :key', [':key' => $server['host']])->count();
+                $modelCallOnLineUp = CallOnLine::find('server = :key AND status = :key1', ['key' => $server['host'], ':key1' => 'Up'])->count();
 
-                $modelCallOnLineUp = CallOnLine::model()->count('server = :key AND status = :key1', ['key' => $server['host'], ':key1' => 'Up']);
                 $totalUP += $modelCallOnLineUp;
                 $array .= '<font color="black">' . strtoupper($server['name']) . '</font> <font color="blue">T:' . $modelCallOnLine . '</font> <font color="green">A:' . $modelCallOnLineUp . '</font>&ensp;|&ensp;';
 

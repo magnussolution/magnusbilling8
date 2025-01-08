@@ -61,7 +61,7 @@ class CampaignDashBoardController extends CController
         $pkCount = is_array($attributes) || is_object($attributes) ? $attributes : [];
         for ($i = 0; $i < count($pkCount); $i++) {
             //get all campaign phonebook
-            $modelCampaignPhonebook = CampaignPhonebook::model()->findAll('id_campaign = :key', [':key' => $attributes[$i]['id']]);
+            $modelCampaignPhonebook = CampaignPhonebook::find('id_campaign = :key', [':key' => $attributes[$i]['id']])->all;
 
             $ids_phone_books = [];
             foreach ($modelCampaignPhonebook as $key => $phonebook) {
@@ -69,64 +69,55 @@ class CampaignDashBoardController extends CController
             }
 
             //Calls Being Placed
-            $modelCallOnline = CallOnLine::model()->count(
+            $modelCallOnline = CallOnLine::find(
                 'id_user = :key AND sip_account LIKE :key1 ',
                 [
                     ':key'  => $attributes[$i]['id_user'],
                     ':key1' => 'MC!' . $attributes[$i]['name'] . '%',
                 ]
-            );
+            )->count();
             $attributes[$i]['callsPlaced'] = $modelCallOnline;
 
             // Calls Ringing
-            $modelCallOnline = CallOnLine::model()->count(
+            $modelCallOnline = CallOnLine::find(
                 'id_user = :key AND status LIKE :key1 ',
                 [
                     ':key'  => $attributes[$i]['id_user'],
                     ':key1' => 'Ring%',
                 ]
-            );
+            )->count();
             $attributes[$i]['callsringing'] = $modelCallOnline;
 
             //Calls in Transfer
-            $modelCallOnline = CallOnLine::model()->count(
+            $modelCallOnline = CallOnLine::find(
                 'id_user = :key AND status = :key1 ',
                 [
                     ':key'  => $attributes[$i]['id_user'],
                     ':key1' => 'Up',
                 ]
-            );
+            )->count();
             $attributes[$i]['callsInTransfer'] = $modelCallOnline;
 
             //Calls Transfered
-            $criteria = new CDbCriteria();
-            $criteria->addInCondition('id_phonebook', $ids_phone_books);
-            $criteria->addCondition('info LIKE "Forward DTMF%"');
-            $modelPhoneNumber                  = PhoneNumber::model()->count($criteria);
+
+            $modelPhoneNumber                  = PhoneNumber::find('info LIKE "Forward DTMF%" AND id_phonebook IN (' . $ids_phone_books . ')')->count();
             $attributes[$i]['callsTransfered'] = $modelPhoneNumber;
 
             //Total Numbers
-            $criteria = new CDbCriteria();
-            $criteria->addInCondition('id_phonebook', $ids_phone_books);
-            $modelPhoneNumber                    = PhoneNumber::model()->count($criteria);
+            $modelPhoneNumber                    = PhoneNumber::find('id_phonebook IN (' . $ids_phone_books . ')')->count();
             $attributes[$i]['callsTotalNumbers'] = $modelPhoneNumber;
 
             //Diales Today
-            $modelCdr = CampaignReport::model()->count(
+            $modelCdr = CampaignReport::find()(
                 'unix_timestamp > :key AND id_campaign = :key1',
                 [
                     ':key'  => strtotime(date('Y-m-d')),
                     ':key1' => $attributes[$i]['id'],
                 ]
-            );
+            )->count();
             $attributes[$i]['callsDialedtoday'] = $modelCdr;
 
-            //Leads Remaining to Dial
-            $criteria = new CDbCriteria();
-            $criteria->addInCondition('id_phonebook', $ids_phone_books);
-            $criteria->addCondition('status = :key');
-            $criteria->params[':key']              = 1;
-            $modelPhoneNumber                      = PhoneNumber::model()->count($criteria);
+            $modelPhoneNumber                      =  PhoneNumber::find('id_phonebook IN (' . $ids_phone_books . ') AND status = 1')->count();
             $attributes[$i]['callsRemaningToDial'] = $modelPhoneNumber;
         }
 

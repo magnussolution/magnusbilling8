@@ -53,7 +53,7 @@ class RefillproviderController extends CController
     public function afterSave($model, $values)
     {
         if ($this->isNewRecord) {
-            $resultProvider     = Provider::model()->findByPk((int) $model->id_provider);
+            $resultProvider     = Provider::findOne((int) $model->id_provider);
             $creditOld          = $resultProvider->credit;
             $model->description = $model->description . ', ' . Yii::t('app', 'Old credit') . ' ' . round($creditOld, 2);
 

@@ -124,7 +124,7 @@ class SipController extends CController
             }
         } else if ((isset($values['id_sip']) || isset($values['id_ivr']) || isset($values['id_queue'])) &  ! $this->isNewRecord) {
 
-            $modelSip = Sip::model()->findByPk($values['id']);
+            $modelSip = Sip::findOne($values['id']);
 
             $type_forward = explode('|', $modelSip->forward);
 
@@ -140,9 +140,9 @@ class SipController extends CController
 
         if ($this->isNewRecord) {
 
-            $modelUser = User::model()->findByPk((int) $values['id_user']);
+            $modelUser = User::findOne((int) $values['id_user']);
 
-            $modelSipCount = Sip::model()->count("id_user = :id_user", [':id_user' => (int) $values['id_user']]);
+            $modelSipCount = Sip::find("id_user = :id_user", [':id_user' => (int) $values['id_user']])->count();
 
             if ($modelUser->idGroup->id_user_type != 3) {
                 echo json_encode([
@@ -245,13 +245,13 @@ class SipController extends CController
             if ($type == 'destroy') {
                 //delete the deletes users on Sipproxy server
                 for ($i = 0; $i < count($values); $i++) {
-                    $modelSip = Sip::model()->findByPk((int) $values[$i]['id']);
+                    $modelSip = Sip::findOne((int) $values[$i]['id']);
                     $sql      = "DELETE FROM $dbname.$table WHERE username = '" . $modelSip->name . "'";
                     $con->createCommand($sql)->execute();
                 }
             } elseif ($type == 'save') {
                 if ($this->isNewRecord) {
-                    $modelUser = User::model()->findByPk((int) $values->id_user);
+                    $modelUser = User::findOne((int) $values->id_user);
                     $sql       = "INSERT INTO $dbname.$table (username,domain,ha1,accountcode,trace) VALUES
                             ('$values->defaultuser','$remoteProxyIP','" . md5($values->defaultuser . ':' . $remoteProxyIP . ':' . $values->secret) . "','" . $modelUser->username . "',$values->trace)";
                     $con->createCommand($sql)->execute();
@@ -302,7 +302,7 @@ class SipController extends CController
                             $attributes[$i]['id_' . $itemOption[0]] = end($itemOption);
                             if (is_numeric($itemOption[1])) {
                                 $model = ucfirst($itemOption[0]);
-                                $model = $model::model()->findByPk(end($itemOption));
+                                $model = $model::findOne(end($itemOption));
 
                                 $attributes[$i]['id_' . $itemOption[0] . '_name'] = isset($model->name) ? $model->name : '';
                             } else {
@@ -369,7 +369,7 @@ class SipController extends CController
             exit;
         }
 
-        $modelUser = User::model()->findByPk((int) $_POST['id_user']);
+        $modelUser = User::findOne((int) $_POST['id_user']);
 
         if ($modelUser->idGroup->idUserType->id != 3) {
             return;

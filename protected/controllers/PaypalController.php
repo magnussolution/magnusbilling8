@@ -13,6 +13,9 @@ use app\components\UserCreditManager;
 use app\models\Methodpay;
 use app\models\Refill;
 use app\models\User;
+use app\components\Mail;
+use Exception;
+
 
 class PaypalController extends CController
 {
@@ -91,13 +94,13 @@ class PaypalController extends CController
 
             if ($_POST['payment_status'] == 'Completed') {
                 Yii::error('PAYMENT VERIFIED', 'info');
-                $modelUser = User::model()->findByPk((int) $id_user);
+                $modelUser = User::findOne((int) $id_user);
 
                 if (isset($modelUser->id) && Refill::model()->countRefill($txn_id, $modelUser->id) == 0) {
 
                     //checa se o usaurio ja fez pagamentos
                     if ($this->config['global']['paypal_new_user'] == 0) {
-                        $modelRefillCount = Refill::model()->count('id_user = :key', array(':key' => $modelUser->id));
+                        $modelRefillCount = Refill::find('id_user = :key', array(':key' => $modelUser->id))->count();
 
                         if ($modelRefillCount == 0) {
                             $mail_subject = "RECURRING SERVICES : PAYPAL";
@@ -108,7 +111,6 @@ class PaypalController extends CController
 
                             $mail = new Mail(null, $modelUser->id, null, $mail_content, $mail_subject);
                             $mail->send($this->config['global']['admin_email']);
-                            fclose($fp);
                             header("HTTP/1.1 200 OK");
                             exit;
                         } else {
@@ -130,10 +132,7 @@ class PaypalController extends CController
     }
 }
 
-namespace app\controllers;
 
-use Yii;
-use app\components\CController;
 
 class PaypalIPN
 {
@@ -218,16 +217,8 @@ class PaypalIPN
 
         // Build the body of the verification post request, adding the _notify-validate command.
         $req                     = 'cmd=_notify-validate';
-        $get_magic_quotes_exists = false;
-        if (function_exists('get_magic_quotes_gpc')) {
-            $get_magic_quotes_exists = true;
-        }
         foreach ($myPost as $key => $value) {
-            if ($get_magic_quotes_exists == true && get_magic_quotes_gpc() == 1) {
-                $value = urlencode(stripslashes($value));
-            } else {
-                $value = urlencode($value);
-            }
+            $value = urlencode($value);
             $req .= "&$key=$value";
         }
 

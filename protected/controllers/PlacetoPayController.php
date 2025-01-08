@@ -20,7 +20,7 @@ class PlacetoPayController extends CController
     {
 
         if (isset($_GET['status']) && isset($_GET['ref'])) {
-            $modelRefill = Refill::model()->findByPk($_GET['ref']);
+            $modelRefill = Refill::findOne($_GET['ref']);
             if ($modelRefill->payment == 1) {
                 echo '<br><br><center><font color=green>Estado: APROBADO Referencia:' . $_GET['ref'] . '</font></center>';
             } elseif ($_GET['status'] == 0) {

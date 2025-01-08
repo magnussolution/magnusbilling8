@@ -113,7 +113,7 @@ class TrunkController extends CController
 
         $pkCount = is_array($attributes) || is_object($attributes) ? $attributes : [];
         for ($i = 0; $i < count($pkCount); $i++) {
-            $modelTrunk                                = Trunk::model()->findByPk((int) $attributes[$i]['failover_trunk']);
+            $modelTrunk                                = Trunk::findOne((int) $attributes[$i]['failover_trunk']);
             $attributes[$i]['failover_trunktrunkcode'] = isset($modelTrunk->id)
                 ? $modelTrunk->trunkcode
                 : Yii::t('app', 'Undefined');

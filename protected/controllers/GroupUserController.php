@@ -36,6 +36,7 @@ class GroupUserController extends CController
         $this->instanceModel        = new GroupUser;
         $this->abstractModel        = GroupUser::find();
         $this->abstractModelRelated = GroupModule::find();
+        $this->instanceModelRelated = new GroupModule;
         parent::init();
     }
 
@@ -57,10 +58,11 @@ class GroupUserController extends CController
         $filter       = isset($_POST['filter']) ? $_POST['filter'] : null;
         $this->filter = $filter ? $this->createCondition(json_decode($filter)) : $this->defaultFilter;
 
-        $modelGroupUser = $this->abstractModel->find([
-            'condition' => $this->filter,
-            'params'    => $this->paramsFilter,
-        ]);
+        $query = $this->abstractModel;
+        $query->where = $this->filter;
+        $query->params = $this->paramsFilter;
+        $modelGroupUser = $query->one();
+
 
         echo json_encode([
             $this->nameRoot => isset($modelGroupUser->id_user_type) && $modelGroupUser->id_user_type == 1 ? true : false,
@@ -98,7 +100,10 @@ class GroupUserController extends CController
                 $this->instanceModel->save();
                 $newGroupId = $this->instanceModel->id;
 
-                $modelGroupModule = $this->abstractModelRelated->findAll('id_group = :key', [':key' => $modelGroupUser->id]);
+                $query = $this->abstractModelRelated;
+                $query->where = (['=', 'id_group', $modelGroupUser->id]);
+                $modelGroupModule = $query->all();
+
                 foreach ($modelGroupModule as $groupModule) {
                     $modelGroupModuleNew             = new GroupModule();
                     $modelGroupModuleNew->attributes = $groupModule->getAttributes();

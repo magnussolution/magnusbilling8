@@ -34,6 +34,7 @@ use app\models\PhoneNumber;
 use app\models\User;
 use app\models\Rate;
 use app\models\RateAgent;
+use app\components\Util;
 
 class CampaignController extends CController
 {
@@ -82,7 +83,7 @@ class CampaignController extends CController
                     exit;
                 }
             } else {
-                $modelCampaign = Campaign::model()->findByPk($values['id']);
+                $modelCampaign = Campaign::findOne($values['id']);
 
                 if ($values['frequency'] > $modelCampaign->max_frequency) {
 
@@ -165,7 +166,7 @@ class CampaignController extends CController
                 if ($type == 'ivr' || $type == 'queue' || $type == 'sip') {
                     $attributes[$i]['id_' . $type . '_0'] = $itemOption[1];
                     $modelType                            = ucfirst($type);
-                    $model                                = $modelType::model()->findByPk((int) $itemOption[1]);
+                    $model                                = $modelType::findOne((int) $itemOption[1]);
                     if (isset($model->name)) {
                         $attributes[$i]['id_' . $type . '_0' . '_name'] = $model->name;
                     }
@@ -224,7 +225,7 @@ class CampaignController extends CController
 
         $creationdate = $_POST['startingdate'] . ' ' . $_POST['startingtime'];
 
-        $modelUser = User::model()->findByPk((int) Yii::$app->session['id_user']);
+        $modelUser = User::findOne((int) Yii::$app->session['id_user']);
 
         $name        = $modelUser->username . '_' . $creationdate;
         $description = isset($_POST['sms_text']) ? $_POST['sms_text'] : false;
@@ -405,10 +406,8 @@ class CampaignController extends CController
             }
 
             //get campaingphonebookes
-            $modelCampaignPhonebook = CampaignPhonebook::model()->findAll(
-                'id_campaign = :key',
-                [':key' => $id_campaign]
-            );
+            $modelCampaignPhonebook = CampaignPhonebook::find(['id_campaign' => $id_campaign])->all;
+
 
             if (! isset($modelCampaignPhonebook->id)) {
                 echo json_encode([
@@ -424,9 +423,9 @@ class CampaignController extends CController
             }
 
             //find active numbers in phonebooks
-            $criteria = new CDbCriteria();
-            $criteria->addInCondition('id', $ids_phone_books);
-            $modelPhoneBook = PhoneBook::model()->findAll($criteria);
+            $modelPhoneBook = PhoneBook::find()
+                ->where(['id' => $ids_phone_books])
+                ->all();
 
             if (! isset($modelPhoneBook[0])) {
                 echo json_encode([
@@ -436,11 +435,9 @@ class CampaignController extends CController
                 exit;
             }
             //find only active phonebook
-            $criteria = new CDbCriteria();
-            $criteria->addInCondition('id', $ids_phone_books);
-            $criteria->addCondition('status = :key');
-            $criteria->params[':key'] = 1;
-            $modelPhoneBook           = PhoneBook::model()->findAll($criteria);
+            $modelPhoneBook = PhoneBook::find()
+                ->where(['id' => $ids_phone_books, 'status' => 1])
+                ->all();
 
             if (! isset($modelPhoneBook[0])) {
                 echo json_encode([
@@ -451,11 +448,9 @@ class CampaignController extends CController
             }
 
             //find active numbers in phonebooks
-            $criteria = new CDbCriteria();
-            $criteria->addInCondition('id_phonebook', $ids_phone_books);
-            $criteria->addCondition('status = :key');
-            $criteria->params[':key'] = 1;
-            $modelPhoneNumber         = PhoneNumber::model()->findAll($criteria);
+            $modelPhoneNumber = PhoneNumber::find()
+                ->where(['id_phonebook' => $ids_phone_books, 'status' => 1])
+                ->all();
 
             if (! isset($modelPhoneNumber[0])) {
                 echo json_encode([
@@ -465,12 +460,10 @@ class CampaignController extends CController
                 exit;
             } else {
 
-                $criteria = new CDbCriteria();
-                $criteria->addInCondition('id_phonebook', $ids_phone_books);
-                $criteria->addCondition('status = :key AND creationdate < :key1');
-                $criteria->params[':key']  = 1;
-                $criteria->params[':key1'] = date('Y-m-d H:i:s');
-                $modelPhoneNumber          = PhoneNumber::model()->find($criteria);
+                $modelPhoneNumber = PhoneNumber::find()
+                    ->where(['id_phonebook' => $ids_phone_books, 'status' => 1])
+                    ->andWhere(['<', 'creationdate', date('Y-m-d H:i:s')])
+                    ->all();
 
                 if (! isset($modelPhoneNumber[0])) {
                     echo json_encode([
@@ -492,21 +485,20 @@ class CampaignController extends CController
 
         if ($modelCampaign->type == 0) {
 
-            $criteria = new CDbCriteria([
-                'condition' => 'id_plan = :key',
-                'params'    => [':key' => $modelCampaign->idUser->id_plan],
-                'with'      => [
-                    'idPrefix' => [
-                        'condition' => "idPrefix.prefix LIKE '999%'",
-                    ],
-                ],
-            ]);
 
             if ($modelCampaign->idUser->id_user > 1) {
-                $modelRate = RateAgent::model()->find($criteria);
+                $query = RateAgent::find();
             } else {
-                $modelRate = Rate::model()->find($criteria);
+                $query = Rate::find();
             }
+            $query->where('id_plan = :key', [':key' => $modelCampaign->idUser->id_plan]);
+            $query->joinWith([
+                'idPrefix' => function ($query) {
+                    $query->andWhere(['like', 'idPrefix.prefix', '999%', false]);
+                },
+            ]);
+
+            $modelRate = $query->All();
 
             if (! isset($modelRate->id)) {
                 echo json_encode([

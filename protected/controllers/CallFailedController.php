@@ -506,7 +506,7 @@ class CallFailedController extends CController
 
 
 <?php
-        $model = CallFailed::model()->findByPk((int) $_GET['id']);
+        $model = CallFailed::findOne((int) $_GET['id']);
 
         if (! isset($model->idServer->id) || $model->idServer->type == 'mbilling') {
 

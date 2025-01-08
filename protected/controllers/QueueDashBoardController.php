@@ -82,7 +82,7 @@ class QueueDashBoardController extends CController
 
         QueueMember::model()->truncateQueueAgentStatus();
 
-        $resultQueue = Queue::model()->findAll();
+        $resultQueue = Queue::find()->all();;
 
         foreach ($resultQueue as $key => $queue) {
 

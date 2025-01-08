@@ -76,7 +76,7 @@ class RefillController extends CController
 
     public function beforeSave($values)
     {
-        $modelRefill = Refill::model()->findByPk($values['id']);
+        $modelRefill = Refill::findOne($values['id']);
         if (! $this->isNewRecord) {
 
             if (isset($values['payment']) && (preg_match('/^PENDING\:/', $modelRefill->description) && $values['payment'] == 1 && $modelRefill->payment == 0)) {
@@ -107,7 +107,7 @@ class RefillController extends CController
             if (isset($values['credit'])) {
                 $totalRefill = $modelUser->credit + $values['credit'];
 
-                $modelUser = User::model()->findByPk((int) Yii::$app->session['id_user']);
+                $modelUser = User::findOne((int) Yii::$app->session['id_user']);
 
                 $userAgent = $modelUser->typepaid == 1 ? $modelUser->credit = $modelUser->credit + $modelUser->creditlimit : $modelUser->credit;
 
@@ -186,7 +186,7 @@ class RefillController extends CController
     public function beforeDestroy($values)
     {
         if (isset($values['id'])) {
-            $modelRefill = Refill::model()->findByPk($values['id']);
+            $modelRefill = Refill::findOne($values['id']);
             if (preg_match('/^PENDING\:/', $modelRefill->description) && $modelRefill->payment == 0 && $modelRefill->credit < 0) {
                 $this->cancelSendCreditBDService($values, $modelRefill);
             }

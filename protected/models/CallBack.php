@@ -89,7 +89,7 @@ class  CallBack extends Model
         if ($this->getIsNewRecord()) {
             $config = LoadConfig::getConfig();
 
-            $modelUser   = User::model()->findByPk((int) $this->id_user);
+            $modelUser   = User::findOne((int) $this->id_user);
             $this->exten = Util::number_translation($modelUser->prefix_local, $this->exten);
         }
         return parent::beforeSave($insert);

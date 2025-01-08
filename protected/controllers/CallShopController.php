@@ -116,7 +116,7 @@ class CallShopController extends CController
     {
         if (isset($_GET['id'])) {
             $id                       = (int) $_GET['id'];
-            $modelSip                 = Sip::model()->findByPk((int) $id);
+            $modelSip                 = Sip::findOne((int) $id);
             $modelSip->status         = 0;
             $modelSip->callshopnumber = 'NULL';
             $modelSip->callshoptime   = 0;

@@ -96,7 +96,7 @@ class MolPayController extends CController
                 Yii::error(print_r($description, true), 'error');
 
                 Yii::error('username=' . $username . ', amount = ' . $amount, 'error');
-                $modelUser = User::model()->findByPk((int) $id_user);
+                $modelUser = User::findOne((int) $id_user);
 
                 if (count($modelUser) && Refill::model()->countRefill($tranID, $modelUser->id) == 0) {
                     UserCreditManager::releaseUserCredit($modelUser->id, $amount, $description, 1, $tranID);

@@ -102,7 +102,7 @@ class CallAppController extends CController
                 ]
             );
         } else {
-            $modelPhoneNumber = PhoneNumber::model()->findByPk((int) $_GET['id']);
+            $modelPhoneNumber = PhoneNumber::findOne((int) $_GET['id']);
         }
 
         if (isset($modelPhoneNumber->status)) {

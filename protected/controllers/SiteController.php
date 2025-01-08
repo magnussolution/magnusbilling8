@@ -6,6 +6,7 @@ use Yii;
 use app\models\User;
 use app\components\CController;
 use app\components\Util;
+use app\models\Configuration;
 
 class SiteController extends CController
 {
@@ -41,9 +42,15 @@ class SiteController extends CController
     {
 
 
-
-
         /*
+        $language = Configuration::find()->select('config_value')->where(['LIKE', 'config_key', 'base_language'])->all();
+
+        print_r($language[0]->attributes);
+
+        // $modelUser = User::find()->where(['username', 'teste'])->all;
+
+
+     
         $query = User::find();
         //$query->where(['and', 'id', 'o']);
         $query->joinWith([

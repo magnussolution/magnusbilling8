@@ -43,7 +43,7 @@ class GAuthenticatorController extends CController
 
     public function beforeSave($values)
     {
-        $modelUser = User::model()->findByPk((int) $values['id']);
+        $modelUser = User::findOne((int) $values['id']);
 
         //try disable token from account
         if ($values['googleAuthenticator_enable'] != 1 && strlen($modelUser->google_authenticator_key) > 5) {

@@ -40,7 +40,7 @@ class TransferToMobileController extends CController
     public function actionRead($asJson = true, $condition = null)
     {
 
-        $modelTransferToMobile = TransferToMobile::model()->findByPk((int) Yii::$app->session['id_user']);
+        $modelTransferToMobile = TransferToMobile::findOne((int) Yii::$app->session['id_user']);
 
         $methods = [];
 
@@ -96,7 +96,7 @@ class TransferToMobileController extends CController
             $config    = LoadConfig::getConfig();
             $id_refill = $_GET['id'];
 
-            $modelRefill = Refill::model()->findByPk((int) $id_refill, 'id_user = :key', array(':key' => Yii::$app->session['id_user']));
+            $modelRefill = Refill::findOne((int) $id_refill, 'id_user = :key', array(':key' => Yii::$app->session['id_user']));
 
             echo $config['global']['fm_transfer_print_header'] . "<br><br>";
 

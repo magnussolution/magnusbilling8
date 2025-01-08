@@ -89,7 +89,7 @@ class PagSeguroController extends CController
             if ($status == 3) {
                 $description = "Pagamento confirmado, PAGSEGURO:" . $transacaoID;
 
-                $modelUser = User::model()->findByPk((int) $id_user);
+                $modelUser = User::findOne((int) $id_user);
 
                 if (count($modelUser) && Refill::model()->countRefill($transacaoID, $modelUser->id) == 0) {
                     Yii::error($modelUser->id . ' ' . $amount . ' ' . $description . ' ' . $transacaoID, 'error');

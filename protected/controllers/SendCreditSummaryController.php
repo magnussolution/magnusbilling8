@@ -80,7 +80,7 @@ class SendCreditSummaryController extends CController
             $this->paramsFilter['number'] = $model->number . '%';
         }
         /*
-        $modelSendCreditSummary = SendCreditSummary::model()->findAll();
+        $modelSendCreditSummary = SendCreditSummary::find()->all();;
         foreach ($modelSendCreditSummary as $key => $value) {
 
         $modelRefill = Refill::model()->find('invoice_number = :key', [':key' => $value->id]);

@@ -127,7 +127,7 @@ class DidwwController extends CController
         $setup_price   = Yii::$app->session['setup_price']   = ($dids->included[2]->attributes->setup_price * $this->profit) * $this->currency_converter;
         $monthly_price = Yii::$app->session['monthly_price'] = ($dids->included[2]->attributes->monthly_price * $this->profit) * $this->currency_converter;
 
-        $modelUser = User::model()->findByPk(Yii::$app->session['id_user']);
+        $modelUser = User::findOne(Yii::$app->session['id_user']);
 
         if (isset($modelUser->id)) {
 

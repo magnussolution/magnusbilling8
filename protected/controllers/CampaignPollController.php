@@ -54,7 +54,7 @@ class CampaignPollController extends CController
     public function beforeSave($values)
     {
         if ($this->isNewRecord || isset($values['id_campaign'])) {
-            $modelCampaign     = Campaign::model()->findByPk((int) $values['id_campaign']);
+            $modelCampaign     = Campaign::findOne((int) $values['id_campaign']);
             $values['id_user'] = $modelCampaign->id_user;
         }
 

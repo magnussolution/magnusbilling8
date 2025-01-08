@@ -80,7 +80,7 @@ class SmsCallbackController extends CController
                 'order'     => $order,
             ]);
 
-            $modelTrunk   = Trunk::model()->findByPk((int) $modelTrunkGroupTrunk->id_trunk);
+            $modelTrunk   = Trunk::findOne((int) $modelTrunkGroupTrunk->id_trunk);
             $idTrunk      = $modelTrunk->id;
             $providertech = $modelTrunk->providertech;
             $ipaddress    = $modelTrunk->trunkcode;

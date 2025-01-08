@@ -142,7 +142,7 @@ class SmsController extends CController
             $values['id_user'] = Yii::$app->session['id_user'];
         }
 
-        $modelUser = User::model()->findByPk((int) $values['id_user']);
+        $modelUser = User::findOne((int) $values['id_user']);
 
         $res = SmsSend::send($modelUser, $values['telephone'], $values['sms'], 0, $values['sms_from']);
 

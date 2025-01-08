@@ -83,7 +83,7 @@ class TransferToMobileController extends CController
             }
         }
 
-        $this->modelTransferToMobile = TransferToMobile::model()->findByPk((int) Yii::$app->session['id_user']);
+        $this->modelTransferToMobile = TransferToMobile::findOne((int) Yii::$app->session['id_user']);
     }
 
     public function actionRead($asJson = true, $condition = null)
@@ -381,7 +381,7 @@ error_txt=Transaction successful';
 
             //check if agent have credit
 
-            $modelAgent = User::model()->findByPk($this->modelTransferToMobile->id_user);
+            $modelAgent = User::findOne($this->modelTransferToMobile->id_user);
 
             if ($modelAgent->credit + $modelAgent->creditlimit < $this->cost) {
 
@@ -414,7 +414,7 @@ error_txt=Transaction successful';
 
         if ($_GET['method'] == 'international') {
 
-            $modelSendCreditProducts = SendCreditProducts::model()->findByPk((int) $_GET['id']);
+            $modelSendCreditProducts = SendCreditProducts::findOne((int) $_GET['id']);
 
             Yii::$app->session['operatorId'] = $modelSendCreditProducts->operator_id;
 
@@ -970,7 +970,7 @@ error_txt=Transaction successful';
     public function actionGetProductTax()
     {
 
-        $modelSendCreditProducts = SendCreditProducts::model()->findByPk((int) $_GET['id']);
+        $modelSendCreditProducts = SendCreditProducts::findOne((int) $_GET['id']);
         echo $modelSendCreditProducts->info;
     }
 }

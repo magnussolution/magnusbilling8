@@ -10,6 +10,7 @@ use Yii;
 use app\components\CController;
 use app\models\CallBack;
 use app\models\Configuration;
+use Exception;
 
 class ClicToCallController extends CController
 {
@@ -18,10 +19,7 @@ class ClicToCallController extends CController
     {
         parent::init();
         if (!isset(Yii::$app->session['language'])) {
-            $language = Configuration::model()->findAll(array(
-                'select'    => 'config_value',
-                'condition' => "config_key LIKE 'base_language'",
-            ));
+            $language = Configuration::find()->select('config_value')->where(['LIKE', 'config_key', 'base_language'])->all();
 
             Yii::$app->session['language'] = $language[0]->config_value;
 

@@ -26,6 +26,8 @@ namespace app\controllers;
 use Yii;
 use app\components\CController;
 use app\models\CallArchive;
+use PharData;
+use Phar;
 
 class CallArchiveController extends CController
 {
@@ -149,7 +151,7 @@ class CallArchiveController extends CController
 
         if (isset($_GET['id'])) {
 
-            $modelCall = CallArchive::model()->findByPk((int) $_GET['id']);
+            $modelCall = CallArchive::findOne((int) $_GET['id']);
             $day       = $modelCall->starttime;
             $uniqueid  = $modelCall->uniqueid;
             $day       = explode(' ', $day);
@@ -197,15 +199,11 @@ class CallArchiveController extends CController
 
             $this->filter = $this->extraFilter($filter);
 
-            $criteria = new CDbCriteria([
-                'condition' => $this->filter,
-                'params'    => $this->paramsFilter,
-                'with'      => $this->relationFilter,
-            ]);
+            $query = CallArchive::find()->where($this->filter)->params($this->paramsFilter)->with($this->relationFilter);
             if (count($ids)) {
-                $criteria->addInCondition('t.id', $ids);
+                $query->andWhere(['in', 'id', $ids]);
             }
-            $modelCdr = CallArchive::model()->findAll($criteria);
+            $modelCdr = $query->all();
 
             $folder = $this->magnusFilesDirectory . 'monitor';
 

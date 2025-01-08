@@ -63,7 +63,7 @@ class TransferMobileMoneyController extends CController
     public function init()
     {
 
-        $this->modelTransferToMobile = TransferToMobile::model()->findByPk((int) Yii::$app->session['id_user']);
+        $this->modelTransferToMobile = TransferToMobile::findOne((int) Yii::$app->session['id_user']);
 
         $this->instanceModel = new User;
         $this->abstractModel = User::find();
@@ -108,7 +108,7 @@ class TransferMobileMoneyController extends CController
 
         if (isset($_POST['amountValues'])) {
 
-            $modelSendCreditProducts = SendCreditProducts::model()->findByPk((int) $_POST['amountValues']);
+            $modelSendCreditProducts = SendCreditProducts::findOne((int) $_POST['amountValues']);
 
             $modelSendCreditRates = SendCreditRates::model()->find(array(
                 'condition' => 'id_user = :key AND id_product = :key1',
@@ -353,7 +353,7 @@ class TransferMobileMoneyController extends CController
 
             //check if agent have credit
 
-            $modelAgent = User::model()->findByPk($this->modelTransferToMobile->id_user);
+            $modelAgent = User::findOne($this->modelTransferToMobile->id_user);
 
             if ($modelAgent->credit + $modelAgent->creditlimit < $this->cost) {
 
@@ -367,7 +367,7 @@ class TransferMobileMoneyController extends CController
 
             $agentProfit = $modelAgent->{$methosProfit};
 
-            $modelSendCreditProducts = SendCreditProducts::model()->findByPk((int) Yii::$app->session['id_product']);
+            $modelSendCreditProducts = SendCreditProducts::findOne((int) Yii::$app->session['id_product']);
 
             if (preg_match('/-/', $modelSendCreditProducts->product)) {
 
@@ -440,7 +440,7 @@ class TransferMobileMoneyController extends CController
 
         $argument = $this->modelTransferToMobile->transfer_show_selling_price;
 
-        $modelUserOld = User::model()->findByPk(Yii::$app->session['id_user']);
+        $modelUserOld = User::findOne(Yii::$app->session['id_user']);
 
         if ($argument < 10) {
             $fee = '1.0' . $argument;
@@ -502,7 +502,7 @@ class TransferMobileMoneyController extends CController
 
         if ($this->modelTransferToMobile->id_user > 1) {
 
-            $modelAgentOld = User::model()->findByPk($this->modelTransferToMobile->id_user);
+            $modelAgentOld = User::findOne($this->modelTransferToMobile->id_user);
 
             User::model()->updateByPk(
                 $this->modelTransferToMobile->id_user,
@@ -535,7 +535,7 @@ class TransferMobileMoneyController extends CController
             $config    = LoadConfig::getConfig();
             $id_refill = $_GET['id'];
 
-            $modelRefill = Refill::model()->findByPk((int) $id_refill, 'id_user = :key', array(':key' => Yii::$app->session['id_user']));
+            $modelRefill = Refill::findOne((int) $id_refill, 'id_user = :key', array(':key' => Yii::$app->session['id_user']));
 
             echo $config['global']['fm_transfer_print_header'] . "<br><br>";
 
@@ -642,7 +642,7 @@ class TransferMobileMoneyController extends CController
         $methosProfit = 'transfer_flexiload_profit';
         $user_profit  = $this->modelTransferToMobile->{$methosProfit};
 
-        $modelSendCreditProducts = SendCreditProducts::model()->findByPk((int) Yii::$app->session['id_product']);
+        $modelSendCreditProducts = SendCreditProducts::findOne((int) Yii::$app->session['id_product']);
         $modelSendCreditRates    = SendCreditRates::model()->find(array(
             'condition' => 'id_product = :key AND id_user = :key1',
             'params'    => array(
@@ -678,7 +678,7 @@ class TransferMobileMoneyController extends CController
         if (isset($_GET['id'])) {
             //calculation the R button value.
 
-            $modelSendCreditProducts = SendCreditProducts::model()->findByPk((int) $_GET['id']);
+            $modelSendCreditProducts = SendCreditProducts::findOne((int) $_GET['id']);
 
             //wholesale price - cliente discount;
             echo $amount                      = $modelSendCreditProducts->wholesale_price *= (1 - $user_profit / 100);
@@ -794,7 +794,7 @@ class TransferMobileMoneyController extends CController
     public function actionGetProductTax()
     {
 
-        $modelSendCreditProducts = SendCreditProducts::model()->findByPk((int) $_GET['id']);
+        $modelSendCreditProducts = SendCreditProducts::findOne((int) $_GET['id']);
         echo $modelSendCreditProducts->info;
     }
 

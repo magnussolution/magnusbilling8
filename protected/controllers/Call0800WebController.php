@@ -122,7 +122,7 @@ class Call0800WebController extends CController
                 }
 
                 if ($modelSip->id_user > 1) {
-                    $modelUserAgent = User::model()->findByPk((int) $modelSip->id_user);
+                    $modelUserAgent = User::findOne((int) $modelSip->id_user);
 
                     $modelUserAgent->credit = $modelUserAgent->typepaid == 1
                         ? $modelUserAgent->credit + $modelUserAgent->creditlimit
@@ -212,7 +212,7 @@ class Call0800WebController extends CController
                 $modelTrunkGroupTrunk = TrunkGroupTrunk::model()->findBySql($sql);
 
                 foreach ($modelTrunkGroupTrunk as $key => $trunk) {
-                    $modelTrunk = Trunk::model()->findByPk((int) $modelTrunkGroupTrunk->id_trunk);
+                    $modelTrunk = Trunk::findOne((int) $modelTrunkGroupTrunk->id_trunk);
                     if ($modelTrunk->status == 0) {
                         continue;
                     }

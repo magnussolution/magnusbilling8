@@ -140,12 +140,11 @@ class QueueController extends CController
 
         $id  = json_decode($_POST['ids']);
         $ids = implode(",", $id);
-
-        $uniID = count($ids) == 1 ? true : false;
+        $ids = is_array($ids) == 1 ? true : false;
 
         $this->abstractModel->truncateQueueStatus();
 
-        $modelQueue = Queue::model()->findAll("id IN ($ids)");
+        $modelQueue = Queue::model()->where(['IN', 'id', $ids])->all();
         foreach ($modelQueue as $key => $queue) {
             try {
                 AsteriskAccess::instance('localhost', 'magnus', 'magnussolution')->queueReseteStats(trim($queue->name));

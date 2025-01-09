@@ -11,12 +11,13 @@ namespace app\controllers;
 
 use Yii;
 use app\components\CController;
-use app\models\User;
-use app\models\Plan;
-use app\models\GroupUser;
 use app\components\Util;
 use app\components\Mail;
 use app\components\AsteriskAccess;
+use app\models\User;
+use app\models\Plan;
+use app\models\GroupUser;
+use app\models\Sip;
 use PDO;
 
 class JoomlaController extends CController
@@ -28,7 +29,7 @@ class JoomlaController extends CController
 
         if (isset($_POST['key'])) {
 
-            $modelUser = User::model()->find('username = :key', ['key' => $_POST['user']]);
+            $modelUser = User::find('username = :key', ['key' => $_POST['user']])->one();
             if (isset($modelUser->id)) {
                 $key = sha1($modelUser->username . $modelUser->password);
 
@@ -57,7 +58,7 @@ class JoomlaController extends CController
             $_REQUEST['password'] = trim(Util::generatePassword(20, true, true, true, false));
             $_REQUEST['active']   = 0;
         }
-        $modelUser = User::model()->find('email = :key', [':key' => $_REQUEST['email']]);
+        $modelUser = User::find('email = :key', [':key' => $_REQUEST['email']])->one();
 
         if (isset($modelUser->id)) {
             if (isset($is_android)) {
@@ -66,13 +67,13 @@ class JoomlaController extends CController
                 exit('COM_USERS_PROFILE_EMAIL1_MESSAGE');
             }
         }
-        $modelUser = User::model()->find('username = :key', [':key' => $_REQUEST['user']]);
+        $modelUser = User::find('username = :key', [':key' => $_REQUEST['user']])->one();
 
         if (isset($modelUser->id)) {
             exit('COM_USERS_PROFILE_USERNAME_MESSAGE');
         }
 
-        $modelPlan = Plan::model()->find('signup = 1');
+        $modelPlan = Plan::find('signup = 1')->one();
 
         if (isset($modelPlan->id)) {
             $id_plan = $modelPlan->id;
@@ -86,7 +87,7 @@ class JoomlaController extends CController
             $id_group = $_REQUEST['id_group'];
         } else {
 
-            $modelGroupUser = GroupUser::model()->findAllByAttributes(["id_user_type" => 3]);
+            $modelGroupUser = GroupUser::find('id_user_type = 3')->all();
             if (isset($modelGroupUser[0]->id)) {
                 $id_group = $modelGroupUser[0]->id;
             } else {

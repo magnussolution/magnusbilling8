@@ -26,6 +26,7 @@ use app\models\QueueMember;
 use app\models\Queue;
 use app\models\Sip;
 use PDO;
+use Exception;
 
 class QueueDashBoardController extends CController
 {
@@ -116,12 +117,11 @@ class QueueDashBoardController extends CController
                     $agentStatus = substr($agentStatus, 0, 7) == 'in call' ? 'in call' : $agentStatus;
                     $last_call   = $this->get_string_between($line, '(last was ', ' secs ago)');
                     $last_call   = is_numeric($last_call) ? $last_call : 0;
-                    $resultSIP   = Sip::model()->findAll(['condition' => "name = '$username'"]);
+                    $resultSIP   = Sip::find('name =  :key', [':key' => $username])->all();
                     $id_user     = $resultSIP[0]->id_user;
 
                     $valuesInsert = ":id_user, :username, :agentStatus, :totalCalls, :last_call, :queueId";
                     $sql          = "INSERT INTO pkg_queue_agent_status (id_user, agentName, agentStatus, totalCalls, last_call, id_queue) VALUES ($valuesInsert) ";
-
                     $command = Yii::$app->db->createCommand($sql);
                     $command->bindValue(":id_user", $id_user, PDO::PARAM_INT);
                     $command->bindValue(":username", $username, PDO::PARAM_STR);

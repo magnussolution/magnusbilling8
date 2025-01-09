@@ -26,10 +26,12 @@ namespace app\controllers;
 use Yii;
 use app\components\CController;
 use app\components\ApiAccess;
-use app\components\LogUsers;
+use app\components\MagnusLog;
+use app\models\LogUsers;
 use app\models\Rate;
 use app\models\RateAgent;
 use app\models\Plan;
+use app\models\Prefix;
 use Exception;
 
 class RateController extends CController
@@ -122,7 +124,7 @@ class RateController extends CController
 
     public function extraFilterCustomAgent($filter)
     {
-        $modelPlan = Plan::model()->findAll('id_user = :key', [':key' => Yii::$app->session['id_user']]);
+        $modelPlan = Plan::find('id_user = :key', [':key' => Yii::$app->session['id_user']])->one();
         $ids_plan  = '';
         foreach ($modelPlan as $key => $plan) {
             $ids_plan .= $plan->id . ',';
@@ -148,7 +150,7 @@ class RateController extends CController
     {
         if (Yii::$app->session['isAgent'] || Yii::$app->session['id_agent'] > 1) {
             $info = 'Module: rateagent  ' . json_encode($values);
-            LogUsers::model()->updateByPk(Yii::$app->db->getLastInsertID(), ['description' => $info]);
+            LogUsers::findOne(Yii::$app->db->getLastInsertID(), ['description' => $info]);
         }
     }
 
@@ -234,11 +236,11 @@ class RateController extends CController
             exit;
         }
 
-        $modelPrefix = Prefix::model()->find(1);
+        $modelPrefix = Prefix::find();
 
         if (! isset($modelPrefix->id)) {
             $this->importPrefixs($values);
-            $modelPrefix = Prefix::model()->find(1);
+            $modelPrefix = Prefix::find();
         }
 
         if (Yii::$app->session['isAgent']) {
@@ -304,7 +306,7 @@ class RateController extends CController
                 exit;
             }
 
-            $modelRate = Rate::model()->findAll('dialprefix > 0');
+            $modelRate = Rate::find()->query('dialprefix > 0')->all();
             if (isset($modelRate[0]->id)) {
                 //check if there are more than 2000 new prefix, if yes, import using LOAD DATA.
                 if (count($modelRate) > 2000) {

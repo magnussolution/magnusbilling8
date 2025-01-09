@@ -60,10 +60,9 @@ class  Callerid extends Model
     {
         return [
             [['cid', 'id_user'], 'required'],
-            [['id_user'], 'integer', 'integerOnly' => true],
+            [['id_user', 'activated'], 'integer', 'integerOnly' => true],
             [['cid', 'name'], 'string', 'max' => 100],
             [['description'], 'string', 'max' => 500],
-            [['activated'], 'string', 'max' => 1],
         ];
     }
 

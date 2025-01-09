@@ -208,7 +208,7 @@ class RateProviderController extends CController
             exit;
         }
 
-        $modelRate = RateProvider::model()->findAll('dialprefix IS NOT NULL');
+        $modelRate = RateProvider::find()->query('dialprefix IS NOT NULL')->all();
         if (isset($modelRate[0]->id)) {
             //check if there are more than 2000 new prefix, if yes, import using LOAD DATA.
             if (count($modelRate) > 2000) {

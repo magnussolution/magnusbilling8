@@ -351,19 +351,30 @@ class BaseController extends Controller
 
         $query->andWhere($this->filter);
 
-        $query->select($this->select);
+        if ($this->select != '*') {
+            $query->select($this->select);
+        }
 
-        if (strlen($this->join) > 0)
+        if (!empty($this->join)) {
             $query->join($this->join);
+        }
 
-        $query->addParams($this->paramsFilter);
-        $query->with($this->relationFilter);
+
+        if (!empty($this->paramsFilter)) {
+            $query->addParams($this->paramsFilter);
+        }
+
+
+        if (!empty($this->relationFilter)) {
+            $query->joinWith($this->relationFilter);
+        }
+
         $query->orderBy($this->order);
         $query->limit($this->limit);
         $query->offset($this->start);
 
         if (!empty($this->addInCondition)) {
-            $query->andWhere(['in', $this->addInCondition[0], $this->addInCondition[1]]);
+            $query->andWhere($this->addInCondition);
         }
 
         if ($this->group != 1) {
@@ -594,7 +605,7 @@ class BaseController extends Controller
         } else {
 
             if (! $this->isNewRecord && Yii::$app->session['isClient'] && preg_match('/pkg_phonenumber/', $this->instanceModel::tableName())) {
-                $modelCheck = $this->abstractModel->findOne($values[$namePk]);
+                $modelCheck = $this->abstractModel->query('id = :key', [':key' => $values[$namePk]])->one();
 
                 if ($modelCheck->idPhonebook->idUser->id != Yii::$app->session['id_user']) {
                     exit('try edit invalid id');
@@ -1111,7 +1122,7 @@ class BaseController extends Controller
 
                     if (Yii::$app->session['isClient']) {
 
-                        $modelCheck = $this->abstractModel->findOne($values[$namePk]);
+                        $modelCheck = $this->abstractModel->query('id = :key', [':key' => $values[$namePk]])->one();
 
                         if (isset($modelCheck->id_user)) {
                             $modelUser = User::findOne($modelCheck->id_user);
@@ -1414,7 +1425,6 @@ class BaseController extends Controller
         if (! is_array($filter)) {
             return $condition;
         }
-
         foreach ($filter as $key => $f) {
             $isSubSelect = false;
 
@@ -1446,6 +1456,8 @@ class BaseController extends Controller
             } else {
                 $comparison = null;
             }
+
+
             switch ($type) {
                 case 'date':
                     switch ($comparison) {
@@ -1464,62 +1476,50 @@ class BaseController extends Controller
                     }
                     break;
                 case 'string':
-                    $field = isset($f->caseSensitive) && $f->caseSensitive && ! is_array($field) ? "BINARY $field" : $field;
 
                     switch ($comparison) {
                         case 'st':
 
                             if ($field == 'idUser.username') {
-                                $modelUser = User::find()->where(['like', 'username', $value . '%'])->all();
+
+                                $modelUser = User::find()->where(['LIKE BINARY', 'username', $value . '%'])->all();
                                 $in        = '';
                                 foreach ($modelUser as $key => $user) {
                                     $in .= $user->id . ',';
                                 }
-                                $this->addInCondition = 't.id_user IN ( ' . strtr($in, 0, -1) . ' )';
-                                $filterDirect         = true;
+                                $this->addInCondition = $this->instanceModel::tableName() . '.id_user IN ( ' . substr($in, 0, -1) . ' )';
                             }
                             if (! isset($filterDirect)) {
-                                if (preg_match("/^id[A-Z].*\./", $field)) {
-                                    if (array_key_exists(strtok($field, '.'), $this->relationFilter)) {
-                                        $this->relationFilter[strtok($field, '.')]['condition'] .= " AND $field LIKE :$paramName";
-                                    } else {
-                                        $this->relationFilter[strtok($field, '.')] = [
-                                            'condition' => "$field LIKE :$paramName",
-                                        ];
-                                    }
-                                } else {
-                                    $condition .= " AND $field LIKE :$paramName";
-                                }
 
-                                $this->paramsFilter[$paramName] = "$value%";
+                                if (preg_match("/^id[A-Z].*\./", $field)) {
+                                    $this->relationFilter[strtok($field, '.')] = function ($query) use ($value, $field) {
+                                        $query->andWhere(['LIKE BINARY', strtolower(preg_replace('/id/', 'pkg_', $field)), $value . '%']);
+                                    };
+                                } else {
+                                    $condition .= " AND $field LIKE BINARY :$paramName";
+                                    $this->paramsFilter[$paramName] = "$value%";
+                                }
                             }
 
                             break;
                         case 'ed':
                             if ($field == 'idUser.username') {
-                                $modelUser = User::find()->where(['like', 'username', $value])->all();
+                                $modelUser = User::find()->where(['LIKE BINARY', 'username', '%' . $value])->all();
                                 $in        = '';
                                 foreach ($modelUser as $key => $user) {
                                     $in .= $user->id . ',';
                                 }
-                                $this->addInCondition = 't.id_user IN ( ' . strtr($in, 0, -1) . ' )';
-                                $filterDirect         = true;
-                            }
-                            if (! isset($filterDirect)) {
-                                if (preg_match("/^id[A-Z].*\./", $field)) {
-                                    if (array_key_exists(strtok($field, '.'), $this->relationFilter)) {
-                                        $this->relationFilter[strtok($field, '.')]['condition'] .= " AND $field LIKE :$paramName";
-                                    } else {
-                                        $this->relationFilter[strtok($field, '.')] = [
-                                            'condition' => "$field LIKE :$paramName",
-                                        ];
-                                    }
-                                } else {
-                                    $condition .= " AND $field LIKE :$paramName";
-                                }
+                                $this->addInCondition = $this->instanceModel::tableName() . '.id_user IN ( ' . substr($in, 0, -1) . ' )';
+                            } else if (preg_match("/^id[A-Z].*\./", $field)) {
 
+                                $this->relationFilter[strtok($field, '.')] = function ($query) use ($value, $field) {
+                                    $query->andWhere(['LIKE BINARY', strtolower(preg_replace('/id/', 'pkg_', $field)), '%' . $value]);
+                                };
+                            } else {
+                                $condition .= " AND $field LIKE BINARY :$paramName";
                                 $this->paramsFilter[$paramName] = "%$value";
                             }
+
 
                             break;
                         case 'ct':
@@ -1534,65 +1534,51 @@ class BaseController extends Controller
 
                                 $conditionsOr = implode(' OR ', $conditionsOr);
                                 $condition .= " AND ($conditionsOr)";
+                            } else  if (preg_match("/^id[A-Z].*\./", $field)) {
+
+                                $this->relationFilter[strtok($field, '.')] = function ($query) use ($value, $field) {
+                                    $query->andWhere(['LIKE BINARY', strtolower(preg_replace('/id/', 'pkg_', $field)), '%' . $value . '%']);
+                                };
+                                $this->paramsFilter[$paramName] = "%" . $value . "%";
                             } else {
-
-                                if (preg_match("/^id[A-Z].*\./", $field)) {
-
-                                    if (array_key_exists(strtok($field, '.'), $this->relationFilter)) {
-                                        $this->relationFilter[strtok($field, '.')]['condition'] .= " AND $field LIKE :$paramName";
-                                    } else {
-                                        $this->relationFilter[strtok($field, '.')] = [
-                                            'condition' => "$field LIKE :$paramName",
-                                        ];
-                                    }
-                                    $this->paramsFilter[$paramName] = "%" . $value . "%";
-                                } else {
-                                    $condition .= " AND LOWER($field) LIKE :$paramName";
-                                    $this->paramsFilter[$paramName] = "%" . strtolower($value) . "%";
-                                }
+                                $condition .= " AND LOWER($field) LIKE BINARY :$paramName";
+                                $this->paramsFilter[$paramName] = "%" . $value . "%";
                             }
+
                             break;
                         case 'eq':
 
                             if (preg_match("/^id[A-Z].*\./", $field)) {
                                 $filterDirect = false;
                                 if ($field == 'idUser.username') {
-                                    $modelUser = User::find()->where(['username' => $value])->one();
-                                    if (isset($modelUser->id)) {
-                                        $condition .= " AND t.id_user = :$paramName";
-                                        $value        = $modelUser->id;
-                                        $filterDirect = true;
+                                    $modelUser = User::find()->where(['username' => $value])->all();
+                                    $in        = '';
+                                    foreach ($modelUser as $key => $user) {
+                                        $in .= $user->id . ',';
                                     }
+                                    $this->addInCondition = $this->instanceModel::tableName() . '.id_user IN ( ' . substr($in, 0, -1) . ' )';
+                                } else  if (preg_match("/^id[A-Z].*\./", $field)) {
+                                    $this->relationFilter[strtok($field, '.')] = function ($query) use ($value, $field) {
+                                        $query->andWhere(['LIKE BINARY', strtolower(preg_replace('/id/', 'pkg_', $field)),  $value]);
+                                    };
+                                } else {
+                                    $condition .= " AND $field LIKE BINARY :$paramName";
+                                    $this->paramsFilter[$paramName] = $value;
                                 }
-
-                                if (! isset($filterDirect)) {
-
-                                    if (array_key_exists(strtok($field, '.'), $this->relationFilter)) {
-                                        $this->relationFilter[strtok($field, '.')]['condition'] .= " AND $field = :$paramName";
-                                    } else {
-                                        $this->relationFilter[strtok($field, '.')] = [
-                                            'condition' => "$field = :$paramName",
-                                        ];
-                                    }
-                                }
-                            } else {
-                                $condition .= " AND $field = :$paramName";
                             }
 
-                            $this->paramsFilter[$paramName] = $value;
+
                             break;
                         case 'df':
                             $this->paramsFilter[$paramName] = $value;
                             if (preg_match("/^id[A-Z].*\./", $field)) {
-                                if (array_key_exists(strtok($field, '.'), $this->relationFilter)) {
-                                    $this->relationFilter[strtok($field, '.')]['condition'] .= " AND $field != :$paramName";
-                                } else {
-                                    $this->relationFilter[strtok($field, '.')] = [
-                                        'condition' => "$field != :$paramName",
-                                    ];
-                                }
+
+                                $this->relationFilter[strtok($field, '.')] = function ($query) use ($value, $field) {
+                                    $query->andWhere(['!= BINARY', strtolower(preg_replace('/id/', 'pkg_', $field)),  $value]);
+                                };
                             } else {
                                 $condition .= " AND $field != :$paramName";
+                                $this->paramsFilter[$paramName] = $value;
                             }
 
                             break;
@@ -1608,13 +1594,10 @@ class BaseController extends Controller
                     switch ($comparison) {
                         case 'eq':
                             if (preg_match("/^id[A-Z].*\./", $field)) {
-                                if (array_key_exists(strtok($field, '.'), $this->relationFilter)) {
-                                    $this->relationFilter[strtok($field, '.')]['condition'] .= " AND $field = :$paramName";
-                                } else {
-                                    $this->relationFilter[strtok($field, '.')] = [
-                                        'condition' => "$field = :$paramName",
-                                    ];
-                                }
+
+                                $this->relationFilter[strtok($field, '.')] = function ($query) use ($value, $field) {
+                                    $query->andWhere(['=', strtolower(preg_replace('/id/', 'pkg_', $field)),  $value]);
+                                };
                             } else {
                                 $condition .= " AND $field = :$paramName";
                             }
@@ -1622,13 +1605,10 @@ class BaseController extends Controller
                             break;
                         case 'lt':
                             if (preg_match("/^id[A-Z].*\./", $field)) {
-                                if (array_key_exists(strtok($field, '.'), $this->relationFilter)) {
-                                    $this->relationFilter[strtok($field, '.')]['condition'] .= " AND $field < :$paramName";
-                                } else {
-                                    $this->relationFilter[strtok($field, '.')] = [
-                                        'condition' => "$field < :$paramName",
-                                    ];
-                                }
+
+                                $this->relationFilter[strtok($field, '.')] = function ($query) use ($value, $field) {
+                                    $query->andWhere(['< ', strtolower(preg_replace('/id/', 'pkg_', $field)),  $value]);
+                                };
                             } else {
                                 $condition .= " AND $field < :$paramName";
                             }
@@ -1636,13 +1616,9 @@ class BaseController extends Controller
                             break;
                         case 'gt':
                             if (preg_match("/^id[A-Z].*\./", $field)) {
-                                if (array_key_exists(strtok($field, '.'), $this->relationFilter)) {
-                                    $this->relationFilter[strtok($field, '.')]['condition'] .= " AND $field > :$paramName";
-                                } else {
-                                    $this->relationFilter[strtok($field, '.')] = [
-                                        'condition' => "$field > :$paramName",
-                                    ];
-                                }
+                                $this->relationFilter[strtok($field, '.')] = function ($query) use ($value, $field) {
+                                    $query->andWhere(['>', strtolower(preg_replace('/id/', 'pkg_', $field)),  $value]);
+                                };
                             } else {
                                 $condition .= " AND $field > :$paramName";
                             }
@@ -1695,7 +1671,6 @@ class BaseController extends Controller
                     break;
             }
         }
-
         return $condition;
     }
 
@@ -2082,16 +2057,16 @@ class BaseController extends Controller
             $modelUser = User::findOne($values['id']);
             $id_user   = $modelUser->id_user;
         } else if (preg_match('/pkg_plan/', $this->instanceModel::tableName())) {
-            $modelCheck = $this->abstractModel->findOne($values[$namePk]);
+            $modelCheck = $this->abstractModel->query('id = :key', [':key' => $values[$namePk]])->one();
             $id_user    = $modelCheck->idUser->id;
         } else if (preg_match('/pkg_rate_agent/', $this->instanceModel::tableName())) {
-            $modelCheck = $this->abstractModel->findOne($values[$namePk]);
+            $modelCheck = $this->abstractModel->query('id = :key', [':key' => $values[$namePk]])->one();
             $id_user    = $modelCheck->idPlan->idUser->id;
         } else if (preg_match('/pkg_offer/', $this->instanceModel::tableName())) {
-            $modelCheck = $this->abstractModel->findOne($values[$namePk]);
+            $modelCheck = $this->abstractModel->query('id = :key', [':key' => $values[$namePk]])->one();
             $id_user    = $modelCheck->idUser->id;
         } else {
-            $modelCheck = $this->abstractModel->findOne($values[$namePk]);
+            $modelCheck = $this->abstractModel->query('id = :key', [':key' => $values[$namePk]])->one();
             $id_user    = $modelCheck->idUser->id_user;
         }
 

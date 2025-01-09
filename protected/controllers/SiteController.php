@@ -41,13 +41,26 @@ class SiteController extends CController
     public function actionIndex()
     {
 
-
         /*
+
+        $modelUser = User::find()->where('username = :key', [':key' => 'teste'])->one();
+
+        $modelUser = User::find()->where('username = :key')->params([':key' => 'teste'])->one();
+
+        print_r($modelUser->username);
+        exit;
+      
+        $modelUser = User::findOne(1);
+
+        print_r($modelUser->username);
+        exit;
+        
+     
         $language = Configuration::find()->select('config_value')->where(['LIKE', 'config_key', 'base_language'])->all();
 
         print_r($language[0]->attributes);
 
-        // $modelUser = User::find()->where(['username', 'teste'])->all;
+        // $modelUser = User::find()->where(['=','username', 'teste'])->all();
 
 
      

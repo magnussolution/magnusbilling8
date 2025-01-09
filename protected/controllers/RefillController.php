@@ -207,7 +207,7 @@ class RefillController extends CController
 
         $this->nameSum = 'sum';
 
-        return $this->abstractModel->findAll($criteria);
+        return $this->abstractModel->query()->select(['EXTRACT(YEAR_MONTH FROM date) AS CreditMonth', 'SUM(t.credit) AS sumCreditMonth'])->where($this->filter)->one();
     }
 
     public function setAttributesModels($attributes, $models)

@@ -29,7 +29,7 @@ use app\models\Callerid;
 
 class CalleridController extends CController
 {
-    public $attributeOrder        = 't.id';
+    public $attributeOrder        = 'pkg_callerid.id';
     public $extraValues           = ['idUser' => 'username'];
     public $fieldsInvisibleClient = [
         'tipo',

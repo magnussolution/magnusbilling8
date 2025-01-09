@@ -95,13 +95,13 @@ class  Queue extends Model
 
                     switch ($type) {
                         case 'SIP':
-                            $model = Sip::model()->find('UPPER(name) = :key', [':key' => strtoupper($destination)]);
+                            $model = Sip::find('UPPER(name) = :key', [':key' => strtoupper($destination)])->one();
                             break;
                         case 'QUEUE':
-                            $model = Queue::model()->find('UPPER(name)  = :key', [':key' => strtoupper($destination)]);
+                            $model = Queue::find('UPPER(name)  = :key', [':key' => strtoupper($destination)])->one();
                             break;
                         case 'IVR':
-                            $model = Ivr::model()->find('UPPER(name)  = :key', [':key' => strtoupper($destination)]);
+                            $model = Ivr::find('UPPER(name)  = :key', [':key' => strtoupper($destination)])->one();
                             break;
                     }
                 }
@@ -124,19 +124,29 @@ class  Queue extends Model
         }
     }
 
-    public function truncateQueueStatus()
+    public function beforeSave($insert)
+    {
+        if (! $this->getIsNewRecord()) {
+            $model = Queue::findOne($this->id);
+
+            QueueMember::updateAll(['queue_name' => $this->name], ['queue_name' => $model->name]);
+        }
+        return parent::beforeSave($insert);
+    }
+
+    public static function truncateQueueStatus()
     {
         $sql = "TRUNCATE pkg_queue_status";
         Yii::$app->db->createCommand($sql)->execute();
     }
 
-    public function deleteQueueStatus($id)
+    public static function deleteQueueStatus($id)
     {
         $sql = "DELETE FROM pkg_queue_status WHERE callId = " . $id;
         Yii::$app->db->createCommand($sql)->execute();
     }
 
-    public function updateQueueStatus($operator, $holdtime, $uniqueid)
+    public static function updateQueueStatus($operator, $holdtime, $uniqueid)
     {
         $sql = "UPDATE pkg_queue_status SET status = 'answered', agentName = :key,
                     holdtime = :key2  WHERE callId = :key3 ";
@@ -146,7 +156,7 @@ class  Queue extends Model
         $command->bindValue(":key3", $uniqueid, \PDO::PARAM_STR);
         $command->execute();
     }
-    public function getQueueStatus($agentName, $id_queue)
+    public static function getQueueStatus($agentName, $id_queue)
     {
         $sql     = "SELECT * FROM pkg_queue_status WHERE agentName = :key AND id_queue = :key1";
         $command = Yii::$app->db->createCommand($sql);
@@ -155,7 +165,7 @@ class  Queue extends Model
         return $command->queryAll();
     }
 
-    public function getQueueAgentStatus($id)
+    public static function getQueueAgentStatus($id)
     {
         $sql     = "SELECT agentName FROM pkg_queue_agent_status WHERE id = :key";
         $command = Yii::$app->db->createCommand($sql);
@@ -163,21 +173,11 @@ class  Queue extends Model
         return $command->queryAll();
     }
 
-    public function insertQueueStatus($id_queue, $uniqueid, $queueName, $callerId, $channel)
+    public static function insertQueueStatus($id_queue, $uniqueid, $queueName, $callerId, $channel)
     {
         $sql = "INSERT INTO pkg_queue_status (id_queue, callId, queue_name, callerId, time, channel, status)
                         VALUES (" . $id_queue . ", '" . $uniqueid . "', '$queueName', '" . $callerId . "',
                         '" . date('Y-m-d H:i:s') . "', '" . $channel . "', 'ringing')";
         Yii::$app->db->createCommand($sql)->execute();
-    }
-
-    public function beforeSave($insert)
-    {
-        if (! $this->getIsNewRecord()) {
-            $model = Queue::findOne($this->id);
-
-            QueueMember::model()->updateAll(['queue_name' => $this->name], 'queue_name = :key', [':key' => $model->name]);
-        }
-        return parent::beforeSave($insert);
     }
 }

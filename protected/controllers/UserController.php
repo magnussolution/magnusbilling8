@@ -156,10 +156,9 @@ class UserController extends CController
         if (isset($values['id_group_agent'])) {
             if (Yii::$app->session['user_type'] == 1 && $values['id_group_agent'] > 0) {
 
-                $modelGroupUser = GroupUser::model()->find(
-                    'id_user_type = 3 AND id = :key',
-                    [':key' => $values['id_group_agent']]
-                );
+                $modelGroupUser = GroupUser::find()
+                    ->where(['id_user_type' => 3, 'id' => $values['id_group_agent']])
+                    ->one();
 
                 if (! isset($modelGroupUser)) {
                     echo json_encode([
@@ -171,14 +170,9 @@ class UserController extends CController
                 }
             }
         }
-
-        $methodModel = Methodpay::Model()->findAll(
-            "payment_method=:field1 AND active=:field12",
-            [
-                "field1"  => 'SuperLogica',
-                "field12" => '1',
-            ]
-        );
+        $methodModel = Methodpay::find()
+            ->where(['payment_method' => 'SuperLogica', 'active' => '1'])
+            ->all();
 
         $values = $this->superLogica($methodModel, $values);
 
@@ -209,12 +203,9 @@ class UserController extends CController
 
         if ($this->isNewRecord) {
 
-            $groupType = GroupUser::model()->find(
-                "id=:field1",
-                [
-                    'field1' => $values['id_group'],
-                ]
-            );
+            $groupType = GroupUser::find()
+                ->where(['id' => $values['id_group']])
+                ->one();
             $idUserType = $groupType->id_user_type;
 
             if (Yii::$app->session['isAdmin'] == true && $idUserType == 1) {
@@ -334,12 +325,9 @@ class UserController extends CController
             }
         }
 
-        $modelOfferUse = OfferUse::model()->findAll(
-            "id_user = :id_user AND releasedate = '0000-00-00 00:00:00' AND status = 1 ",
-            [
-                ':id_user' => $model->id,
-            ]
-        );
+        $modelOfferUse = OfferUse::find()
+            ->where(['id_user' => $model->id, 'releasedate' => '0000-00-00 00:00:00', 'status' => 1])
+            ->all();
 
         if ($model->id_offer > 0) {
             //if exists a offer to this user, disable that to add the new.
@@ -386,10 +374,9 @@ class UserController extends CController
             }
 
             if (isset($user_id_group)) {
-                $modelGroupUser = GroupUser::model()->find(
-                    'id_user_type = 1 AND id = :key',
-                    [':key' => $user_id_group]
-                );
+                $modelGroupUser = GroupUser::find()
+                    ->where(['id_user_type' => 1, 'id' => $user_id_group])
+                    ->one();
 
                 if (isset($modelGroupUser->id)) {
                     // try create or edit a administratio, check permissions
@@ -439,18 +426,18 @@ class UserController extends CController
 
         if ($model->callshop == 0) {
 
-            $modelRateCallshop = RateCallshop::model()->deleteAll(
+            $modelRateCallshop = RateCallshop::deleteAll(
                 'id_user = :id_user',
                 [':id_user' => $model->id]
             );
         } elseif ($model->callshop == 1) {
 
-            $modelRateCallshop = RateCallshop::model()->findAll(
-                'id_user = :id_user',
-                [':id_user' => $model->id]
-            );
-            if (count($modelRateCallshop) == 0) {
-                RateCallshop::model()->createCallShopRates($model);
+            $modelRateCallshop = RateCallshop::find()
+                ->where(['id_user' => $model->id])
+                ->all();
+
+            if (!isset($modelRateCallshop[0])) {
+                RateCallshop::createCallShopRates($model);
             }
         }
     }
@@ -488,7 +475,7 @@ class UserController extends CController
             exit;
         }
 
-        $modelUser = $this->abstractModel->findByPk((int) $_POST['id']);
+        $modelUser = $this->abstractModel->query('id = :key', [':key' => (int) $_POST['id']])->one();
         $credit    = ['rows' => ['credit' => $modelUser->credit]];
 
         echo json_encode($credit);
@@ -632,10 +619,9 @@ class UserController extends CController
 
             if ($attributes[$i]['id_offer'] > 0) {
 
-                $modelOfferUse = OfferUse::model()->find('id_offer = :key AND id_user = :key1 AND status = 1 AND releasedate = "0000-00-00 00:00:00"', [
-                    ':key'  => $attributes[$i]['id_offer'],
-                    ':key1' => $attributes[$i]['id'],
-                ]);
+                $modelOfferUse = OfferUse::find()
+                    ->where(['id_offer' => $attributes[$i]['id_offer'], 'id_user' => $attributes[$i]['id'], 'status' => 1, 'releasedate' => '0000-00-00 00:00:00'])
+                    ->one();
 
                 if (! isset($modelOfferUse->id)) {
                     $attributes[$i]['offer'] = 0;

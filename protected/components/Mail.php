@@ -27,6 +27,13 @@
 
 namespace app\components;
 
+use Yii;
+use JPhpMailer;
+use app\models\User;
+use app\models\Smtps;
+use app\models\TemplateMail;
+use app\models\Configuration;
+
 class Mail
 {
 
@@ -168,17 +175,12 @@ class Mail
 
         if (! empty($type)) {
             $this->type  = $type;
-            $modelUser   = User::model()->findOne((int) $id_user);
-            $modelConfig = Configuration::model()->find('config_key = "ip_servers"');
+            $modelUser   = User::findOne((int) $id_user);
+            $modelConfig = Configuration::find()->where(['config_key' => 'ip_servers'])->one();
 
-            $modelTemplate = TemplateMail::model()->find(
-                'mailtype = :key AND language = :key1 AND id_user = :key2',
-                [
-                    ':key'  => $type,
-                    ':key1' => $modelUser->language,
-                    ':key2' => $modelUser->id_user,
-                ]
-            );
+            $modelTemplate = TemplateMail::find()
+                ->where(['mailtype' => $type, 'language' => $modelUser->language, 'id_user' => $modelUser->id_user])
+                ->one();
 
             if (! isset($modelTemplate->id)) {
                 return;
@@ -216,7 +218,7 @@ class Mail
         }
 
         if ($id_agent > 1) {
-            $modelAgent                     = User::model()->findOne((int) $id_agent);
+            $modelAgent                     = User::findOne((int) $id_agent);
             $modelUser->id                  = $modelAgent->id;
             $modelUser->username            = $modelAgent->username;
             $modelUser->username            = $modelAgent->email;
@@ -364,7 +366,7 @@ class Mail
             }
         }
 
-        $modelSmtps = Smtps::model()->find('id_user = :key', [':key' => $this->id_agent]);
+        $modelSmtps = Smtps::find()->where(['id_user' => $this->id_agent])->one();
 
         if (! isset($modelSmtps->id)) {
             return;

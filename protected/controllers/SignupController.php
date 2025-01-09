@@ -7,17 +7,19 @@
 namespace app\controllers;
 
 use Yii;
-use app\components\CController;
-use app\components\AsteriskAccess;
-use app\components\Util;
-use app\models\Signup;
+use Exception;
+use app\models\Sip;
 use app\models\Plan;
 use app\models\User;
-use app\models\Methodpay;
+use app\models\Signup;
 use app\models\Estados;
-use app\models\SLUserSave;
-use app\models\Mail;
-use app\models\Sip;
+use app\components\Mail;
+use app\components\Util;
+use app\models\Methodpay;
+use app\components\SLUserSave;
+use app\components\CController;
+use app\components\AsteriskAccess;
+use app\models\GroupUser;
 
 class SignupController extends CController
 {
@@ -34,7 +36,7 @@ class SignupController extends CController
     public function actionView($id)
     {
         if (isset($_GET['loginkey']) && strlen($_GET['loginkey']) > 5 and strlen($_GET['loginkey']) < 30) {
-            $modelUser = User::model()->find('active = 2 AND loginkey = :key AND id = :key1', array(':key' => $_GET['loginkey'], ':key1' => $_GET['id']));
+            $modelUser = User::find()->query('active = 2 AND loginkey = :key AND id = :key1', array(':key' => $_GET['loginkey'], ':key1' => $_GET['id']))->one();
             if (!isset($modelUser->id)) {
                 if (!isset($modelUser->id)) {
                     $this->redirect('/');
@@ -78,12 +80,9 @@ class SignupController extends CController
             $this->redirect('/');
         } else if (isset($_GET['username']) && strlen($_GET['username']) > 3 && isset($_GET['password']) && isset($_GET['id'])) {
 
-            $signup = Signup::model()->find('username = :key AND password = :key1 AND id = :key2', array(
-                ':key'  => $_GET['username'],
-                ':key1' => $_GET['password'],
-                ':key2' => (int) $_GET['id'],
-
-            ));
+            $signup = Signup::find()
+                ->where(['username' => $_GET['username'], 'password' => $_GET['password'], 'id' => (int) $_GET['id']])
+                ->one();
 
             $mail = new Mail(Mail::$TYPE_SIGNUP, $id);
             try {
@@ -116,9 +115,9 @@ class SignupController extends CController
         }
         if (isset($_POST['Signup'])) {
 
-            $result = GroupUser::model()->findAllByAttributes(array("id_user_type" => 3));
+            $result = GroupUser::find()->query('id_user_type = 3')->all();
 
-            $signup->id_group = $result[0]['id'];
+            $signup->id_group = $result[0]->id;
             $signup->active   = isset($_POST['Signup']['active']) ? $_POST['Signup']['active'] : 2;
 
             if ($this->config['global']['base_language'] == 'pt_BR') {
@@ -235,18 +234,19 @@ class SignupController extends CController
         }
         //if exist get id, find agent plans else get admin plans
         if (isset($_GET['id'])) {
-            $filter = "AND username = :id";
-            $params = array(":id" => $_GET['id']);
+            $filter = "username = :key";
+            $params = array(":key" => $_GET['id']);
         } else {
-            $filter = "AND t.id_user = :id";
-            $params = array(":id" => 1);
+            $filter = "pkg_plan.id_user = :key";
+            $params = array(":key" => 1);
         }
 
-        $modelPlan = Plan::model()->findAll(array(
-            'condition' => 'signup = 1 ' . $filter,
-            'join'      => 'JOIN pkg_user ON t.id_user = pkg_user.id',
-            'params'    => $params,
-        ));
+        $modelPlan = Plan::find()
+            ->where(['signup' => 1])
+            ->andWhere($filter)
+            ->joinWith('idUser')
+            ->params($params)
+            ->all();
 
         if ($this->config['global']['signup_auto_pass'] > 5) {
             $pass = Util::generatePassword($this->config['global']['signup_auto_pass'], true, true, true, false);
@@ -267,7 +267,7 @@ class SignupController extends CController
 
     public function createUserinSuperLogica()
     {
-        $modelMethodPay = Methodpay::model()->find("payment_method = 'SuperLogica' AND active = 1");
+        $modelMethodPay = Methodpay::find()->where(['payment_method' => 'SuperLogica', 'active' => 1])->one();
         if (isset($modelMethodPay->id)) {
 
             $response = SLUserSave::saveUserSLCurl(
@@ -288,7 +288,7 @@ class SignupController extends CController
     {
         $this->abstractModel = Plan::find();
 
-        $modelPlans = $this->abstractModel->findAll('signup = 1');
+        $modelPlans = $this->abstractModel->query('signup = 1')->all();
         echo json_encode(array(
             $this->nameRoot => $this->getAttributesModels($modelPlans, array()),
         ));
@@ -299,7 +299,7 @@ class SignupController extends CController
     {
         $this->abstractModel = Estados::find();
 
-        $modelStates = $this->abstractModel->findAll();
+        $modelStates = $this->abstractModel->query()->all();
         echo json_encode(array(
             $this->nameRoot => $this->getAttributesModels($modelStates, array()),
         ));

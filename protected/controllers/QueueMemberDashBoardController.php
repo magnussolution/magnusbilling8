@@ -49,7 +49,7 @@ class QueueMemberDashBoardController extends CController
         $pkCount = is_array($attributes) || is_object($attributes) ? $attributes : [];
         for ($i = 0; $i < count($pkCount); $i++) {
             if (preg_match('/IN CALL|IN USE|ON HOLD/', strtoupper($attributes[$i]['agentStatus']))) {
-                $result                   = Queue::model()->getQueueStatus($attributes[$i]['agentName'], $attributes[$i]['id_queue']);
+                $result                   = Queue::getQueueStatus($attributes[$i]['agentName'], $attributes[$i]['id_queue']);
                 $attributes[$i]['number'] = isset($result[0]['callerId']) ? $result[0]['callerId'] : null;
             }
         }

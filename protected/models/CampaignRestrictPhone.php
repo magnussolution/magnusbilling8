@@ -67,7 +67,7 @@ class  CampaignRestrictPhone extends Model
         return $this->getExtraField($rules);
     }
 
-    public function deleteDuplicatedrows()
+    public static function deleteDuplicatedrows()
     {
         $sql = "ALTER TABLE pkg_campaign_restrict_phone DROP INDEX number";
         Yii::$app->db->createCommand($sql)->execute();
@@ -82,7 +82,7 @@ class  CampaignRestrictPhone extends Model
         Yii::$app->db->createCommand($sql)->execute();
     }
 
-    public function insertNumbers($sqlNumbersInsert)
+    public static function insertNumbers($sqlNumbersInsert)
     {
         $sql = 'INSERT IGNORE INTO pkg_campaign_restrict_phone (number)
                             VALUES ' . implode(',', $sqlNumbersInsert) . ';';
@@ -94,7 +94,7 @@ class  CampaignRestrictPhone extends Model
         }
     }
 
-    public function deleteNumbers($sqlNumbersDelete)
+    public static function deleteNumbers($sqlNumbersDelete)
     {
         $sql = 'DELETE FROM pkg_campaign_restrict_phone WHERE number IN (' . substr($sqlNumbersDelete, 0, -2) . ');';
         try {

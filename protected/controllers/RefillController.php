@@ -96,13 +96,10 @@ class RefillController extends CController
                 exit;
             }
             //get the total credit betewen agent users
-            $modelUser = User::model()->find(
-                [
-                    'select'    => 'SUM(credit) AS credit',
-                    'condition' => 'id_user = :key',
-                    'params'    => [':key' => Yii::$app->session['id_user']],
-                ]
-            );
+            $modelUser = User::find()
+                ->select(['SUM(credit) AS credit'])
+                ->where(['id_user' => Yii::$app->session['id_user']])
+                ->one();
 
             if (isset($values['credit'])) {
                 $totalRefill = $modelUser->credit + $values['credit'];
@@ -213,29 +210,27 @@ class RefillController extends CController
     public function setAttributesModels($attributes, $models)
     {
 
-        $criteria = new CDbCriteria();
+        $query = $this->abstractModel;
         if (strlen($this->filter)) {
-            $criteria->addCondition($this->filter);
+            $query->where($this->filter);
         }
-        $criteria->select = 'SUM(t.credit) AS credit';
-        $criteria->join   = $this->join;
-        $criteria->params = $this->paramsFilter;
-        $criteria->with   = $this->relationFilter;
-
-        if (count($this->addInCondition)) {
-            $criteria->addInCondition($this->addInCondition[0], $this->addInCondition[1]);
+        $query->select = ['SUM(t.credit) AS credit'];
+        $query->join   = $this->join;
+        $query->params = $this->paramsFilter;
+        $query->with   = $this->relationFilter;
+        if (!empty($this->addInCondition)) {
+            $query->andWhere($this->addInCondition);
         }
+        $modelRefill = $query->all();
 
-        $modelRefill = $this->abstractModel->find($criteria);
 
-        $criteria->select = 'EXTRACT(YEAR_MONTH FROM date) AS CreditMonth , SUM(t.credit) AS sumCreditMonth';
-
-        $criteria->group = 'CreditMonth';
-
-        if (count($this->addInCondition)) {
-            $criteria->addInCondition($this->addInCondition[0], $this->addInCondition[1]);
+        $query = $this->abstractModel;
+        $query->select = ['EXTRACT(YEAR_MONTH FROM date) AS CreditMonth', 'SUM(t.credit) AS sumCreditMonth'];
+        $query->group = 'CreditMonth';
+        if (!empty($this->addInCondition)) {
+            $query->andWhere($this->addInCondition);
         }
-        $modelRefillSumm2 = $this->abstractModel->findAll($criteria);
+        $modelRefillSumm2 = $query->all();
 
         $pkCount = is_array($attributes) || is_object($attributes) ? $attributes : [];
         for ($i = 0; $i < count($pkCount); $i++) {
@@ -248,22 +243,24 @@ class RefillController extends CController
 
     public function cancelSendCreditBDService($values, $modelRefill)
     {
-        User::model()->updateByPk(
-            $modelRefill->id_user,
+
+        User::updateAll(
             [
-                'credit' => new CDbExpression('credit + ' . $modelRefill->credit * -1),
-            ]
+                'credit' => new \yii\db\Expression('credit + ' . $modelRefill->credit),
+            ],
+            ['id' => $modelRefill->id_user]
         );
     }
     public function releaseSendCreditBDService($values, $modelRefill)
     {
 
-        User::model()->updateByPk(
-            $modelRefill->id_user,
+        User::updateAll(
             [
-                'credit' => new CDbExpression('credit - ' . $modelRefill->credit * -1),
-            ]
+                'credit' => new \yii\db\Expression('credit - ' . $modelRefill->credit),
+            ],
+            ['id' => $modelRefill->id_user]
         );
+
 
         $modelRefill->description = preg_replace('/PENDING\: /', '', $modelRefill->description);
         $modelRefill->save();

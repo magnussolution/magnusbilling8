@@ -25,7 +25,7 @@ class SuperLogicaController extends CController
         Yii::error(print_r($_REQUEST, true), 'error');
         echo json_encode(["status" => 200]);
 
-        $modelMethodpay = Methodpay::model()->find("payment_method = 'SuperLogica'");
+        $modelMethodpay = Methodpay::find()->where(['payment_method' => 'SuperLogica'])->one();
 
         $sql             = "SELECT * FROM pkg_method_pay WHERE payment_method = 'SuperLogica'";
         $result          = Yii::$app->db->createCommand($sql)->queryAll();
@@ -51,26 +51,9 @@ class SuperLogicaController extends CController
         $id_recebimento_recb = $_POST['data']['id_recebimento_recb'];
         $id_sacado_sac       = $_POST['data']['id_sacado_sac'];
 
-        $modelUser = User::model()->find('id_sacado_sac = :id_sacado_sac', [':id_sacado_sac' => $id_sacado_sac]);
+        $modelUser = User::find()->where(['id_sacado_sac' => $id_sacado_sac])->one();
         if (! isset($modelUser->id)) {
             exit;
-        }
-        $id_user = $modelUser->id;
-
-        $amount = $_POST['data']['vl_total_recb'];
-
-        if ($_POST['data']['fl_status_recb'] == '1') {
-            $modelboleto = Boleto::model()->find(
-                'id_user = :id_user AND description LIKE :description AND status = 0',
-                [
-                    ':id_user'    => $modelUser->id,
-                    'description' => "%superlogica%" . $id_recebimento_recb . "%",
-                ]
-            );
-
-            if (isset($modelboleto->id)) {
-                UserCreditManager::releaseUserCredit($modelboleto->id_user, $modelboleto->payment, 'Boleto Pago', $modelboleto->description);
-            }
         }
     }
 }

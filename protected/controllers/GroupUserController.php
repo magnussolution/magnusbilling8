@@ -93,7 +93,7 @@ class GroupUserController extends CController
         $success          = false;
         $this->msgSuccess = 'invalid group';
         if (isset($_POST['id'])) {
-            $modelGroupUser = $this->abstractModel->findByPk((int) $_POST['id']);
+            $modelGroupUser = $this->abstractModel->query('id = :key', [':key' => (int) $_POST['id']])->one();
             if (isset($modelGroupUser->id)) {
                 $this->instanceModel->name         = $modelGroupUser->name . ' Cloned';
                 $this->instanceModel->id_user_type = $modelGroupUser->id_user_type;

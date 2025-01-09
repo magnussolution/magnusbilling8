@@ -165,14 +165,14 @@ class RateProviderController extends CController
             exit;
         }
 
-        $modelPrefix = Prefix::model()->find(1);
+        $modelPrefix = Prefix::findOne(1);
 
         if (! isset($modelPrefix->id)) {
             $this->importPrefixs($values);
-            $modelPrefix = Prefix::model()->find(1);
+            $modelPrefix = Prefix::findOne(1);
         }
 
-        Prefix::model()->deleteAll('prefix REGEXP "[a-z]"');
+        Prefix::deleteAll('prefix REGEXP "[a-z]"');
 
         $sql = "LOAD DATA LOCAL INFILE '" . $_FILES['file']['tmp_name'] . "'" .
             " IGNORE INTO TABLE pkg_rate_provider" .
@@ -241,7 +241,7 @@ class RateProviderController extends CController
                 exit;
             }
 
-            RateProvider::model()->updateAll(['dialprefix' => null, 'destination' => null], 'dialprefix IS NOT NULL');
+            RateProvider::updateAll(['dialprefix' => null, 'destination' => null], ['IS NOT', 'dialprefix', null]);
         }
 
         $sql = "UPDATE pkg_rate_provider SET buyrateinitblock = 1 WHERE buyrateinitblock = 0; UPDATE pkg_rate_provider SET buyrateincrement = 1 WHERE buyrateincrement = 0;";

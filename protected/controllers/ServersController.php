@@ -46,15 +46,17 @@ class ServersController extends CController
         $this->abstractModel        = Servers::find();
         $this->titleReport          = Yii::t('app', 'CallerID');
         $this->abstractModelRelated = ServersServers::find();
+        $this->instanceModelRelated = new ServersServers;
         parent::init();
     }
 
     public function setAttributesModels($attributes, $models)
     {
-        $modelServer = Servers::model()->find([
-            'condition' => 'type = "asterisk" AND status = 1 AND weight > 0',
-            'order'     => 'last_call DESC',
-        ]);
+        $modelServer = Servers::find()
+            ->where(['type' => 'asterisk', 'status' => 1])
+            ->andWhere(['>', 'weight', 0])
+            ->orderBy(['last_call' => SORT_DESC])
+            ->one();
         if (isset($modelServer->id)) {
             $last_call = date("Y-m-d H:i:s", strtotime("-5 minutes", strtotime($modelServer->last_call)));
 
@@ -62,10 +64,10 @@ class ServersController extends CController
             for ($i = 0; $i < count($pkCount); $i++) {
 
                 if ($attributes[$i]['status'] == 4) {
-                    Servers::model()->updateByPk($attributes[$i]['id'], ['status' => 1]);
+                    Servers::updateAll(['status' => 1], ['id' => $attributes[$i]['id']]);
                 }
                 if ($attributes[$i]['type'] == 'asterisk' && $attributes[$i]['status'] > 0 && $attributes[$i]['weight'] > '0' && $attributes[$i]['last_call'] < $last_call) {
-                    Servers::model()->updateByPk($attributes[$i]['id'], ['status' => 4]);
+                    Servers::updateAll(['status' => 4], ['id' => $attributes[$i]['id']]);
                 }
             }
         }
@@ -75,7 +77,7 @@ class ServersController extends CController
     public function afterSave($model, $values)
     {
 
-        $modelServer = Servers::model()->findAll("type = 'sipproxy' AND status = 1");
+        $modelServer = Servers::find()->query("type = 'sipproxy' AND status = 1")->all();
         foreach ($modelServer as $key => $proxy) {
 
             $hostname = $proxy->host;
@@ -98,13 +100,17 @@ class ServersController extends CController
             $sql = "TRUNCATE $dbname.$table";
             $con->createCommand($sql)->execute();
 
-            $modelServerAS = ServersServers::model()->findAll("id_proxy = :key", [':key' => $proxy->id]);
+            $modelServerAS = ServersServers::find()->query("id_proxy = :key", [':key' => $proxy->id]);
 
             if (isset($modelServerAS[0]->id_server)) {
                 foreach ($modelServerAS as $key => $server) {
 
-                    $modelServer = Servers::model()->find("id = :key AND (type = 'asterisk' OR type = 'mbilling')
-                        AND status IN( 1,4) AND weight > 0", [':key' => $server->id_server]);
+                    $modelServer = Servers::find()
+                        ->where(['id' => $server->id_server])
+                        ->andWhere(['or', ['type' => 'asterisk'], ['type' => 'mbilling']])
+                        ->andWhere(['status' => [1, 4]])
+                        ->andWhere(['>', 'weight', 0])
+                        ->one();
 
                     if (isset($modelServer->id)) {
                         if ($this->ip_is_private($hostname)) {
@@ -122,8 +128,11 @@ class ServersController extends CController
                 }
             } else {
 
-                $modelServerAS = Servers::model()->findAll("(type = 'asterisk' OR type = 'mbilling')
-                        AND status IN( 1,4) AND weight > 0");
+                $modelServerAS = Servers::find()
+                    ->where(['or', ['type' => 'asterisk'], ['type' => 'mbilling']])
+                    ->andWhere(['status' => [1, 4]])
+                    ->andWhere(['>', 'weight', 0])
+                    ->all();
                 foreach ($modelServerAS as $key => $server) {
 
                     if ($this->ip_is_private($hostname)) {
@@ -150,14 +159,11 @@ class ServersController extends CController
         if ($_SERVER['HTTP_HOST'] == 'localhost') {
             return;
         }
-        $select = 'trunkcode, user, secret, disallow, allow, directmedia, context, dtmfmode, insecure, nat, qualify, type, host, fromdomain,fromuser, register_string,port,transport,encryption,sendrpid,maxuse,sip_config';
-        $model  = Trunk::model()->findAll(
-            [
-                'select'    => $select,
-                'condition' => 'providertech = :key AND status = 1',
-                'params'    => [':key' => 'sip'],
-            ]
-        );
+        $select = 'trunkcode, user, secret, disallow, allow, directmedia, context, dtmfmode, insecure, nat, qualify, type, host, fromdomain, fromuser, register_string, port, transport, encryption, sendrpid, maxuse, sip_config';
+        $model  = Trunk::find()
+            ->select($select)
+            ->where(['providertech' => 'sip', 'status' => 1])
+            ->all();
 
         if (count($model)) {
             AsteriskAccess::instance()->writeAsteriskFile($model, '/etc/asterisk/sip_magnus.conf', 'trunkcode');

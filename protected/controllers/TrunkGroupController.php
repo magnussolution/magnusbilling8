@@ -40,6 +40,7 @@ class TrunkGroupController extends CController
         $this->instanceModel        = new TrunkGroup;
         $this->abstractModel        = TrunkGroup::find();
         $this->abstractModelRelated = TrunkGroupTrunk::find();
+        $this->instanceModelRelated = new TrunkGroupTrunk;
         $this->titleReport          = Yii::t('app', 'Trunk Groups');
 
         parent::init();
@@ -50,7 +51,7 @@ class TrunkGroupController extends CController
 
         $weight = explode(',', $model->weight);
 
-        $modelTrunkGroupTrunk = TrunkGroupTrunk::model()->findAll('id_trunk_group = :key', [':key' => $model->id]);
+        $modelTrunkGroupTrunk = TrunkGroupTrunk::find()->where(['id_trunk_group' => $model->id])->all();
 
         for ($i = 0; $i < count($modelTrunkGroupTrunk); $i++) {
 
@@ -71,9 +72,7 @@ class TrunkGroupController extends CController
 
         $values = $this->getAttributesRequest();
 
-        $criteria = new CDbCriteria();
-        $criteria->addInCondition($this->nameFkRelated, $ids);
-        $this->success = $this->abstractModelRelated->deleteAll($criteria);
+        $this->success = TrunkGroupTrunk::deleteAll([$this->nameFkRelated => $ids]);
 
         foreach ($ids as $key => $id_trunk_group) {
             foreach ($values['id_trunk'] as $key => $value) {

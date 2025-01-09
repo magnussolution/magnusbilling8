@@ -79,9 +79,10 @@ class QueueDashBoardController extends CController
 
     public function getQueue()
     {
-        QueueDashBoard::model()->deleteAll('time < :key', [':key' => date('Y-m-d 00:00:00')]);
 
-        QueueMember::model()->truncateQueueAgentStatus();
+        QueueDashBoard::deleteAll('time < :key', [':key' => date('Y-m-d 00:00:00')]);
+
+        QueueMember::truncateQueueAgentStatus();
 
         $resultQueue = Queue::find()->all();;
 

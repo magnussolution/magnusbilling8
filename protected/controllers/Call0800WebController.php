@@ -24,8 +24,20 @@
 namespace app\controllers;
 
 use Yii;
-use app\components\CController;
+use app\models\Iax;
+use app\models\Sip;
 use app\models\Call;
+use app\models\Plan;
+use app\models\User;
+use app\models\Trunk;
+use app\components\Util;
+use app\models\UserRate;
+use app\components\CController;
+use app\models\TrunkGroupTrunk;
+use app\components\SearchTariff;
+use app\components\AccessManager;
+use app\components\Portabilidade;
+use app\components\AsteriskAccess;
 
 header('Access-Control-Allow-Origin: *');
 header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept");
@@ -48,11 +60,11 @@ class Call0800WebController extends CController
             $destination = isset($_REQUEST['number']) ? $_REQUEST['number'] : '';
             $user        = isset($_GET['user']) ? $_GET['user'] : '';
 
-            $model = Sip::model()->find("name = :user", [':user' => $user]);
+            $model = Sip::find()->where(['name' => $user])->one();
 
             if (! isset($model->id)) {
 
-                $model = Iax::model()->find("name = :user", [':user' => $user]);
+                $model = Iax::find()->where(['name' => $user])->one();
                 if (! isset($model->id)) {
                     $error_msg = Yii::t('app', 'Error : User no Found!');
                     echo $error_msg;
@@ -165,7 +177,7 @@ class Call0800WebController extends CController
                 $SearchTariff = new SearchTariff();
                 $callTrunk    = $SearchTariff->find($yournumber, $modelSip->idUser->id_plan, $modelSip->idUser->id);
 
-                $result = Plan::model()->searchTariff($modelSip->idUser->id_plan, $yournumber);
+                $result = Plan::searchTariff($modelSip->idUser->id_plan, $yournumber);
                 if (! is_array($result) || count($result) == 0) {
                     return 0;
                 }
@@ -174,13 +186,12 @@ class Call0800WebController extends CController
                 $result       = $result[1];
 
                 //Select custom rate to user
-                $modelUserRate = UserRate::model()->find('id_prefix = :key AND id_user = :key1', [
-                    ':key'  => $result[0]['id_prefix'],
-                    ':key1' => $modelSip->idUser->id,
-                ]);
+                $modelUserRate = UserRate::find()
+                    ->where(['id_prefix' => $result[0]['id_prefix'], 'id_user' => $modelSip->idUser->id])
+                    ->one();
 
                 //change custom rate to user
-                if (count($modelUserRate)) {
+                if (isset($modelUserRate->id)) {
                     $result[0]['rateinitial']  = $modelUserRate->rateinitial;
                     $result[0]['initblock']    = $modelUserRate->initblock;
                     $result[0]['billingblock'] = $modelUserRate->billingblock;
@@ -196,7 +207,6 @@ class Call0800WebController extends CController
                 $callTrunkDestination = $SearchTariff->find($destination, $modelSip->idUser->id_plan, $modelSip->idUser->id);
 
                 if (! is_array($callTrunkDestination) || count($callTrunkDestination) == 0) {
-                    echo $sql;
                     echo Yii::t('app', 'Prefix not found to destination');
 
                     exit;
@@ -209,10 +219,10 @@ class Call0800WebController extends CController
                 } else if ($callTrunk[0]['trunk_group_type'] == 3) {
                     $sql = "SELECT *, (SELECT buyrate FROM pkg_rate_provider WHERE id_provider = tr.id_provider AND id_prefix = " . $callTrunk[0]['id_prefix'] . " LIMIT 1) AS buyrate  FROM pkg_trunk_group_trunk t  JOIN pkg_trunk tr ON t.id_trunk = tr.id WHERE id_trunk_group = " . $callTrunk[0]['id_trunk_group'] . " ORDER BY buyrate IS NULL , buyrate ";
                 }
-                $modelTrunkGroupTrunk = TrunkGroupTrunk::model()->findBySql($sql);
+                $modelTrunkGroupTrunk = TrunkGroupTrunk::findBySql($sql)->all();
 
                 foreach ($modelTrunkGroupTrunk as $key => $trunk) {
-                    $modelTrunk = Trunk::findOne((int) $modelTrunkGroupTrunk->id_trunk);
+                    $modelTrunk = Trunk::findOne((int) $trunk->id_trunk);
                     if ($modelTrunk->status == 0) {
                         continue;
                     }
@@ -227,7 +237,7 @@ class Call0800WebController extends CController
                 $sql = "SELECT * FROM pkg_rate_provider t  JOIN pkg_prefix p ON t.id_prefix = p.id WHERE " .
                     "id_provider = " . $modelTrunk->id_provider . " AND " . $prefixclause .
                     "ORDER BY LENGTH( prefix ) DESC LIMIT 1";
-                $modelRateProvider = Yii::app()->db->createCommand($sql)->queryAll();
+                $modelRateProvider = Yii::$app->db->createCommand($sql)->queryAll();
 
                 if (substr("$yournumber", 0, 4) == 1111) {
                     $yournumber = str_replace(substr($yournumber, 0, 7), "", $yournumber);

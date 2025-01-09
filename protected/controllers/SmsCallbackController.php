@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Acoes do modulo "Call".
  *
@@ -23,13 +24,13 @@
 namespace app\controllers;
 
 use Yii;
-use app\components\CController;
-use app\components\AsteriskAccess;
-use app\components\SearchTariff;
-use app\models\Callerid;
-use app\models\Portabilidade;
-use app\models\TrunkGroupTrunk;
 use app\models\Trunk;
+use app\models\Callerid;
+use app\components\CController;
+use app\models\TrunkGroupTrunk;
+use app\components\SearchTariff;
+use app\components\Portabilidade;
+use app\components\AsteriskAccess;
 
 class SmsCallbackController extends CController
 {
@@ -37,16 +38,16 @@ class SmsCallbackController extends CController
     public function actionRead($asJson = true, $condition = null)
     {
 
-        if ( ! isset($_GET['number']) || ! isset($_GET['callerid'])) {
+        if (! isset($_GET['number']) || ! isset($_GET['callerid'])) {
             exit;
         }
         $destination = isset($_GET['number']) ? $_GET['number'] : '';
         $callerid    = isset($_GET['callerid']) ? $_GET['callerid'] : '';
         $date        = date('Y-m-d H:i:s');
 
-        $modelCallerid = Callerid::model()->find("cid = :callerid AND activated = 1", [':callerid' => $callerid]);
+        $modelCallerid = Callerid::find()->where(['cid' => $callerid, 'activated' => 1])->one();
 
-        if ( ! isset($modelCallerid->id)) {
+        if (! isset($modelCallerid->id)) {
             $error_msg = Yii::t('app', 'Error : Authentication Error!');
             echo $error_msg;
             exit;
@@ -73,12 +74,10 @@ class SmsCallbackController extends CController
             } else if ($searchTariff[0]['trunk_group_type'] == 2) {
                 $order = 'RAND()';
             }
-
-            $modelTrunkGroupTrunk = TrunkGroupTrunk::model()->find([
-                'condition' => 'id_trunk_group = :key',
-                'params'    => [':key' => $searchTariff[0]['id_trunk_group']],
-                'order'     => $order,
-            ]);
+            $modelTrunkGroupTrunk = TrunkGroupTrunk::find()
+                ->where(['id_trunk_group' => $searchTariff[0]['id_trunk_group']])
+                ->orderBy($order)
+                ->one();
 
             $modelTrunk   = Trunk::findOne((int) $modelTrunkGroupTrunk->id_trunk);
             $idTrunk      = $modelTrunk->id;
@@ -87,7 +86,7 @@ class SmsCallbackController extends CController
             $removeprefix = $modelTrunk->removeprefix;
             $prefix       = $modelTrunk->trunkprefix;
 
-            if (strncmp($callerid, $removeprefix, strlen($removeprefix)) == 0 ||  || substr(strtoupper($removeprefix), 0, 1) == 'X') {
+            if (strncmp($callerid, $removeprefix, strlen($removeprefix)) == 0 ||  substr(strtoupper($removeprefix), 0, 1) == 'X') {
                 $callerid = substr($callerid, strlen($removeprefix));
             }
 

@@ -21,19 +21,25 @@
 
 namespace app\components;
 
+use app\models\User;
+use app\models\Refill;
+use app\components\Mail;
+use app\components\ServicesProcess;
+use app\components\UserCreditManager;
+
 class UserCreditManager
 {
 
     public static function checkGlobalCredit($id_user)
     {
-        $modelUser = User::model()->findOne((int) $id_user);
+        $modelUser = User::findOne((int) $id_user);
 
         $userCredit          = $modelUser->typepaid == 1
             ? $modelUser->credit = $modelUser->credit + $modelUser->creditlimit
             : $modelUser->credit;
 
         if ($modelUser->id_user > 1) {
-            $modelAgent           = User::model()->findOne((int) $modelUser->id_user);
+            $modelAgent           = User::findOne((int) $modelUser->id_user);
             $agentCredit          = $modelAgent->typepaid == 1
                 ? $modelAgent->credit = $modelAgent->credit + $modelAgent->creditlimit
                 : $modelAgent->credit;
@@ -54,7 +60,7 @@ class UserCreditManager
         1 - add credit and try add in refill
         2 - add credit but NOT add in refill
          */
-        $modelUser = User::model()->findOne((int) $id_user);
+        $modelUser = User::findOne((int) $id_user);
 
         $signal = $paymount_type == 1 ? '+' : '-';
 
@@ -91,7 +97,7 @@ class UserCreditManager
 
         //check if already exists refill with code
         if (strlen($code) > 0 && $code > 0) {
-            $modelRefill = Refill::model()->find("description LIKE '%$code%' AND id_user = $id_user");
+            $modelRefill = Refill::find()->where(['like', 'description', $code])->andWhere(['id_user' => $id_user])->one();
 
             if (isset($modelRefill->id)) {
                 if ($modelRefill->payment == 0) {

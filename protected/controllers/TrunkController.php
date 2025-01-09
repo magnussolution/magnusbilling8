@@ -136,27 +136,21 @@ class TrunkController extends CController
         if ($_SERVER['HTTP_HOST'] == 'localhost') {
             return;
         }
-        $select = 'trunkcode, user, secret, disallow, allow, directmedia, context, dtmfmode, insecure, nat, qualify, type, host, fromdomain,fromuser, register_string,port,transport,encryption,sendrpid,maxuse,sip_config';
-        $model  = Trunk::model()->findAll(
-            [
-                'select'    => $select,
-                'condition' => 'providertech = :key AND status = 1',
-                'params'    => [':key' => 'sip'],
-            ]
-        );
+        $select = 'trunkcode, user, secret, disallow, allow, directmedia, context, dtmfmode, insecure, nat, qualify, type, host, fromdomain, fromuser, register_string, port, transport, encryption, sendrpid, maxuse, sip_config';
+        $model  = Trunk::find()
+            ->select($select)
+            ->where(['providertech' => 'sip', 'status' => 1])
+            ->all();
 
         if (count($model)) {
             AsteriskAccess::instance()->writeAsteriskFile($model, '/etc/asterisk/sip_magnus.conf', 'trunkcode');
         }
 
-        $select = 'trunkcode, user, secret, disallow, allow, directmedia, context, dtmfmode, insecure, nat, qualify, type, host, register_string,sip_config';
-        $model  = Trunk::model()->findAll(
-            [
-                'select'    => $select,
-                'condition' => 'providertech = :key AND status = 1',
-                'params'    => [':key' => 'iax2'],
-            ]
-        );
+        $select = 'trunkcode, user, secret, disallow, allow, directmedia, context, dtmfmode, insecure, nat, qualify, type, host, register_string, sip_config';
+        $model  = Trunk::find()
+            ->select($select)
+            ->where(['providertech' => 'iax2', 'status' => 1])
+            ->all();
 
         if (count($model)) {
             AsteriskAccess::instance()->writeAsteriskFile($model, '/etc/asterisk/iax_magnus.conf', 'trunkcode');

@@ -24,6 +24,7 @@
 namespace app\controllers;
 
 use Yii;
+use app\components\SqlInject;
 use app\components\CController;
 use app\models\CampaignRestrictPhone;
 
@@ -109,7 +110,7 @@ class CampaignRestrictPhoneController extends CController
         if (count($sqlNumbersInsert) > 0) {
             SqlInject::sanitize($sqlNumbersInsert);
             if (count($sqlNumbersInsert) > 0) {
-                $result = CampaignRestrictPhone::model()->insertNumbers($sqlNumbersInsert);
+                $result = CampaignRestrictPhone::insertNumbers($sqlNumbersInsert);
 
                 if (isset($result->errorInfo)) {
                     echo json_encode([
@@ -121,17 +122,16 @@ class CampaignRestrictPhoneController extends CController
             }
         }
 
-        if (count($sqlNumbersDelete) > 0) {
-            if (strlen($sqlNumbersDelete) > 1) {
-                $result = CampaignRestrictPhone::model()->deleteNumbers($sqlNumbersDelete);
 
-                if (isset($result->errorInfo)) {
-                    echo json_encode([
-                        $this->nameSuccess => false,
-                        'errors'           => $this->getErrorMySql($result),
-                    ]);
-                    exit;
-                }
+        if (strlen($sqlNumbersDelete) > 1) {
+            $result = CampaignRestrictPhone::deleteNumbers($sqlNumbersDelete);
+
+            if (isset($result->errorInfo)) {
+                echo json_encode([
+                    $this->nameSuccess => false,
+                    'errors'           => $this->getErrorMySql($result),
+                ]);
+                exit;
             }
         }
     }

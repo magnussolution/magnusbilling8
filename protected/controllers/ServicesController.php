@@ -44,6 +44,7 @@ class ServicesController extends CController
         $this->abstractModel        = Services::find();
         $this->titleReport          = Yii::t('app', 'Services');
         $this->abstractModelRelated = ServicesModule::find();
+        $this->instanceModelRelated = new ServicesModule;
         parent::init();
     }
 

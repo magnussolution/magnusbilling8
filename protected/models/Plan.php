@@ -76,7 +76,7 @@ class  Plan extends Model
      * @param string $destination
      * @return array
      */
-    public function searchTariff($id_plan, $destination)
+    public static function searchTariff($id_plan, $destination)
     {
         $max_len_prefix = strlen($destination);
         $prefixclause = '(';

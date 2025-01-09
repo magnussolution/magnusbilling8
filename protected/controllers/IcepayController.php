@@ -19,7 +19,7 @@ class IcepayController extends CController
     public function actionIndex()
     {
         if (isset($_POST)) {
-            $modelMethodpay = Methodpay::model()->find("payment_method = 'IcePay'");
+            $modelMethodpay = Methodpay::find()->where(['payment_method' => 'IcePay'])->one();
 
             if (preg_match("/ /", $modelMethodpay->show_name)) {
                 $type        = explode(" ", $modelMethodpay->show_name);
@@ -34,7 +34,7 @@ class IcepayController extends CController
             if (!$method->OnSuccess()) {
                 $data = $method->GetData();
 
-                RefillIcepay::model()->deleteByPk((int) (int) $data->orderID);
+                RefillIcepay::deleteAll(['id' => (int) $data->orderID]);
 
                 echo '<h1>Oops, some error occured</h1>
                     <p>Error description : OnSuccess FALSE ' . $data->statusCode . ' </p>';
@@ -66,9 +66,9 @@ class Object ( [status] => OK
 
                 $modelRefillIcepay = RefillIcepay::findOne((int) (int) $data->orderID);
 
-                RefillIcepay::model()->deleteByPk((int) (int) $data->orderID);
+                RefillIcepay::deleteAll(['id' => (int) $data->orderID]);
 
-                if (isset($modelRefillIcepay->credit) && Refill::model()->countRefill($data->paymentID, $modelRefillIcepay->id_user) == 0) {
+                if (isset($modelRefillIcepay->credit) && Refill::countRefill($data->paymentID, $modelRefillIcepay->id_user) == 0) {
 
                     $description = 'Ycepay No.' . $data->paymentID;
                     UserCreditManager::releaseUserCredit($modelRefillIcepay->id_user, $modelRefillIcepay->credit, $description, 1, $data->paymentID);

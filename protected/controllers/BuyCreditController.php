@@ -39,7 +39,7 @@ class BuyCreditController extends CController
             if (isset($data[3])) {
                 $_GET['id_method'] = $data[3];
             } else {
-                $methodPay         = Methodpay::model()->find('payment_method = :key', [':key' => 'Paypal']);
+                $methodPay = Methodpay::find()->where(['payment_method' => 'Paypal'])->one();
                 $_GET['id_method'] = $methodPay->id;
             }
             Yii::$app->session['id_user']  = $modelSip->id_user;

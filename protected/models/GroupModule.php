@@ -94,7 +94,7 @@ class  GroupModule extends Model
     }
 
 
-    public function getGroupModule($id_group, $isClient, $id_user)
+    public static function getGroupModule($id_group, $isClient, $id_user)
     {
         if ($isClient) {
             $sql = "(SELECT m.id, action, show_menu, text, module, icon_cls, m.id_module, gm.createShortCut, gm.createQuickStart, priority

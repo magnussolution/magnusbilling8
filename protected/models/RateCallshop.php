@@ -66,7 +66,7 @@ class  RateCallshop extends Model
         return $this->getExtraField($rules);
     }
 
-    public function createCallShopRates($model)
+    public static function createCallShopRates($model)
     {
         $table = $model->id_user > 1 ? 'pkg_rate_agent' : 'pkg_rate';
 
@@ -81,7 +81,7 @@ class  RateCallshop extends Model
         $command->execute();
     }
 
-    public function findCallShopRate($number, $id_user)
+    public static function findCallShopRate($number, $id_user)
     {
         $sql = "SELECT * FROM pkg_rate_callshop WHERE dialprefix = SUBSTRING(:ndiscado,1,length(dialprefix))
                                 AND id_user= :id_user   ORDER BY LENGTH(dialprefix) DESC LIMIT 1";

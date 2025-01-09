@@ -27,6 +27,7 @@ use Yii;
 use app\components\CController;
 use app\models\SipTrace;
 use app\models\Servers;
+use Exception;
 
 class SipTraceController extends CController
 {
@@ -56,7 +57,7 @@ class SipTraceController extends CController
 
         $result = htmlentities($data);
 
-        $modelServers = Servers::model()->findAll('status = 1');
+        $modelServers = Servers::find()->query('status = 1')->all();
 
         $result = explode("U " . date('Y') . "", $result);
 
@@ -160,7 +161,7 @@ class SipTraceController extends CController
     public function actionRead($asJson = true, $condition = null)
     {
 
-        $modelServers = Servers::model()->findAll('status = 1');
+        $modelServers = Servers::find()->query('status = 1')->all();
 
         $start = $_GET['start'];
 
@@ -405,7 +406,7 @@ class SipTraceController extends CController
 
     public function actionDestroy()
     {
-        SipTrace::model()->deleteAll();
+        SipTrace::deleteAll();
         unlink('/var/www/html/mbilling/resources/reports/siptrace.log');
     }
 
@@ -424,7 +425,7 @@ class SipTraceController extends CController
     public function actionStart()
     {
 
-        $modelTrace = SipTrace::model()->find();
+        $modelTrace = SipTrace::find()->one();
 
         if (isset($modelTrace->id)) {
             echo json_encode([
@@ -450,7 +451,7 @@ class SipTraceController extends CController
     public function actionClearAll()
     {
         try {
-            SipTrace::model()->deleteAll();
+            SipTrace::deleteAll();
         } catch (Exception $e) {
             print_r($e);
         }

@@ -86,7 +86,7 @@ class  Rate extends Model
         return $this->hasOne(Prefix::class, ['id' => 'id_prefix']);
     }
 
-    public function insertPortabilidadeRates($rates)
+    public static function insertPortabilidadeRates($rates)
     {
         if (count($rates) > 0) {
             $sql = 'INSERT INTO pkg_rate (id_prefix, id_plan, rateinitial,  id_trunk_group, initblock, billingblock,  status) VALUES ' . implode(',', $rates) . ';';
@@ -94,7 +94,7 @@ class  Rate extends Model
         }
     }
 
-    public function searchAgentRate($calledstation, $id_plan_agent)
+    public static function searchAgentRate($calledstation, $id_plan_agent)
     {
         $sql = "SELECT rateinitial, initblock, billingblock, minimal_time_charge " .
             "FROM pkg_plan " .
@@ -109,7 +109,7 @@ class  Rate extends Model
         return $command->queryAll();
     }
 
-    public function insertRates($userType, $sqlRate)
+    public static function insertRates($userType, $sqlRate)
     {
 
         if ($userType == 1) {

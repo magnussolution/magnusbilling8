@@ -92,14 +92,14 @@ class PrefixController extends CController
                 }
                 $prefix      = $row[0];
                 $destination = ($row[1] == '') ? 'ROC' : trim($row[1]);
-                $destination = utf8_encode($destination);
+                $destination = mb_convert_encoding($destination, 'UTF-8', 'ISO-8859-1');
                 $destination = preg_replace("/'/", "''", $destination);
 
-                $resultPrefix = Prefix::model()->getPrefix($prefix);
+                $resultPrefix = Prefix::getPrefix($prefix);
 
                 if (count($resultPrefix) > 0) {
                     if ($resultPrefix[0]['destination'] != $destination) {
-                        Prefix::model()->updateDestination($prefix, $destination);
+                        Prefix::updateDestination($prefix, $destination);
                     }
                 } else {
                     $sqlPrefix[] = "('$prefix', '$destination')";
@@ -109,7 +109,7 @@ class PrefixController extends CController
         if (count($sqlPrefix) > 0) {
             SqlInject::sanitize($sqlPrefix);
             if (count($sqlPrefix) > 0) {
-                $result = Prefix::model()->insertPrefixs($sqlPrefix);
+                $result = Prefix::insertPrefixs($sqlPrefix);
                 Yii::error(print_r($result, true), 'info');
 
                 if (isset($result->errorInfo)) {

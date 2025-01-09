@@ -244,7 +244,7 @@ class DiddestinationController extends CController
             } else {
                 //update destination
 
-                $modelDiddestination = Diddestination::model()->find('id_did = :key', [':key' => $did->id]);
+                $modelDiddestination = Diddestination::find()->where(['id_did' => $did->id])->one();
 
                 if (isset($modelDiddestination)) {
                     if ($modelDiddestination->id_user == $id_user) {

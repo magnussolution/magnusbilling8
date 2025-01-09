@@ -21,6 +21,17 @@
 
 namespace app\components;
 
+use Yii;
+use app\models\Sms;
+use app\models\Call;
+use app\models\Rate;
+use app\models\User;
+use app\models\Trunk;
+use app\models\TrunkGroupTrunk;
+use app\components\SearchTariff;
+use app\components\Portabilidade;
+use app\components\UserCreditManager;
+
 class SmsSend
 {
     public static function send($modelUser, $destination, $text, $id_phonenumber = 0, $sms_from = '', $providerResult = '')
@@ -58,7 +69,7 @@ class SmsSend
         //PEGA O PREÇO DE VENDA DO AGENT
         if ($modelUser->id_user > 1) {
 
-            $modelRate = Rate::model()->searchAgentRate($destination, $modelUser->id_plan);
+            $modelRate = Rate::searchAgentRate($destination, $modelUser->id_plan);
 
             if (! count($modelRate)) {
                 return [
@@ -69,7 +80,7 @@ class SmsSend
 
             $rateInitialClientAgent = $modelRate[0]['rateinitial'];
 
-            $modelUserAgent = User::model()->findOne((int) $modelUser->id_user);
+            $modelUserAgent = User::findOne((int) $modelUser->id_user);
 
             $modelUser->id_plan = $modelUserAgent->id_plan;
         } else {
@@ -102,9 +113,9 @@ class SmsSend
             } else if ($callTrunk[0]['trunk_group_type'] == 3) {
                 $sql = "SELECT *, (SELECT buyrate FROM pkg_rate_provider WHERE id_provider = tr.id_provider AND id_prefix = " . $callTrunk[0]['id_prefix'] . " LIMIT 1) AS buyrate  FROM pkg_trunk_group_trunk t  JOIN pkg_trunk tr ON t.id_trunk = tr.id WHERE id_trunk_group = " . $callTrunk[0]['id_trunk_group'] . " ORDER BY buyrate IS NULL , buyrate ";
             }
-            $modelTrunkGroupTrunk = TrunkGroupTrunk::model()->findBySql($sql);
+            $modelTrunkGroupTrunk = TrunkGroupTrunk::findBySql($sql)->one();
 
-            $modelTrunk = Trunk::model()->findOne((int) $modelTrunkGroupTrunk->id_trunk);
+            $modelTrunk = Trunk::findOne((int) $modelTrunkGroupTrunk->id_trunk);
 
             //RETIRO O 1111
             if (substr($destination, 0, 7) == '9991111') {
@@ -131,7 +142,7 @@ class SmsSend
             $sql = "SELECT * FROM pkg_rate_provider t  JOIN pkg_prefix p ON t.id_prefix = p.id WHERE " .
                 "id_provider = " . $modelTrunk->id_provider . " AND " . $prefixclause .
                 "ORDER BY LENGTH( prefix ) DESC LIMIT 1";
-            $modelRateProvider = Yii::app()->db->createCommand($sql)->queryAll();
+            $modelRateProvider = Yii::$app->db->createCommand($sql)->queryAll();
 
             $buyRate = isset($modelRateProvider[0]['buyrate']) ? $modelRateProvider[0]['buyrate'] : null;
 

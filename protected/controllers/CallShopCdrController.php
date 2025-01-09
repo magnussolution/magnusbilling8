@@ -66,14 +66,11 @@ class CallShopCdrController extends CController
 
     public function getSumPrice()
     {
-        return $this->abstractModel->find(
-            [
-                'select'    => "SUM(price) price",
-                'join'      => $this->join,
-                'condition' => $this->filter,
-                'params'    => $this->paramsFilter,
-            ]
-        );
+        return CallShopCdr::find()
+            ->select(["SUM(price) AS price"])
+            ->where($this->filter)
+            ->params($this->paramsFilter)
+            ->one();
     }
 
     public function beforeReport($columns)

@@ -90,17 +90,13 @@ class CallAppController extends CController
                 echo 'error, numer is necessary';
                 exit;
             }
-
-            $modelPhoneNumber = PhoneNumber::model()->find(
-                [
-                    'condition' => 'id_phonebook = :id_phonebook AND number = :destination AND name = :name',
-                    'params'    => [
-                        ':id_phonebook' => $this->id_phonebook,
-                        ':destination'  => $this->destination,
-                        ':name'         => $this->name,
-                    ],
-                ]
-            );
+            $modelPhoneNumber = PhoneNumber::find()
+                ->where([
+                    'id_phonebook' => $this->id_phonebook,
+                    'number'       => $this->destination,
+                    'name'         => $this->name,
+                ])
+                ->one();
         } else {
             $modelPhoneNumber = PhoneNumber::findOne((int) $_GET['id']);
         }
@@ -123,9 +119,9 @@ class CallAppController extends CController
 
     public function getIdPhoneBook()
     {
-        $modelUser = User::model()->find("username = :username", [':username' => $this->user]);
+        $modelUser = User::find()->where(['username' => $this->user])->one();
 
-        if (! is_array($modelUser) || ! count($modelUser)) {
+        if (! isset($modelUser->id)) {
             $error_msg = Yii::t('app', 'Error : User no Found!');
             echo $error_msg;
             exit;
@@ -133,17 +129,15 @@ class CallAppController extends CController
 
         $id_user = $modelUser->id;
 
-        $modelCampaign = Campaign::model()->find(
-            "status = 1 AND id_user = :id_user",
-            [':id_user' => $id_user]
-        );
+        $modelCampaign = Campaign::find()
+            ->where(['status' => 1, 'id_user' => $id_user])
+            ->one();
 
-        if (is_array($modelUser) && count($modelCampaign)) {
+        if (is_array($modelUser) && isset($modelCampaign->id)) {
 
-            $modelCampaignPhonebook = CampaignPhonebook::model()->find(
-                "id_campaign = :id_campaign",
-                [':id_campaign' => $modelCampaign->id]
-            );
+            $modelCampaignPhonebook = CampaignPhonebook::find()
+                ->where(['id_campaign' => $modelCampaign->id])
+                ->one();
         } else {
             echo "User not have campaign";
             exit;

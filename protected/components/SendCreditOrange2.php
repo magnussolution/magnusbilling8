@@ -12,7 +12,7 @@ namespace app\components;
 class SendCreditOrange2
 {
 
-    public function billElectricity($post, $modelSendCreditRates, $test)
+    public static function billElectricity($post, $modelSendCreditRates, $test)
     {
         $date = date_create($post['creationdate']);
 
@@ -308,7 +308,7 @@ class SendCreditOrange2
     public function sendPayment($number, $modelSendCreditRates, $test)
     {
 
-        $modelSendCreditProducts = SendCreditProducts::model()->findOne((int) $modelSendCreditRates->id_product);
+        $modelSendCreditProducts = SendCreditProducts::findOne((int) $modelSendCreditRates->id_product);
 
         if (preg_match('/Bundle/', $modelSendCreditProducts->operator_name)) {
             $type = 'airdata';

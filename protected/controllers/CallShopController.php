@@ -19,8 +19,10 @@
 namespace app\controllers;
 
 use Yii;
-use app\components\CController;
+use app\models\Sip;
 use app\models\CallShop;
+use app\models\CallShopCdr;
+use app\components\CController;
 
 class CallShopController extends CController
 {
@@ -92,7 +94,9 @@ class CallShopController extends CController
 
         if (isset($_GET['id'])) {
             $id = (int) $_GET['id'];
-            Sip::model()->updateByPk((int) $id, ['status' => 2]);
+            $modelSip = Sip::findOne((int) $id);
+            $modelSip->status = 2;
+            $modelSip->save();
         } else {
 
             if (isset($_GET['name'])) {
@@ -101,9 +105,11 @@ class CallShopController extends CController
                 $filter = json_decode($_POST['filter'], true);
             }
 
-            $modelSip         = Sip::model()->find("name = :name ", [':name' => $filter[0]['value']]);
-            $modelSip->status = 2;
-            $modelSip->save();
+            $modelSip = Sip::find()->where(['name' => $filter[0]['value']])->one();
+            if ($modelSip !== null) {
+                $modelSip->status = 2;
+                $modelSip->save();
+            }
         }
 
         echo json_encode([
@@ -121,8 +127,7 @@ class CallShopController extends CController
             $modelSip->callshopnumber = 'NULL';
             $modelSip->callshoptime   = 0;
             $modelSip->save();
-
-            CallShopCdr::model()->updateAll(['status' => '1'], 'cabina = :key', [':key' => $modelSip->name]);
+            CallShopCdr::updateAll(['status' => '1'], ['cabina' => $modelSip->name]);
         } else {
 
             if (isset($_GET['name'])) {
@@ -131,13 +136,13 @@ class CallShopController extends CController
                 $filter = json_decode($_POST['filter'], true);
             }
 
-            $modelSip                 = Sip::model()->find("name = :name ", [':name' => $filter[0]['value']]);
+            $modelSip = Sip::find()->where(['name' => $filter[0]['value']])->one();
             $modelSip->status         = 0;
             $modelSip->callshopnumber = 'NULL';
             $modelSip->callshoptime   = 0;
             $modelSip->save();
 
-            CallShopCdr::model()->updateAll(['status' => '1'], 'cabina = :key', [':key' => $filter[0]['value']]);
+            CallShopCdr::updateAll(['status' => '1'], ['cabina' => $filter[0]['value']]);
         }
         echo json_encode([
             $this->nameSuccess => true,

@@ -177,7 +177,7 @@ class SendCreditDingConnect
         return $products;
     }
 
-    public function getProviderCode($number)
+    public static function getProviderCode($number)
     {
         $removeprefix = '00';
         if (strncmp($number, $removeprefix, strlen($removeprefix)) == 0 || substr(strtoupper($removeprefix), 0, 1) == 'X') {

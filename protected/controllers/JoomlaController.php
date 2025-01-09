@@ -206,7 +206,7 @@ class JoomlaController extends CController
     public function actionUpdatePassword()
     {
 
-        $modelUser = User::model()->find('username = :key', [':key' => $_POST['username']]);
+        $modelUser = User::find()->where(['username' => $_POST['username']])->one();
         if (strtoupper($_POST['data']) == strtoupper(MD5($modelUser->username . ':' . $modelUser->password))) {
             $modelUser->password = trim($_POST['new_password']);
             $modelUser->save();

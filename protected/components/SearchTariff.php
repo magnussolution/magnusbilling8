@@ -35,7 +35,7 @@ class SearchTariff
             include dirname(__FILE__) . '/beforeSearchTariff.php';
         }
 
-        $result = Plan::model()->searchTariff($id_plan, $destination);
+        $result = Plan::searchTariff($id_plan, $destination);
         $agi->verbose($result[0], 25);
         $result = $result[1];
 
@@ -44,10 +44,9 @@ class SearchTariff
         }
 
         //Select custom rate to user
-        $modelUserRate = UserRate::model()->find('id_prefix = :key AND id_user = :key1', [
-            ':key'  => $result[0]['id_prefix'],
-            ':key1' => $id_user,
-        ]);
+        $modelUserRate = UserRate::find()
+            ->where(['id_prefix' => $result[0]['id_prefix'], 'id_user' => $id_user])
+            ->one();
 
         //change custom rate to user
         if (isset($modelUserRate->id)) {

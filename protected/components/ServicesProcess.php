@@ -162,10 +162,9 @@ class ServicesProcess
                     $method != 'activation' &&
                     ($modelServicesUse->idUser->disk_space - $modelServicesUse->idServices->disk_space < 1)
                 ) {
-                    $modelSip = Sip::model()->find(
-                        'id_user = :key',
-                        [':key' => $modelServicesUse->id_user]
-                    );
+                    $modelSip = Sip::find()
+                        ->where(['id_user' => $modelServicesUse->id_user])
+                        ->one();
                     $modelSip->record_call = 0;
                     $modelSip->save();
                 }

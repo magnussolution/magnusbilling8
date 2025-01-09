@@ -23,12 +23,17 @@
 
 namespace app\controllers;
 
+use PDO;
 use Yii;
-use app\components\CController;
-use app\models\Call;
-use PharData;
 use Phar;
+use PharData;
+use CDbExpression;
+use app\models\Call;
 use app\models\Campaign;
+use app\components\MagnusLog;
+use app\components\CController;
+use app\components\AccessManager;
+use Exception;
 
 class CallController extends CController
 {
@@ -379,11 +384,10 @@ class CallController extends CController
                 ( SELECT COUNT(sessiontime) FROM pkg_cdr t $this->join WHERE $this->filter AND sessiontime >= $timeCampaign20 AND sessiontime < $timeCampaign40 ) AS id_prefix,
                 ( SELECT COUNT(sessiontime) FROM pkg_cdr t $this->join WHERE $this->filter AND sessiontime <= $timeCampaign20   ) AS id_offer
                 ";
-                $count = $this->abstractModel->count([
-                    'join'      => $this->join,
-                    'condition' => $this->filter,
-                    'params'    => $this->paramsFilter,
-                ]);
+                $count = Call::find()
+                    ->where($this->filter)
+                    ->params($this->paramsFilter)
+                    ->count();
                 $this->limit          = 1;
                 $this->titleReport    = "Estatistica da campanha $nameCampaign";
                 $this->subTitleReport = "Total de chamadas $count";
@@ -408,12 +412,11 @@ class CallController extends CController
         $this->filter = $this->fixedWhere ? $filter . ' ' . $this->fixedWhere : $filter;
         $this->filter = $this->extraFilter($filter);
 
-        $modelCall = $this->abstractModel->find([
-            'select'    => 'SUM(t.buycost) AS buycost, SUM(t.sessionbill) AS sessionbill ',
-            'condition' => $this->filter,
-            'params'    => $this->paramsFilter,
-            'with'      => $this->relationFilter,
-        ]);
+        $modelCall = Call::find()
+            ->select(['SUM(t.buycost) AS buycost', 'SUM(t.sessionbill) AS sessionbill'])
+            ->where($this->filter)
+            ->params($this->paramsFilter)
+            ->one();
 
         $modelCall->sumbuycost     = number_format($modelCall->buycost, 4);
         $modelCall->sumsessionbill = number_format($modelCall->sessionbill, 4);
@@ -457,7 +460,7 @@ class CallController extends CController
         $header = '';
         foreach ($columns as $key => $value) {
             if (strlen($value['header']) > 40) {
-                MagnusLog::insertLOG('EDIT', $id_user, $_SERVER['REMOTE_ADDR'], 'CDR export columns have more than 40 char.' . print_r($columns, true));
+                MagnusLog::insertLOG('EDIT', Yii::$app->session['id_user'], $_SERVER['REMOTE_ADDR'], 'CDR export columns have more than 40 char.' . print_r($columns, true));
                 exit;
             }
             $header .= "'" . ($value['header']) . "',";

@@ -24,12 +24,12 @@
 namespace app\controllers;
 
 use Yii;
-use app\components\CController;
-use app\components\SqlInject;
-use app\components\AccessManager;
 use app\models\Sms;
 use app\models\User;
-use app\models\SmsSend;
+use app\components\SmsSend;
+use app\components\SqlInject;
+use app\components\CController;
+use app\components\AccessManager;
 
 class SmsController extends CController
 {
@@ -112,7 +112,7 @@ class SmsController extends CController
             exit('invalid user');
         }
 
-        $modelUser = User::model()->find('username = :key', [':key' => $_POST['username']]);
+        $modelUser = User::find()->where(['username' => $_POST['username']])->one();
         if (! isset($modelUser->id)) {
             exit('invalid data');
         }

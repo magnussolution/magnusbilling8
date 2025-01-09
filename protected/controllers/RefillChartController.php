@@ -30,7 +30,7 @@ class RefillChartController extends CController
     {
         $filter = isset($_GET['filter']) ? json_decode($_GET['filter']) : null;
 
-        $records = Refill::model()->getRefillChart($filter);
+        $records = Refill::getRefillChart($filter);
 
         # envia o json requisitado
         echo json_encode(array(

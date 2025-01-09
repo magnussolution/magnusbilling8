@@ -500,7 +500,7 @@ class AsteriskAccess
             $data = AsteriskAccess::instance($server['host'], $server['username'], $server['password'])->cdrShowActive();
 
             if (! isset($data) || ! isset($data['data'])) {
-                Servers::model()->updateByPk($server['id'], ['status' => 2]);
+                Servers::updateAll(['status' => 2], ['id' => $server['id']]);
                 continue;
             }
 

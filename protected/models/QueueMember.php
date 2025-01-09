@@ -81,7 +81,7 @@ class  QueueMember extends Model
         return parent::beforeSave($insert);
     }
 
-    public function truncateQueueAgentStatus()
+    public static function truncateQueueAgentStatus()
     {
         $sql = "TRUNCATE pkg_queue_agent_status";
         Yii::$app->db->createCommand($sql)->execute();

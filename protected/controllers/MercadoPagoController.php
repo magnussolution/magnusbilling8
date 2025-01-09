@@ -13,6 +13,7 @@ use app\components\UserCreditManager;
 use app\components\Util;
 use app\models\Methodpay;
 use app\models\User;
+use MercadoPago\MP;
 
 
 class MercadoPagoController extends CController
@@ -25,7 +26,7 @@ class MercadoPagoController extends CController
 
         require_once 'lib/mercadopago/mercadopago.php';
 
-        $modelMethodpay = Methodpay::model()->find('payment_method = :key AND id_user = 1 AND active = 1', [':key' => 'MercadoPago']);
+        $modelMethodpay = Methodpay::find()->where(['payment_method' => 'MercadoPago', 'id_user' => 1, 'active' => 1])->one();
 
         $mp = new MP($modelMethodpay->username, $modelMethodpay->pagseguro_TOKEN);
 

@@ -144,7 +144,7 @@ class QueueController extends CController
 
         $this->abstractModel->truncateQueueStatus();
 
-        $modelQueue = Queue::model()->where(['IN', 'id', $ids])->all();
+        $modelQueue = Queue::find()->where(['IN', 'id', $ids])->all();
         foreach ($modelQueue as $key => $queue) {
             try {
                 AsteriskAccess::instance('localhost', 'magnus', 'magnussolution')->queueReseteStats(trim($queue->name));

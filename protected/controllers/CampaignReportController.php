@@ -79,27 +79,19 @@ class CampaignReportController extends CController
         $attributes = false;
         foreach ($models as $key => $item) {
             $attributes[$key]    = $item->attributes;
-            $modelCampaignReport = CampaignReport::model()->find([
-                'select'    => 'count(*) totalDialed ',
-                'condition' => 'id_campaign = :key AND unix_timestamp > :key1',
-                'params'    => [
-                    ':key'  => $item->id,
-                    ':key1' => $this->interval,
-
-                ],
-            ]);
+            $modelCampaignReport = CampaignReport::find()
+                ->select(['count(*) as totalDialed'])
+                ->where(['id_campaign' => $item->id])
+                ->andWhere(['>', 'unix_timestamp', $this->interval])
+                ->one();
 
             $attributes[$key]['totalDialed'] = $modelCampaignReport->totalDialed;
 
-            $modelCampaignReport = CampaignReport::model()->find([
-                'select'    => 'count(*) totalFailed ',
-                'condition' => 'id_campaign = :key AND status = 2 AND unix_timestamp > :key1',
-                'params'    => [
-                    ':key'  => $item->id,
-                    ':key1' => $this->interval,
-
-                ],
-            ]);
+            $modelCampaignReport = CampaignReport::find()
+                ->select(['count(*) as totalFailed'])
+                ->where(['id_campaign' => $item->id, 'status' => 2])
+                ->andWhere(['>', 'unix_timestamp', $this->interval])
+                ->one();
             if ($modelCampaignReport->totalFailed == 0 || $attributes[$key]['totalDialed'] == 0) {
                 $ratio = 0;
             } else {
@@ -108,15 +100,11 @@ class CampaignReportController extends CController
 
             $attributes[$key]['totalFailed'] = $modelCampaignReport->totalFailed . ' (' . number_format($ratio, 2) . '%)';
 
-            $modelCampaignReport = CampaignReport::model()->find([
-                'select'    => 'count(*) totalAmd',
-                'condition' => 'id_campaign = :key AND status = 5 AND unix_timestamp > :key1',
-                'params'    => [
-                    ':key'  => $item->id,
-                    ':key1' => $this->interval,
-
-                ],
-            ]);
+            $modelCampaignReport = CampaignReport::find()
+                ->select(['count(*) as totalAmd'])
+                ->where(['id_campaign' => $item->id, 'status' => 5])
+                ->andWhere(['>', 'unix_timestamp', $this->interval])
+                ->one();
             if ($modelCampaignReport->totalAmd == 0 || $attributes[$key]['totalDialed'] == 0) {
                 $ratio = 0;
             } else {
@@ -125,15 +113,12 @@ class CampaignReportController extends CController
 
             $attributes[$key]['totalAmd'] = $modelCampaignReport->totalAmd . ' (' . number_format($ratio, 2) . '%)';
 
-            $modelCampaignReport = CampaignReport::model()->find([
-                'select'    => 'count(*) totalAnswered ',
-                'condition' => 'id_campaign = :key AND status IN (3,4,5,7) AND unix_timestamp > :key1',
-                'params'    => [
-                    ':key'  => $item->id,
-                    ':key1' => $this->interval,
-
-                ],
-            ]);
+            $modelCampaignReport = CampaignReport::find()
+                ->select(['count(*) as totalAnswered'])
+                ->where(['id_campaign' => $item->id])
+                ->andWhere(['status' => [3, 4, 5, 7]])
+                ->andWhere(['>', 'unix_timestamp', $this->interval])
+                ->one();
             if ($modelCampaignReport->totalAnswered == 0 || $attributes[$key]['totalDialed'] == 0) {
                 $ratio = 0;
             } else {
@@ -141,15 +126,11 @@ class CampaignReportController extends CController
             }
             $attributes[$key]['totalAnswered'] = $modelCampaignReport->totalAnswered . ' (' . number_format($ratio, 2) . '%)';
 
-            $modelCampaignReport = CampaignReport::model()->find([
-                'select'    => 'count(*) totalPressDigit',
-                'condition' => 'id_campaign = :key AND status = 4 AND unix_timestamp > :key1',
-                'params'    => [
-                    ':key'  => $item->id,
-                    ':key1' => $this->interval,
-
-                ],
-            ]);
+            $modelCampaignReport = CampaignReport::find()
+                ->select(['count(*) as totalPressDigit'])
+                ->where(['id_campaign' => $item->id, 'status' => 4])
+                ->andWhere(['>', 'unix_timestamp', $this->interval])
+                ->one();
             if ($modelCampaignReport->totalPressDigit == 0 || $attributes[$key]['totalDialed'] == 0) {
                 $ratio = 0;
             } else {
@@ -157,15 +138,11 @@ class CampaignReportController extends CController
             }
             $attributes[$key]['totalPressDigit'] = $modelCampaignReport->totalPressDigit . ' (' . number_format($ratio, 2) . '%)';
 
-            $modelCampaignReport = CampaignReport::model()->find([
-                'select'    => 'count(*) transfered',
-                'condition' => 'id_campaign = :key AND status = 7 AND unix_timestamp > :key1',
-                'params'    => [
-                    ':key'  => $item->id,
-                    ':key1' => $this->interval,
-
-                ],
-            ]);
+            $modelCampaignReport = CampaignReport::find()
+                ->select(['count(*) as transfered'])
+                ->where(['id_campaign' => $item->id, 'status' => 7])
+                ->andWhere(['>', 'unix_timestamp', $this->interval])
+                ->one();
             if ($modelCampaignReport->transfered == 0 || $attributes[$key]['totalDialed'] == 0) {
                 $ratio = 0;
             } else {

@@ -74,7 +74,7 @@ class  Prefix extends Model
         return parent::afterSave($insert, $changedAttributes);
     }
 
-    public function insertPrefixs($sqlPrefix)
+    public static function insertPrefixs($sqlPrefix)
     {
 
         $sqlInsertPrefix = 'INSERT IGNORE INTO pkg_prefix (prefix, destination)
@@ -88,7 +88,7 @@ class  Prefix extends Model
         $this->prefixLength();
     }
 
-    public function getPrefix($prefix)
+    public static function getPrefix($prefix)
     {
         $sql     = 'SELECT id, destination FROM pkg_prefix WHERE prefix = :prefix LIMIT 1';
         $command = Yii::$app->db->createCommand($sql);
@@ -100,7 +100,7 @@ class  Prefix extends Model
         }
     }
 
-    public function updateDestination($prefix, $destination)
+    public static function updateDestination($prefix, $destination)
     {
         $sql = "UPDATE pkg_prefix SET destination = :destination  WHERE prefix = :prefix";
         try {
@@ -112,14 +112,14 @@ class  Prefix extends Model
         }
     }
 
-    public function prefixLength()
+    public static function prefixLength()
     {
 
-        $modelPrefix = Prefix::model()->findAll([
-            'select'    => 'SUBSTRING( prefix, 1, 2 ) AS destination, length(prefix) AS prefix',
-            'condition' => 'prefix > 0',
-            'order'     => 'LENGTH( prefix ) DESC',
-        ]);
+        $modelPrefix = Prefix::find()
+            ->select(['SUBSTRING(prefix, 1, 2) AS destination', 'LENGTH(prefix) AS prefix'])
+            ->where(['>', 'prefix', 0])
+            ->orderBy(['LENGTH(prefix)' => SORT_DESC])
+            ->all();
 
         $modelPrefix = Util::unique_multidim_obj($modelPrefix, 'destination');
 
@@ -128,7 +128,7 @@ class  Prefix extends Model
             $insert[] = '(' . $value->destination . ',' . $value->prefix . ')';
         }
 
-        PrefixLength::model()->deleteAll();
+        PrefixLength::deleteAll();
 
         $sql = 'INSERT IGNORE INTO pkg_prefix_length (code,length) VALUES ' . implode(',', $insert) . ';';
         try {

@@ -50,9 +50,7 @@ class CallBackController extends CController
 
         $filter = $filter ? $this->createCondition(json_decode($filter)) : '';
 
-        $filter = preg_replace('/t.status/', 'status', $filter);
-
-        CallBack::model()->updateAll(['status' => '1', 'num_attempt' => 0, 'sessiontime' => 0], $filter, $this->paramsFilter);
+        CallBack::updateAll(['status' => '1', 'num_attempt' => 0, 'sessiontime' => 0], $filter);
         echo json_encode([
             'success' => true,
             'msg'     => $this->msgSuccess,

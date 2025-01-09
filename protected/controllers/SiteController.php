@@ -7,6 +7,7 @@ use app\models\User;
 use app\components\CController;
 use app\components\Util;
 use app\models\Configuration;
+use app\models\Plan;
 
 class SiteController extends CController
 {
@@ -40,8 +41,23 @@ class SiteController extends CController
      */
     public function actionIndex()
     {
-
         /*
+        User::updateAll(['active' => '1'], ['username' => 'teste']);
+     
+           
+        $ids = [1, 2, 3];
+        $modelUser = User::find()->where(['id' => $ids])->all();
+
+        foreach ($modelUser as $key => $value) {
+            print_r($value->username);
+        }
+
+
+        exit;
+
+
+
+     
 
         $modelUser = User::find()->where('username = :key', [':key' => 'teste'])->one();
 

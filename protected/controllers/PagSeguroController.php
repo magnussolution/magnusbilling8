@@ -8,11 +8,12 @@
 namespace app\controllers;
 
 use Yii;
+use app\models\User;
+use app\models\Refill;
+use app\components\Util;
+use app\models\Methodpay;
 use app\components\CController;
 use app\components\UserCreditManager;
-use app\models\Methodpay;
-use app\models\Refill;
-use app\models\User;
 
 class PagSeguroController extends CController
 {
@@ -29,12 +30,10 @@ class PagSeguroController extends CController
         } else {
             $filter .= " AND u.id = 1";
         }
-
-        $modelMethodpay = Methodpay::model()->find(array(
-            'condition' => $filter,
-            'join'      => 'INNER JOIN pkg_user u ON t.id_user = u.id',
-            'params'    => $params,
-        ));
+        $modelMethodpay = Methodpay::find()
+            ->with('idUser')
+            ->where($filter, $params)
+            ->one();
 
         if (!count($modelMethodpay)) {
             exit('error 30');
@@ -91,7 +90,7 @@ class PagSeguroController extends CController
 
                 $modelUser = User::findOne((int) $id_user);
 
-                if (count($modelUser) && Refill::model()->countRefill($transacaoID, $modelUser->id) == 0) {
+                if (isset($modelUser->id) && Refill::countRefill($transacaoID, $modelUser->id) == 0) {
                     Yii::error($modelUser->id . ' ' . $amount . ' ' . $description . ' ' . $transacaoID, 'error');
                     UserCreditManager::releaseUserCredit($modelUser->id, $amount, $description, 1, $transacaoID);
                     header("HTTP/1.1 200 OK");

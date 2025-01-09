@@ -35,7 +35,7 @@ class PlacetoPayController extends CController
         $rest = json_decode(file_get_contents('php://input'), true);
         Yii::error(print_r($rest, true), 'error');
 
-        $modelMethodPay = Methodpay::model()->find('payment_method = :key', [':key' => 'PlacetoPay']);
+        $modelMethodPay = Methodpay::find()->where(['payment_method' => 'PlacetoPay'])->one();
 
         $val = sha1($rest['requestId'] . $rest['status']['status'] . $rest['status']['date'] . $modelMethodPay->P2P_KeyID);
 
@@ -43,7 +43,7 @@ class PlacetoPayController extends CController
 
             echo $rest['requestId'];
 
-            $modelRefill = Refill::model()->find('invoice_number = :key', ['key' => $rest['requestId']]);
+            $modelRefill = Refill::find()->where(['invoice_number' => $rest['requestId']])->one();
             if (isset($modelRefill->id)) {
 
                 if ($rest['status']['status'] == 'APPROVED') {

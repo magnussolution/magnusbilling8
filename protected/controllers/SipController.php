@@ -19,12 +19,13 @@
 namespace app\controllers;
 
 use Yii;
-use app\components\CController;
-use app\components\AsteriskAccess;
-use app\components\Util;
+use CDbConnection;
 use app\models\Sip;
 use app\models\User;
 use app\models\Servers;
+use app\components\Util;
+use app\components\CController;
+use app\components\AsteriskAccess;
 
 class SipController extends CController
 {
@@ -101,7 +102,7 @@ class SipController extends CController
     {
 
         if (isset($values['alias']) && strlen($values['alias'])) {
-            $modelSip = Sip::model()->find('alias = :key AND id_user = (SELECT id_user FROM pkg_sip WHERE id = :key1)', [':key' => $values['alias'], ':key1' => $values['id']]);
+            $modelSip = Sip::find()->where(['alias' => $values['alias'], 'id_user' => (new \yii\db\Query())->select('id_user')->from('pkg_sip')->where(['id' => $values['id']])])->one();
             if (isset($modelSip->id)) {
                 echo json_encode([
                     'success' => false,
@@ -220,7 +221,7 @@ class SipController extends CController
     public function siproxyServer($values, $type)
     {
 
-        $modelServers = Servers::model()->findAll("type = 'sipproxy' AND status = 1");
+        $modelServers = Servers::find()->where(['type' => 'sipproxy', 'status' => 1])->all();
 
         foreach ($modelServers as $key => $server) {
 
@@ -321,7 +322,7 @@ class SipController extends CController
 
     public function actionGetSipShowPeer()
     {
-        $modelSip = Sip::model()->find('name = :key', [':key' => $_POST['name']]);
+        $modelSip = Sip::find()->where(['name' => $_POST['name']])->one();
 
         if ($modelSip->idUser->active == 0) {
             $sipShowPeer = 'The username is inactive';

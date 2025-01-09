@@ -27,11 +27,12 @@
 
 namespace app\controllers;
 
+use PDO;
 use Yii;
+use app\models\User;
+use app\models\Refill;
 use app\components\CController;
 use app\components\AccessManager;
-use app\models\User;
-use PDO;
 
 class BDServiceController extends CController
 {
@@ -82,7 +83,7 @@ class BDServiceController extends CController
 
         if (isset($_POST['traking']) && isset($_POST['id'])) {
 
-            $modelRefill = Refill::model()->find("description LIKE '%" . $_POST['id'] . "%'");
+            $modelRefill = Refill::find()->where(['like', 'description', $_POST['id']])->one();
 
             if (isset($modelRefill->id)) {
                 $description = $modelRefill->description;

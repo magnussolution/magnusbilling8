@@ -18,8 +18,12 @@
 
 namespace app\controllers;
 
+use PDO;
 use Yii;
+use app\models\Trunk;
+use app\components\MagnusLog;
 use app\components\CController;
+use app\components\AccessManager;
 use app\models\CallSummaryPerTrunk;
 
 class CallSummaryPerTrunkController extends CController
@@ -263,11 +267,10 @@ class CallSummaryPerTrunkController extends CController
 
         $filter = preg_replace("/t\./", '', $filter);
 
-        Trunk::model()->updateAll([
+        Trunk::updateAll([
             'call_answered'  => 0,
             'call_total'     => 0,
             'secondusedreal' => 0,
-
         ], $filter, $this->paramsFilter);
 
         echo json_encode([

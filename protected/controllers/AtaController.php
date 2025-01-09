@@ -53,7 +53,7 @@ class AtaController extends CController
         $Profile_Rule = "http://" . $proxy . "/mbilling/index.php/ata?mac=$mac";
         $modelo       = explode(" ", $_SERVER["HTTP_USER_AGENT"]);
 
-        $modelSipuras = Sipuras::model()->find('macadr = :mac', [':mac' => $mac]);
+        $modelSipuras = Sipuras::find()->where(['macadr' => $mac])->one();
 
         if (! isset($modelSipuras->id)) {
             echo 'Ata no found';
@@ -73,7 +73,7 @@ class AtaController extends CController
             $modelSipuras->fultlig      = $date;
 
             //verfica se a senha da linha 1 foi alterada
-            $modelSip = Sip::model()->find('name = :name', [':name' => $modelSipuras->User_ID_1]);
+            $modelSip = Sip::find()->where(['name' => $modelSipuras->User_ID_1])->one();
 
             if (isset($modelSip->id) && $modelSip->secret != $modelSipuras->Password_1) {
                 $modelSipuras->Password_1 = $modelSip->secret;
@@ -82,7 +82,7 @@ class AtaController extends CController
             }
 
             //verfica se a senha da linha 2 foi alterada
-            $modelSip = Sip::model()->find("name = :name", [':name' => $modelSipuras->User_ID_2]);
+            $modelSip = Sip::find()->where(['name' => $modelSipuras->User_ID_2])->one();
 
             if (isset($modelSip->id) && $modelSip->secret != $modelSipuras->Password_2) {
                 $modelSipuras->Password_2 = $modelSip->secret;

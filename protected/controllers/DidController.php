@@ -24,13 +24,19 @@
 namespace app\controllers;
 
 use Yii;
-use app\components\CController;
-use app\components\UserCreditManager;
 use app\models\Did;
+use app\models\Sip;
 use app\models\User;
 use app\models\DidUse;
-use app\models\Sip;
+use app\components\Mail;
+use app\components\Util;
+use app\models\DidHistory;
+use app\components\MagnusLog;
 use app\models\Diddestination;
+use app\components\CController;
+use app\models\CallSummaryMonthDid;
+use app\components\UserCreditManager;
+use Exception;
 
 class DidController extends CController
 {
@@ -252,7 +258,7 @@ class DidController extends CController
             $modelDidUse->month_payed = 1;
             $modelDidUse->save();
 
-            $modelSip = Sip::model()->find('id_user = :key', [':key' => $id_user]);
+            $modelSip = Sip::find()->where(['id_user' => $id_user])->one();
 
             $modelDiddestination              = new Diddestination();
             $modelDiddestination->id_user     = $id_user;
@@ -327,7 +333,7 @@ class DidController extends CController
                 $modelDidUse->month_payed = 1;
                 $modelDidUse->save();
 
-                $modelSip = Sip::model()->find('id_user = :key', [':key' => $id_user]);
+                $modelSip = Sip::find()->where(['id_user' => $id_user])->one();
 
                 $modelDiddestination              = new Diddestination();
                 $modelDiddestination->id_user     = $id_user;
@@ -430,7 +436,7 @@ class DidController extends CController
                         try {
                             $model->save();
                         } catch (Exception $e) {
-                            Did::model()->deleteByPk((int) $model->id);
+                            Did::deleteAll(['id' => (int) $model->id]);
                         }
                     } else {
                         $modelDid             = new Did;
@@ -457,10 +463,7 @@ class DidController extends CController
                 $modelDid = Did::findOne((int) $id);
 
                 if (isset($modelDid->id) && isset($modelDid->idUser->did_days) && $modelDid->idUser->did_days > 0) {
-                    $didUse = DidUse::model()->find('id_did = :key AND releasedate = :key1 AND status = 1', [
-                        'key'   => $id,
-                        ':key1' => '0000-00-00 00:00:00',
-                    ]);
+                    $didUse = DidUse::find()->where(['id_did' => $id, 'releasedate' => '0000-00-00 00:00:00', 'status' => 1])->one();
 
                     $date = date('Y-m-d', strtotime($didUse->reservationdate . " + " . $modelDid->idUser->did_days . " day"));
 
@@ -477,20 +480,17 @@ class DidController extends CController
             foreach ($ids as $key => $id) {
                 $modelDid = Did::findOne((int) $id);
                 if ($modelDid->reserved == 1 && $modelDid->id_user > 0) {
-                    Did::model()->updateByPk(
-                        $id,
+                    Did::updateAll(
                         [
                             'reserved' => 0,
                             'id_user'  => null,
-                        ]
+                        ],
+                        ['id' => $id]
                     );
 
-                    Diddestination::model()->deleteAll("id_did = :key", [':key' => $id]);
+                    Diddestination::deleteAll("id_did = :key", [':key' => $id]);
 
-                    $didUse = DidUse::model()->find('id_did = :key AND releasedate = :key1 AND status = 1', [
-                        'key'   => $id,
-                        ':key1' => '0000-00-00 00:00:00',
-                    ]);
+                    $didUse = DidUse::find()->where(['id_did' => $id, 'releasedate' => '0000-00-00 00:00:00', 'status' => 1])->one();
 
                     if (isset($didUse->id)) {
 
@@ -507,15 +507,16 @@ class DidController extends CController
                         }
                     }
 
-                    DidUse::model()->updateAll(
+
+                    DidUse::updateAll(
                         [
                             'releasedate' => date('Y-m-d H:i:s'),
                             'status'      => 0,
                         ],
-                        'id_did = :key AND releasedate = :key1 AND status = 1',
                         [
-                            ':key'  => $id,
-                            ':key1' => '0000-00-00 00:00:00',
+                            'id_did' => $id,
+                            'releasedate' => '0000-00-00 00:00:00',
+                            'status' => 1,
                         ]
                     );
 
@@ -544,15 +545,15 @@ class DidController extends CController
             foreach ($values as $key => $value) {
                 $modelDid = Did::findOne($value['id']);
                 if ($modelDid->reserved == 0) {
-                    CallSummaryMonthDid::model()->deleteAll("id_did = :key", [':key' => $modelDid->id]);
-                    DidUse::model()->deleteAll("id_did = :key", [':key' => $modelDid->id]);
+                    CallSummaryMonthDid::deleteAll("id_did = :key", [':key' => $modelDid->id]);
+                    DidUse::deleteAll("id_did = :key", [':key' => $modelDid->id]);
                 }
             }
         } else {
             $modelDid = Did::findOne($values['id']);
             if ($modelDid->reserved == 0) {
-                CallSummaryMonthDid::model()->deleteAll("id_did = :key", [':key' => $modelDid->id]);
-                DidUse::model()->deleteAll("id_did = :key", [':key' => $modelDid->id]);
+                CallSummaryMonthDid::deleteAll("id_did = :key", [':key' => $modelDid->id]);
+                DidUse::deleteAll("id_did = :key", [':key' => $modelDid->id]);
             }
         }
 

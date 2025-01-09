@@ -28,11 +28,16 @@ echo "
 
 namespace app\controllers;
 
+use PDO;
 use Yii;
+use CDbCriteria;
+use app\models\User;
 use app\components\CController;
-use app\models\SendCreditProducts;
 use app\models\SendCreditRates;
+use app\models\TransferToMobile;
 use app\models\SendCreditSummary;
+use app\models\SendCreditProducts;
+use app\components\SendCreditOrange2;
 
 class TransferPaymentController extends CController
 {
@@ -50,7 +55,7 @@ class TransferPaymentController extends CController
     private $showprice;
     private $sell_price;
     private $local_currency;
-    public $modelTransferToMobile = [];
+    public $modelTransferToMobile;
     public $operator_name;
     private $number;
     public $received_amout;
@@ -90,29 +95,21 @@ class TransferPaymentController extends CController
             $this->modelTransferToMobile->country = $_POST['TransferToMobile']['country'];
             $types                                = [];
 
-            $modelSendCreditProduct = SendCreditProducts::model()->find([
-                'condition' => 'country = :key AND  type = :key1 AND status = 1 AND operator_name LIKE :key2',
-                'params'    => [
-                    ':key'  => $_POST['TransferToMobile']['country'],
-                    ':key1' => 'Payment',
-                    ':key2' => 'Pre%',
-                ],
-                'group'     => 'country',
-            ]);
+            $modelSendCreditProduct = SendCreditProducts::find()
+                ->where(['country' => $_POST['TransferToMobile']['country'], 'type' => 'Payment', 'status' => 1])
+                ->andWhere(['like', 'operator_name', 'Pre%'])
+                ->groupBy('country')
+                ->one();
 
             if (isset($modelSendCreditProduct->id)) {
                 $types["Prepaid_Electricity"] = "Prepaid Electricity";
             }
 
-            $modelSendCreditProductBill = SendCreditProducts::model()->find([
-                'condition' => 'country = :key AND type = :key1 AND status = 1 AND operator_name LIKE :key2',
-                'params'    => [
-                    ':key'  => $_POST['TransferToMobile']['country'],
-                    ':key1' => 'Payment',
-                    ':key2' => 'Bill%',
-                ],
-                'group'     => 'country',
-            ]);
+            $modelSendCreditProductBill = SendCreditProducts::find()
+                ->where(['country' => $_POST['TransferToMobile']['country'], 'type' => 'Payment', 'status' => 1])
+                ->andWhere(['like', 'operator_name', 'Bill%'])
+                ->groupBy('country')
+                ->one();
 
             if (isset($modelSendCreditProductBill->id)) {
                 $types["Bill_Electricity"] = "Bill Electricity";
@@ -167,13 +164,11 @@ class TransferPaymentController extends CController
 
             $this->getAmountBill();
 
-            $modelSendCreditProducts = SendCreditProducts::model()->findAll([
-                'condition' => 'operator_name LIKE "Bill%" AND country = :key AND status = 1 AND type = :key1 AND product LIKE "%-%" ',
-                'params'    => [
-                    ':key'  => $_POST['TransferToMobile']['country'],
-                    ':key1' => 'payment',
-                ],
-            ]);
+            $modelSendCreditProducts = SendCreditProducts::find()
+                ->where(['like', 'operator_name', 'Bill%'])
+                ->andWhere(['country' => $_POST['TransferToMobile']['country'], 'status' => 1, 'type' => 'payment'])
+                ->andWhere(['like', 'product', '%-%'])
+                ->all();
 
             if (! isset($modelSendCreditProducts[0]->product)) {
                 exit('No products found');
@@ -350,13 +345,9 @@ class TransferPaymentController extends CController
 
         $product = $_POST['TransferToMobile']['bill_amount']; //is the amout to refill
 
-        $modelSendCreditRates = SendCreditRates::model()->find([
-            'condition' => 'id_user = :key AND id_product = :key1',
-            'params'    => [
-                ':key'  => Yii::$app->session['id_user'],
-                ':key1' => Yii::$app->session['id_product'],
-            ],
-        ]);
+        $modelSendCreditRates = SendCreditRates::find()
+            ->where(['id_user' => Yii::$app->session['id_user'], 'id_product' => Yii::$app->session['id_product']])
+            ->one();
 
         if (! isset($modelSendCreditRates->id)) {
 
@@ -402,13 +393,9 @@ class TransferPaymentController extends CController
 
         }
 
-        $modelSendCreditRates = SendCreditRates::model()->find([
-            'condition' => 'id_user = :key AND id_product = :key1',
-            'params'    => [
-                ':key'  => Yii::$app->session['id_user'],
-                ':key1' => $product,
-            ],
-        ]);
+        $modelSendCreditRates = SendCreditRates::find()
+            ->where(['id_user' => Yii::$app->session['id_user'], 'id_product' => $product])
+            ->one();
 
         if (! isset($modelSendCreditRates->id)) {
 
@@ -447,12 +434,11 @@ class TransferPaymentController extends CController
     public function getAmountBill()
     {
 
-        $modelSendCreditProducts = SendCreditProducts::model()->findAll(
-            'country = :key AND status = 1 AND type = "payment" AND product LIKE "%-%" AND operator_name LIKE "Bill%"',
-            [
-                ':key' => $this->modelTransferToMobile->country,
-            ]
-        );
+        $modelSendCreditProducts = SendCreditProducts::find()
+            ->where(['country' => $this->modelTransferToMobile->country, 'status' => 1, 'type' => 'payment'])
+            ->andWhere(['like', 'product', '%-%'])
+            ->andWhere(['like', 'operator_name', 'Bill%'])
+            ->all();
 
         if (! isset($modelSendCreditProducts[0])) {
 
@@ -469,12 +455,10 @@ class TransferPaymentController extends CController
         }
 
         //get the user prices to mount the amount combo
-        $criteria = new CDbCriteria();
-        $criteria->addInCondition('id_product', $ids_products);
-        $criteria->addCondition('id_user = :key');
-        $criteria->params[':key'] = Yii::$app->session['id_user'];
-
-        $modelSendCreditRates = SendCreditRates::model()->findAll($criteria);
+        $modelSendCreditRates = SendCreditRates::find()
+            ->where(['id_user' => Yii::$app->session['id_user']])
+            ->andWhere(['in', 'id_product', $ids_products])
+            ->all();
 
         if (! isset($modelSendCreditRates[0])) {
             exit('Before send credit, you need add your sell price');
@@ -505,7 +489,7 @@ class TransferPaymentController extends CController
 
     public function getAmount()
     {
-        $modelSendCreditProducts = SendCreditProducts::model()->findAll('country = :key AND status = 1 AND type = "payment"', [':key' => $this->modelTransferToMobile->country]);
+        $modelSendCreditProducts = SendCreditProducts::find()->query('country = :key AND status = 1 AND type = "payment"', [':key' => $this->modelTransferToMobile->country])->all();
 
         if (! isset($modelSendCreditProducts[0])) {
 
@@ -522,12 +506,10 @@ class TransferPaymentController extends CController
         }
 
         //get the user prices to mount the amount combo
-        $criteria = new CDbCriteria();
-        $criteria->addInCondition('id_product', $ids_products);
-        $criteria->addCondition('id_user = :key');
-        $criteria->params[':key'] = Yii::$app->session['id_user'];
-
-        $modelSendCreditRates = SendCreditRates::model()->findAll($criteria);
+        $modelSendCreditRates = SendCreditRates::find()
+            ->where(['id_user' => Yii::$app->session['id_user']])
+            ->andWhere(['in', 'id_product', $ids_products])
+            ->all();
 
         if (! isset($modelSendCreditRates[0])) {
             exit('Before send credit, you need add your sell price');
@@ -583,15 +565,18 @@ class TransferPaymentController extends CController
         if ($this->sell_price > 0 && $this->user_cost > 0) {
 
             $profit = 'transfer_international_profit';
-            SendCreditSummary::model()->updateByPk($this->send_credit_id, [
-                'profit'         => $this->modelTransferToMobile->{$profit},
-                'amount'         => $this->cost,
-                'sell'           => number_format($this->sell_price, 2),
-                'earned'         => number_format($this->sell_price - $this->user_cost, 2),
-                'received_amout' => $this->local_currency . ' ' . $this->received_amout,
-            ]);
+            SendCreditSummary::updateAll(
+                [
+                    'profit'         => $this->modelTransferToMobile->{$profit},
+                    'amount'         => $this->cost,
+                    'sell'           => number_format($this->sell_price, 2),
+                    'earned'         => number_format($this->sell_price - $this->user_cost, 2),
+                    'received_amout' => $this->local_currency . ' ' . $this->received_amout,
+                ],
+                ['id' => $this->send_credit_id]
+            );
         } else {
-            SendCreditSummary::model()->deleteByPk($this->send_credit_id);
+            SendCreditSummary::deleteAll(['id' => $this->send_credit_id]);
         }
     }
 
@@ -752,12 +737,14 @@ class TransferPaymentController extends CController
         //echo "description = $description <br>";
         //echo "user_cost = $this->user_cost <br        // exit;
 
-        User::model()->updateByPk(
-            Yii::$app->session['id_user'],
+        User::updateAll(
             [
-                'credit' => new CDbExpression('credit - ' . $this->user_cost),
-            ]
+                'credit' => new \yii\db\Expression('credit - ' . $this->user_cost),
+            ],
+            ['id' =>  Yii::$app->session['id_user']]
         );
+
+
 
         $payment = 1;
         $values  = ":id_user, :costUser, :description, $payment";
@@ -786,11 +773,11 @@ class TransferPaymentController extends CController
 
             $modelAgentOld = User::findOne($this->modelTransferToMobile->id_user);
 
-            User::model()->updateByPk(
-                $this->modelTransferToMobile->id_user,
+            User::updateAll(
                 [
-                    'credit' => new CDbExpression('credit - ' . $this->agent_cost),
-                ]
+                    'credit' => new \yii\db\Expression('credit - ' . $this->agent_cost),
+                ],
+                ['id' => $this->modelTransferToMobile->id_user]
             );
 
             $payment = 1;
@@ -822,13 +809,11 @@ class TransferPaymentController extends CController
 
         $operator_name = isset($_GET['type']) ? $_GET['type'] : 'Prepaid';
 
-        $modelSendCreditProducts = SendCreditProducts::model()->findAll(
-            'country = :key AND status = 1 AND type = "payment" AND product LIKE "%-%" AND operator_name LIKE :key1',
-            [
-                ':key'  => $country,
-                ':key1' => $operator_name . '%',
-            ]
-        );
+        $modelSendCreditProducts = SendCreditProducts::find()
+            ->where(['country' => $country, 'status' => 1, 'type' => 'payment'])
+            ->andWhere(['like', 'product', '%-%'])
+            ->andWhere(['like', 'operator_name', $operator_name . '%'])
+            ->all();
 
         if ($_GET['currency'] == 'EUR') {
 
@@ -854,14 +839,9 @@ class TransferPaymentController extends CController
             if (! isset($product->product)) {
                 exit('invalid');
             }
-
-            $modelSendCreditRates = SendCreditRates::model()->find([
-                'condition' => 'id_user = :key AND id_product = :key1',
-                'params'    => [
-                    ':key'  => Yii::$app->session['id_user'],
-                    ':key1' => $product->id,
-                ],
-            ]);
+            $modelSendCreditRates = SendCreditRates::find()
+                ->where(['id_user' => Yii::$app->session['id_user'], 'id_product' => $product->id])
+                ->one();
 
             echo $amount                      = number_format($amountEUR / $modelSendCreditRates->sell_price, 0, '', '');
             Yii::$app->session['sell_price'] = $amount;
@@ -886,13 +866,9 @@ class TransferPaymentController extends CController
                 exit('invalid');
             }
 
-            $modelSendCreditRates = SendCreditRates::model()->find([
-                'condition' => 'id_user = :key AND id_product = :key1',
-                'params'    => [
-                    ':key'  => Yii::$app->session['id_user'],
-                    ':key1' => $product->id,
-                ],
-            ]);
+            $modelSendCreditRates = SendCreditRates::find()
+                ->where(['id_user' => Yii::$app->session['id_user'], 'id_product' => $product->id])
+                ->one();
 
             echo $amount                      = number_format($amountBDT * $modelSendCreditRates->sell_price, 2);
             Yii::$app->session['sell_price'] = $amount;

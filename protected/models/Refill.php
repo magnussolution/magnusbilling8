@@ -88,7 +88,7 @@ class  Refill extends Model
         return parent::beforeSave($insert);
     }
 
-    public function getRefillChart($filter)
+    public static function getRefillChart($filter)
     {
         if (isset($filter) && $filter[0]->value == 'day') {
             $sql = "SELECT id, DATE_FORMAT( DATE,  '%Y-%m-%d' ) AS CreditMonth , SUM( credit ) AS sumCreditMonth
@@ -100,7 +100,7 @@ class  Refill extends Model
         return Yii::$app->db->createCommand($sql)->queryAll();
     }
 
-    public function countRefill($code, $id_user)
+    public static function countRefill($code, $id_user)
     {
         return Refill::model('description LIKE :key AND id_user = :key1', [':key' => '%' . $code . '%', ':key1' => (int) $id_user])->count();
     }

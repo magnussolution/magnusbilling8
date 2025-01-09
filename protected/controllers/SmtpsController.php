@@ -87,7 +87,7 @@ class SmtpsController extends CController
     {
         if ($this->isNewRecord) {
 
-            $modelUser = Smtps::model()->find("id_user = " . Yii::$app->session['id_user']);
+            $modelUser = Smtps::find()->where(['id_user' => Yii::$app->session['id_user']])->one();
             if (isset($modelUser->id)) {
                 echo json_encode([
                     'success' => false,
@@ -100,7 +100,7 @@ class SmtpsController extends CController
             if (Yii::$app->session['isAgent'] == 1) {
 
                 $filter            = "id_user = 1 AND ( mailtype = 'signup'  OR mailtype = 'signupconfirmed' OR mailtype = 'reminder' OR mailtype = 'refill')";
-                $modelTemplateMail = TemplateMail::model()->findAll($filter);
+                $modelTemplateMail = TemplateMail::find()->query($filter)->all();
 
                 foreach ($modelTemplateMail as $key => $mail) {
                     //add new template to user

@@ -40,11 +40,10 @@ class MolPayController extends CController
         } else {
             $filter .= " AND u.id = 1";
         }
-        $modelMethodpay = Methodpay::model()->find(array(
-            'condition' => $filter,
-            'join'      => 'INNER JOIN pkg_user u ON t.id_user = u.id',
-            'params'    => $params,
-        ));
+        $modelMethodpay = Methodpay::find()
+            ->innerJoin('pkg_user u', 'methodpay.id_user = u.id')
+            ->where($filter, $params)
+            ->one();
 
         if (!count($modelMethodpay)) {
             Yii::error('Methos pay not found', 'error');
@@ -98,7 +97,7 @@ class MolPayController extends CController
                 Yii::error('username=' . $username . ', amount = ' . $amount, 'error');
                 $modelUser = User::findOne((int) $id_user);
 
-                if (count($modelUser) && Refill::model()->countRefill($tranID, $modelUser->id) == 0) {
+                if (isset($modelUser->id) && Refill::countRefill($tranID, $modelUser->id) == 0) {
                     UserCreditManager::releaseUserCredit($modelUser->id, $amount, $description, 1, $tranID);
                     echo "<p align='center'> <font color=red font face='verdana' size='5pt'>Your payment was completed.</font> </p>";
                     echo "<p align='center'> <font color=red font face='verdana' size='5pt'>You may close this window and get back to your account.</font> </p>";

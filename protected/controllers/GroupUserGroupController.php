@@ -44,6 +44,7 @@ class GroupUserGroupController extends CController
         $this->instanceModel        = new GroupUser;
         $this->abstractModel        = GroupUser::find();
         $this->abstractModelRelated = GroupUserGroup::find();
+        $this->instanceModelRelated = new GroupUserGroup;
         $this->titleReport          = Yii::t('app', 'GroupUserGroup');
         parent::init();
     }

@@ -274,13 +274,11 @@ class CallArchiveController extends CController
         $this->filter = $this->fixedWhere ? $filter . ' ' . $this->fixedWhere : $filter;
         $this->filter = $this->extraFilter($filter);
 
-        $modelCall = $this->abstractModel->find([
-            'select'    => 'SUM(t.buycost) AS sumbuycost, SUM(t.sessionbill) AS sumsessionbill ',
-            'join'      => $this->join,
-            'condition' => $this->filter,
-            'params'    => $this->paramsFilter,
-            'with'      => $this->relationFilter,
-        ]);
+        $modelCall = CallArchive::find()
+            ->select(['SUM(buycost) AS sumbuycost', 'SUM(sessionbill) AS sumsessionbill'])
+            ->where($this->filter)
+            ->params($this->paramsFilter)
+            ->one();
 
         $modelCall->sumbuycost     = number_format($modelCall->sumbuycost, 4);
         $modelCall->sumsessionbill = number_format($modelCall->sumsessionbill, 4);

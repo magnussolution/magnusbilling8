@@ -97,14 +97,10 @@ class  Servers extends Model
             $resultServers[0]['host'] = $array['host'];
         }
 
-        $modelServers = Servers::model()->findAll(
-            'type = :key AND status = :key1 AND host != :key2',
-            [
-                ':key'  => 'asterisk',
-                ':key1' => 1,
-                ':key2' => 'localhost',
-            ]
-        );
+        $modelServers = Servers::find()
+            ->where(['type' => 'asterisk', 'status' => 1])
+            ->andWhere(['!=', 'host', 'localhost'])
+            ->all();
         foreach ($modelServers as $key => $server) {
             array_push($resultServers, [
                 'host'     => $server->host,

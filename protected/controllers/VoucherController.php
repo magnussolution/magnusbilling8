@@ -66,13 +66,13 @@ class VoucherController extends CController
         if (Yii::$app->session['isClient']) {
             $values = $this->getAttributesRequest();
 
-            $modelVoucher = $this->abstractModel->find(
+            $modelVoucher = $this->abstractModel->query(
                 'id_user IS NULL AND voucher= :voucher AND used = 0 AND usedate = :key1',
                 [
                     ':voucher' => $values['voucher'],
                     ':key1'    => '0000-00-00 00:00:00',
                 ]
-            );
+            )->one();
 
             if (isset($modelVoucher->id)) {
                 $modelVoucher->id_user = Yii::$app->session['id_user'];
@@ -119,12 +119,11 @@ class VoucherController extends CController
                 }
             }
 
-            $newRecord = $this->abstractModel->findAll([
-                'select' => $this->select,
-                'join'   => $this->join,
-                'order'  => 'id DESC',
-                'limit'  => 1,
-            ]);
+            $newRecord = Voucher::find()
+                ->select($this->select)
+                ->orderBy(['id' => SORT_DESC])
+                ->limit(1)
+                ->all();
 
             echo json_encode([
                 $this->nameSuccess => true,

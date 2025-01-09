@@ -49,7 +49,7 @@ class ConfigurationController extends CController
             exit;
         }
 
-        $model         = Configuration::model()->find('config_key = :config_key', ['config_key' => 'layout']);
+        $model = Configuration::find()->where(['config_key' => 'layout'])->one();
         $model->status = $_POST['status'];
         if ($_POST['status'] == 0) {
             $model->config_value = 0;
@@ -70,7 +70,7 @@ class ConfigurationController extends CController
         $info = 'User change the theme ' . $_POST['value'];
         MagnusLog::insertLOG(2, $info);
 
-        $model               = Configuration::model()->find('config_key = :config_key', [':config_key' => $_POST['field']]);
+        $model = Configuration::find()->where(['config_key' => $_POST['field']])->one();
         $model->config_value = $_POST['value'];
         $model->save();
         echo json_encode([
@@ -85,15 +85,15 @@ class ConfigurationController extends CController
             exit;
         }
 
-        $model               = Configuration::model()->find('config_key = :config_key', ['config_key' => 'admin_email']);
+        $model               = Configuration::find()->where(['config_key' => 'admin_email'])->one();
         $model->config_value = $_POST['email'];
         $model->save();
 
-        $model               = Configuration::model()->find('config_key = :config_key', ['config_key' => 'base_country']);
+        $model               = Configuration::find()->where(['config_key' => 'base_country'])->one();
         $model->config_value = $_POST['countryiso'];
         $model->save();
 
-        $model               = Configuration::model()->find('config_key = :config_key', ['config_key' => 'base_currency']);
+        $model = Configuration::find()->where(['config_key' => 'base_currency'])->one();
         $model->config_value = $_POST['currency'];
         $model->save();
 

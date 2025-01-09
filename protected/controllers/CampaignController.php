@@ -61,6 +61,7 @@ class CampaignController extends CController
         $this->instanceModel        = new Campaign;
         $this->abstractModel        = Campaign::find();
         $this->abstractModelRelated = CampaignPhonebook::find();
+        $this->instanceModelRelated = new CampaignPhonebook;
         $this->titleReport          = Yii::t('app', 'Campaign');
         parent::init();
     }
@@ -343,9 +344,9 @@ class CampaignController extends CController
 
         $nbpage = 10;
 
-        $campaignResult = Campaign::model()->checkCampaignActive($id_campaign, $nbpage, $name_day);
+        $campaignResult = Campaign::checkCampaignActive($id_campaign, $nbpage, $name_day);
 
-        $modelCampaign = $this->abstractModel->findByPk((int) $id_campaign);
+        $modelCampaign = $this->abstractModel->query('id = :key', ['key' =>  $id_campaign]);
 
         if (! isset($campaignResult->id)) {
 

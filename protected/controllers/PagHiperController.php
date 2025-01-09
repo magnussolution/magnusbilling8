@@ -50,10 +50,7 @@ class PagHiperController extends CController
             $filter .= " AND id = 1";
         }
 
-        $modelMethodpay = Methodpay::model()->find([
-            'condition' => $filter,
-            'params'    => $params,
-        ]);
+        $modelMethodpay = Methodpay::find()->where($filter, $params)->one();
 
         if (! isset($modelMethodpay->id)) {
             Yii::error(print_r('Not found paghiper method', true), 'error');
@@ -98,7 +95,7 @@ class PagHiperController extends CController
                 if (isset($result->status_request->status) && $result->status_request->status == 'paid') {
                     // code...
 
-                    $modelRefill = Refill::model()->find('description LIKE :key AND payment = 0', [':key' => '%' . $_POST['transaction_id'] . '%']);
+                    $modelRefill = Refill::find()->where(['like', 'description', $_POST['transaction_id']])->andWhere(['payment' => 0])->one();
                     if (isset($modelRefill->id)) {
                         $modelRefill->payment     = 1;
                         $modelRefill->description = preg_replace('/pendente/', 'confirmado', $modelRefill->description);
@@ -161,15 +158,11 @@ class PagHiperController extends CController
                 Yii::error('description=' . $description, 'error');
                 Yii::error('status=' . $status, 'error');
                 if ($status == 'Aprovado') {
-                    $modelUser = User::model()->find(
-                        "username = :usuario AND id = :key",
-                        [
-                            ':usuario' => $usuario,
-                            ':key'     => $id_user
-                        ]
-                    );
+                    $modelUser = User::find()
+                        ->where(['username' => $usuario, 'id' => $id_user])
+                        ->one();
 
-                    if (isset($modelUser->id) && Refill::model()->countRefill($transacaoID, $modelUser->id) == 0) {
+                    if (isset($modelUser->id) && Refill::countRefill($transacaoID, $modelUser->id) == 0) {
                         Yii::error('teste liberar credito=' . $modelUser->id, 'error');
                         UserCreditManager::releaseUserCredit($modelUser->id, $monto, $description, 1, $transacaoID);
                     }

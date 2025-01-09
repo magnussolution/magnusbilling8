@@ -95,7 +95,7 @@ class  Campaign extends Model
         return $this->hasOne(Plan::class, ['id' => 'id_plan']);
     }
 
-    public function checkCampaignActive($id_campaign, $nbpage, $name_day)
+    public static function checkCampaignActive($id_campaign, $nbpage, $name_day)
     {
         $sql = "SELECT pkg_phonenumber.id as pkg_phonenumber_id, pkg_phonenumber.number, pkg_campaign.id as pkg_campaign_id, pkg_campaign.forward_number,
             pkg_user.id , pkg_user.id_plan, pkg_user.username, pkg_campaign.type, pkg_campaign.description, pkg_phonenumber.name, try, pkg_user.credit, restrict_phone , pkg_user.id_user AS id_agent

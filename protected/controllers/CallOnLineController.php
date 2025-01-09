@@ -85,7 +85,7 @@ class CallOnLineController extends CController
 
         if (preg_match('/^MC\!/', $channel['accountcode'])) {
 
-            $modelPhonenumber = PhoneNumber::model()->find('number = :key', [':key' => $channel['Caller ID']]);
+            $modelPhonenumber = PhoneNumber::find()->where(['number' => $channel['Caller ID']])->one();
 
             echo json_encode([
                 'success'     => true,
@@ -128,7 +128,7 @@ class CallOnLineController extends CController
 
         foreach ($values as $key => $channel) {
 
-            $modelChannel = $this->abstractModel->find('canal = :key', [':key' => $channel['channel']]);
+            $modelChannel = $this->abstractModel->query('canal = :key', [':key' => $channel['channel']])->one();
             if (isset($modelChannel->canal)) {
                 AsteriskAccess::instance()->hangupRequest($modelChannel->canal, $modelChannel->server);
             }

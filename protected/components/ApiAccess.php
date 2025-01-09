@@ -131,7 +131,7 @@ class ApiAccess
 
                     if (isset($modelUser->id)) {
 
-                        $modelGroupModule = GroupModule::model()->getGroupModule($modelUser->id_group, $idUserType == 3 ? true : false, $modelUser->id);
+                        $modelGroupModule = GroupModule::getGroupModule($modelUser->id_group, $idUserType == 3 ? true : false, $modelUser->id);
                         echo json_encode([
                             'menu'    => $baseController->getMenu($modelGroupModule),
                             'actions' => $baseController->getActions($modelGroupModule),
@@ -148,7 +148,7 @@ class ApiAccess
                         die("Access denied in module:" . $_POST['module']);
                     }
                     $module = $_POST['module'];
-                    $rules  = $module::model()->rules();
+                    $rules  = $module::rules();
 
                     echo json_encode($rules);
                     exit;

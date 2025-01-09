@@ -21,15 +21,21 @@
 
 namespace app\controllers;
 
+use PDO;
 use Yii;
+use CDbCriteria;
+use app\models\User;
+use app\models\Refill;
+use app\components\LoadConfig;
 use app\components\CController;
-use app\components\SendCreditRates;
-use app\components\SendCreditSummary;
-use app\components\SendCreditProducts;
+use app\models\SendCreditRates;
+use app\models\TransferToMobile;
+use app\models\SendCreditSummary;
+use app\models\SendCreditProducts;
 use app\components\SendCreditReload;
-
-
-
+use app\components\SendCreditOrange2;
+use app\components\SendCreditTanaSend;
+use app\components\SendCreditDingConnect;
 
 class TransferMobileCreditController extends CController
 {
@@ -47,7 +53,7 @@ class TransferMobileCreditController extends CController
     private $showprice;
     private $sell_price;
     private $local_currency;
-    public $modelTransferToMobile = array();
+    public $modelTransferToMobile;
     public $operator_name;
     public $received_amout;
 
@@ -124,18 +130,14 @@ class TransferMobileCreditController extends CController
                         $_POST['TransferToMobile']['amountValues'] = $_POST['amountValues'];
                     }
 
-                    $modelSendCreditRates = SendCreditRates::model()->find(array(
-                        'condition' => 'id_user = :key',
-                        'params'    => array(
-                            ':key'  => Yii::$app->session['id_user'],
-                            ':key1' => $_POST['TransferToMobile']['amountValues'],
-                        ),
-                        'with'      => array(
-                            'idProduct' => array(
-                                'condition' => 'idProduct.id =  :key1',
-                            ),
-                        ),
-                    ));
+                    $query = SendCreditRates::find();
+                    $query->where('id_user = :key', [':key'  => Yii::$app->session['id_user']]);
+                    $query->joinWith([
+                        'idProduct' => function ($query) {
+                            $query->andWhere(['like', 'pkg_send_credit_rates.id', $_POST['TransferToMobile']['amountValues'], false]);
+                        },
+                    ]);
+                    $modelSendCreditRates = $query->one();
 
                     if (preg_match_all('/\-/', $modelSendCreditRates->idProduct->product) && isset($_POST['TransferToMobile']['amountValuesEUR']) && $_POST['TransferToMobile']['amountValuesEUR'] > 0) {
                         $amouts = explode('-', $modelSendCreditRates->idProduct->product);
@@ -218,15 +220,18 @@ class TransferMobileCreditController extends CController
         if ($this->sell_price > 0 && $this->user_cost > 0) {
 
             $profit = 'transfer_international_profit';
-            SendCreditSummary::model()->updateByPk($this->send_credit_id, array(
-                'profit'         => $this->modelTransferToMobile->{$profit},
-                'amount'         => $this->cost,
-                'sell'           => number_format($this->sell_price, 2),
-                'earned'         => number_format($this->sell_price - $this->user_cost, 2),
-                'received_amout' => $this->local_currency . ' ' . $this->received_amout,
-            ));
+            SendCreditSummary::updateAll(
+                [
+                    'profit'         => $this->modelTransferToMobile->{$profit},
+                    'amount'         => $this->cost,
+                    'sell'           => number_format($this->sell_price, 2),
+                    'earned'         => number_format($this->sell_price - $this->user_cost, 2),
+                    'received_amout' => $this->local_currency . ' ' . $this->received_amout,
+                ],
+                ['id' => $this->send_credit_id]
+            );
         } else {
-            SendCreditSummary::model()->deleteByPk($this->send_credit_id);
+            SendCreditSummary::deleteAll(['id' => $this->send_credit_id]);
         }
     }
 
@@ -240,13 +245,9 @@ class TransferMobileCreditController extends CController
         $this->url = 'https://airtime-api.dtone.com/cgi-bin/shop/topup?';
 
         if ($action == 'topup') {
-            $modelSendCreditProducts = SendCreditProducts::model()->find(array(
-                'condition' => 'operator_name = :key AND product = :key1',
-                'params'    => array(
-                    ':key'  => $this->modelTransferToMobile->operator,
-                    ':key1' => $product,
-                ),
-            ));
+            $modelSendCreditProducts = SendCreditProducts::find()
+                ->where(['operator_name' => $this->modelTransferToMobile->operator, 'product' => $product])
+                ->one();
 
             $this->url = 'https://airtime-api.dtone.com/cgi-bin/shop/topup?';
             $action .= '&msisdn=number&delivered_amount_info=1&product=' . $product . '&operatorid=' . $modelSendCreditProducts->operator_id . '&sms_sent=yes';
@@ -322,7 +323,7 @@ class TransferMobileCreditController extends CController
                 $this->agent_cost = ($_POST['TransferToMobile']['amountValuesBDT'] * $this->cost) - ($_POST['TransferToMobile']['amountValuesBDT'] * $this->cost) * ($agentProfit / 100);
             } else {
                 $modelSendCreditProducts = SendCreditProducts::findOne((int) $_POST['TransferToMobile']['amountValues']);
-                $modelSendCreditRates    = SendCreditRates::model()->find($modelSendCreditProducts->id);
+                $modelSendCreditRates = SendCreditRates::findOne($modelSendCreditProducts->id);
 
                 $this->agent_cost = $modelSendCreditProducts->wholesale_price - ($modelSendCreditProducts->wholesale_price * $agentProfit / 100);
             }
@@ -367,18 +368,16 @@ class TransferMobileCreditController extends CController
 
         $product = $_POST['TransferToMobile']['amountValues']; //is the amout to refill
 
-        $modelSendCreditRates = SendCreditRates::model()->find(array(
-            'condition' => 'id_user = :key',
-            'params'    => array(
-                ':key'  => Yii::$app->session['id_user'],
-                ':key1' => $_POST['TransferToMobile']['amountValues'],
-            ),
-            'with'      => array(
-                'idProduct' => array(
-                    'condition' => 'idProduct.id =  :key1',
-                ),
-            ),
-        ));
+        $query = SendCreditRates::find();
+        $query->where('id_user = :key', [':key'  => Yii::$app->session['id_user']]);
+
+        $query->joinWith([
+            'idProduct' => function ($query) {
+                $query->andWhere(['=', 'pkg_send_credit_products.id', $_POST['TransferToMobile']['amountValues'], false]);
+            },
+        ]);
+        $modelSendCreditRates = $query->one();
+
 
         if (preg_match_all('/-/', $modelSendCreditRates->idProduct->product) && isset($_POST['TransferToMobile']['amountValuesEUR']) && $_POST['TransferToMobile']['amountValuesEUR'] > 0) {
             $modelSendCreditRates->sell_price = $_POST['TransferToMobile']['amountValuesEUR'];
@@ -459,7 +458,7 @@ class TransferMobileCreditController extends CController
         }
     }
 
-    public function releaseCredit($result, $status, $modelSendCreditRates = [])
+    public function releaseCredit($result, $status, $modelSendCreditRates)
     {
 
         if (preg_match('/Orange2|TanaSend/', $result[1])) {
@@ -531,12 +530,13 @@ class TransferMobileCreditController extends CController
             echo $description;
         }
 
-        User::model()->updateByPk(
-            Yii::$app->session['id_user'],
-            array(
-                'credit' => new CDbExpression('credit - ' . $this->user_cost),
-            )
+        User::updateAll(
+            [
+                'credit' => new \yii\db\Expression('credit - ' . $this->user_cost * -1),
+            ],
+            ['id' =>  Yii::$app->session['id_user']]
         );
+
 
         $payment = 1;
         $values  = ":id_user, :costUser, :description, $payment";
@@ -568,12 +568,14 @@ class TransferMobileCreditController extends CController
 
             $modelAgentOld = User::findOne($this->modelTransferToMobile->id_user);
 
-            User::model()->updateByPk(
-                $this->modelTransferToMobile->id_user,
-                array(
-                    'credit' => new CDbExpression('credit - ' . $this->agent_cost),
-                )
+            User::updateAll(
+                [
+                    'credit' => new \yii\db\Expression('credit - ' . $this->agent_cost),
+                ],
+                ['id' => $this->modelTransferToMobile->id_user]
             );
+
+
 
             $payment = 1;
             $values  = ":id_user, :costAgent, :description, $payment";
@@ -608,14 +610,11 @@ class TransferMobileCreditController extends CController
 
         if (isset($this->config['global']['fm_transfer_to_username'])) {
 
-            $modelRefill = Refill::model()->find(
-                'description LIKE :key AND date BETWEEN :key1 AND  NOW() AND payment = 1 AND id_user = :key2',
-                array(
-                    ':key'  => "%" . $number . "%",
-                    ':key1' => date('Y-m-d H:i', mktime(date('H'), date('i') - 2, date('s'), date('m'), date('d'), date('Y'))),
-                    ':key2' => Yii::$app->session['id_user'],
-                )
-            );
+            $modelRefill = Refill::find()
+                ->where(['like', 'description', $number])
+                ->andWhere(['between', 'date', date('Y-m-d H:i', mktime(date('H'), date('i') - 2, date('s'), date('m'), date('d'), date('Y'))), new \yii\db\Expression('NOW()')])
+                ->andWhere(['payment' => 1, 'id_user' => Yii::$app->session['id_user']])
+                ->one();
             if (isset($modelRefill->id)) {
                 echo '<div align=center id="container">';
                 echo "<font color=red>You already send credit to this number. Wait minimal 2 minutes to new recharge</font>";
@@ -637,19 +636,17 @@ class TransferMobileCreditController extends CController
             }
 
             //find products whit trasnferto operatorid
-            $modelSendCreditProducts = SendCreditProducts::model()->findAll('operator_id = :key AND status = 1', array(':key' => $operatorid));
+            $modelSendCreditProducts = SendCreditProducts::find()->query('operator_id = :key AND status = 1', array(':key' => $operatorid))->all();
 
             if (!count($modelSendCreditProducts)) {
 
                 //not receive Operator ID FROM API. API OFF LINE. GET operator from country_code
                 $numberFormate           = $this->number;
                 $numberFormate           = substr($numberFormate, 0, 2) == '00' ? substr($numberFormate, 2) : $numberFormate;
-                $modelSendCreditProducts = SendCreditProducts::model()->findAll(
-                    'country_code = SUBSTRING(:key,1,length(country_code)) AND status = 1',
-                    array(
-                        ':key' => $numberFormate,
-                    )
-                );
+                $modelSendCreditProducts = SendCreditProducts::find()
+                    ->where(['like', 'country_code', $numberFormate . '%', false])
+                    ->andWhere(['status' => 1])
+                    ->all();
                 $forceOperatorSelect = true;
                 // echo $modelSendCreditProducts[0]->id . ' ' . $modelSendCreditProducts[0]->country_code;
 
@@ -664,26 +661,19 @@ class TransferMobileCreditController extends CController
                 exit;
             }
 
-            $modelSendCreditProducts = SendCreditProducts::model()->findAll(
-                'status = 1 AND operator_name = :key AND country_code =:key1 AND type = :key2',
-                array(
-                    ':key'  => $modelSendCreditProducts[0]->operator_name,
-                    ':key1' => $modelSendCreditProducts[0]->country_code,
-                    ':key2' => 'Mobile Credit',
-                )
-            );
+            $modelSendCreditProducts = SendCreditProducts::find()
+                ->where(['status' => 1, 'operator_name' => $modelSendCreditProducts[0]->operator_name, 'country_code' => $modelSendCreditProducts[0]->country_code, 'type' => 'Mobile Credit'])
+                ->all();
 
             $ids_products = array();
             foreach ($modelSendCreditProducts as $key => $products) {
                 $ids_products[] = $products->id;
             }
             //get the user prices to mount the amount combo
-            $criteria = new CDbCriteria();
-            $criteria->addInCondition('id_product', $ids_products);
-            $criteria->addCondition('id_user = :key');
-            $criteria->params[':key'] = Yii::$app->session['id_user'];
-
-            $modelSendCreditRates = SendCreditRates::model()->findAll($criteria);
+            $query = SendCreditRates::find();
+            $query->where('id_product IN (:key)', [':key' => $ids_products]);
+            $query->andWhere('id_user = :key1', [':key1' => Yii::$app->session['id_user']]);
+            $modelSendCreditRates = $query->all();
 
             if (!count($modelSendCreditRates)) {
                 exit('Before send credit, you need add your sell price');
@@ -781,10 +771,9 @@ class TransferMobileCreditController extends CController
     public function actionGetProducts()
     {
 
-        $modelSendCreditProducts = SendCreditProducts::model()->findAll(array(
-            'condition' => 'operator_name = :key AND status = 1',
-            'params'    => array(':key' => $_GET['operator']),
-        ));
+        $modelSendCreditProducts = SendCreditProducts::find()
+            ->where(['operator_name' => $_GET['operator'], 'status' => 1])
+            ->all();
 
         if (!isset($modelSendCreditProducts[0]->operator_id)) {
             return;
@@ -798,12 +787,10 @@ class TransferMobileCreditController extends CController
         }
 
         //get the user prices to mount the amount combo
-        $criteria = new CDbCriteria();
-        $criteria->addInCondition('id_product', $ids_products);
-        $criteria->addCondition('id_user = :key');
-        $criteria->params[':key'] = Yii::$app->session['id_user'];
-
-        $modelSendCreditRates = SendCreditRates::model()->findAll($criteria);
+        $query = SendCreditRates::find();
+        $query->where(['id_product' => $ids_products]);
+        $query->andWhere(['id_user' => Yii::$app->session['id_user']]);
+        $modelSendCreditRates = $query->all();
 
         $values = array();
         $i      = 0;
@@ -855,11 +842,9 @@ class TransferMobileCreditController extends CController
         $modelSendCreditProducts = SendCreditProducts::findOne(Yii::$app->session['interval_product_id']);
 
         if ($_GET['currency'] == 'EUR') {
-
-            $modelSendCreditRates = SendCreditRates::model()->find('id_user = :key AND id_product = :key1', [
-                ':key'  => Yii::$app->session['id_user'],
-                ':key1' => $modelSendCreditProducts->id,
-            ]);
+            $modelSendCreditRates = SendCreditRates::find()
+                ->where(['id_user' => Yii::$app->session['id_user'], 'id_product' => $modelSendCreditProducts->id])
+                ->one();
 
             $amountBDT = $_GET['amount'] / $modelSendCreditRates->sell_price;
 

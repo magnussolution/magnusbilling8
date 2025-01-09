@@ -31,7 +31,7 @@ class Portabilidade
             $is_mobile = false;
             $is_fixed  = false;
 
-            $modelPlan = Plan::model()->findOne((int) $id_plan);
+            $modelPlan = Plan::findOne((int) $id_plan);
 
             if (strlen($ddd) >= 11 || substr($ddd, 2, 1) >= 7) {
                 $is_mobile = true;
@@ -55,7 +55,7 @@ class Portabilidade
                     if ($is_mobile && strlen($ddd) == 10 && substr($ddd, 2, 1) == 7) {
                         //verifico se é radio
                         $sql     = "SELECT company FROM pkg_portabilidade_prefix  WHERE number = :key LIMIT 1";
-                        $command = Yii::app()->db->createCommand($sql);
+                        $command = Yii::$app->db->createCommand($sql);
                         $command->bindValue(":key", substr($ddd, 0, 6), PDO::PARAM_STR);
                         $result = $command->queryAll();
 
@@ -68,7 +68,7 @@ class Portabilidade
                     }
 
                     $sql     = "SELECT company FROM pkg_portabilidade  WHERE number = :key ORDER BY id DESC LIMIT 1";
-                    $command = Yii::app()->db->createCommand($sql);
+                    $command = Yii::$app->db->createCommand($sql);
                     $command->bindValue(":key", $ddd, PDO::PARAM_STR);
                     $result = $command->queryAll();
 
@@ -80,7 +80,7 @@ class Portabilidade
                         } else {
                             $sql = "SELECT company FROM pkg_portabilidade_prefix WHERE number = " . substr($ddd, 0, 6) . " ORDER BY number DESC LIMIT 1";
                         }
-                        $result = Yii::app()->db->createCommand($sql)->queryAll();
+                        $result = Yii::$app->db->createCommand($sql)->queryAll();
 
                         if (is_array($result) && isset($result[0]['company'])) {
                             $destination = preg_replace("/^55/", '1111', $result[0]['company']) . $destination;

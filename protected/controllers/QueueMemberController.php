@@ -56,19 +56,16 @@ class QueueMemberController extends CController
         $this->checkRelation($values);
 
         if (isset($values['interface'])) {
-            $modelSip = Sip::model()->find(
-                "id = :id",
-                ['id' => $values['interface']]
-            );
+            $modelSip = Sip::findOne(['id' => $values['interface']]);
 
             $values['id_user']   = $modelSip->id_user;
             $values['interface'] = 'SIP/' . $modelSip->name;
         }
         if (isset($values['queue_name'])) {
-            $modelQueue = Queue::model()->find(
-                "id = :id OR name = :id",
-                ['id' => $values['queue_name']]
-            );
+            $modelQueue = Queue::find()
+                ->where(['id' => $values['queue_name']])
+                ->orWhere(['name' => $values['queue_name']])
+                ->one();
             $values['queue_name'] = $modelQueue->name;
         }
 
@@ -97,7 +94,9 @@ class QueueMemberController extends CController
                 $modelQueueMember = QueueMember::findOne((int) $values['id']);
 
                 $modelSip   = Sip::findOne((int) $values['interface']);
-                $modelQueue = Queue::model()->find('name = :key', [':key' => $modelQueueMember['queue_name']]);
+                $modelQueue = Queue::find()
+                    ->where(['name' => $modelQueueMember['queue_name']])
+                    ->one();
 
                 if ($modelSip->id_user != $modelQueue->id_user) {
                     echo json_encode([

@@ -41,7 +41,7 @@ class CSVActiveRecorder
         $sql = $this->createSQL($this->model->tableName());
 
         try {
-            Yii::app()->db->createCommand($sql)->execute();
+            Yii::$app->db->createCommand($sql)->execute();
             return true;
         } catch (CDBException $e) {
             $this->addError($e->getMessage());

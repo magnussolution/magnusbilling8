@@ -83,7 +83,7 @@ class SendCreditSummaryController extends CController
         $modelSendCreditSummary = SendCreditSummary::find()->all();;
         foreach ($modelSendCreditSummary as $key => $value) {
 
-        $modelRefill = Refill::model()->find('invoice_number = :key', [':key' => $value->id]);
+        $modelRefill = Refill::find()->where(['invoice_number' => $value->id])->one();
         if (isset($modelRefill->description)) {
         # code...
 
@@ -96,12 +96,11 @@ class SendCreditSummaryController extends CController
 
         }
          */
-        $modelSendCreditSummary = SendCreditSummary::model()->findAll([
-            'select'    => $this->select,
-            'condition' => $this->filter,
-            'params'    => $this->paramsFilter,
-            'order'     => 'date DESC, service',
-        ]);
+        $modelSendCreditSummary = SendCreditSummary::find()
+            ->select($this->select)
+            ->where($this->filter, $this->paramsFilter)
+            ->orderBy(['date' => SORT_DESC, 'service' => SORT_ASC])
+            ->all();
 
         $this->render('index', [
             'model'                  => $model,

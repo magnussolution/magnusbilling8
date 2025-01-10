@@ -15,7 +15,6 @@ use app\models\UserRate;
 
 class UserRateController extends CController
 {
-    public $attributeOrder = 't.id DESC';
     public $titleReport    = 'User Rate';
     public $subTitleReport = 'User Rate';
 
@@ -38,6 +37,7 @@ class UserRateController extends CController
     {
         $this->instanceModel = new UserRate;
         $this->abstractModel = UserRate::find();
+        $this->attributeOrder = $this->instanceModel::tableName() . '.id DESC';
         parent::init();
     }
 }

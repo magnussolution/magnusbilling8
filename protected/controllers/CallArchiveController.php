@@ -31,7 +31,6 @@ use Phar;
 
 class CallArchiveController extends CController
 {
-    public $attributeOrder = 't.id DESC';
     public $extraValues    = [
         'idUser'   => 'username',
         'idPlan'   => 'name',
@@ -90,6 +89,7 @@ class CallArchiveController extends CController
         $this->abstractModel = CallArchive::find();
         $this->titleReport   = Yii::t('app', 'Calls');
 
+        $this->attributeOrder = $this->instanceModel::tableName() . '.id DESC';
         parent::init();
 
         if (! Yii::$app->session['isAdmin']) {

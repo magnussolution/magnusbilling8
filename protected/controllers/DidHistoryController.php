@@ -29,13 +29,14 @@ use app\models\DidHistory;
 
 class DidHistoryController extends CController
 {
-    public $attributeOrder = 't.id';
+    public $attributeOrder;
 
     public function init()
     {
         $this->instanceModel = new DidHistory;
         $this->abstractModel = DidHistory::find();
         $this->titleReport   = Yii::t('app', 'DID History');
+        $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();
     }
 }

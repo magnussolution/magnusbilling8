@@ -24,7 +24,6 @@ use app\models\Iax;
 
 class IaxController extends CController
 {
-    public $attributeOrder = 'regseconds DESC';
     public $extraValues    = array('idUser' => 'username');
 
     public $fieldsFkReport = array(
@@ -39,6 +38,7 @@ class IaxController extends CController
     {
         $this->instanceModel = new Iax;
         $this->abstractModel = Iax::find();
+        $this->attributeOrder = $this->instanceModel::tableName() . '.regseconds DESC';
         parent::init();
     }
 

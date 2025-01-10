@@ -29,7 +29,6 @@ use app\models\DidUse;
 
 class DidUseController extends CController
 {
-    public $attributeOrder = 'status DESC, DAY( reservationdate ) ASC';
     public $extraValues    = ['idDid' => 'did', 'idUser' => 'username'];
 
     public $fieldsInvisibleClient = [
@@ -49,6 +48,7 @@ class DidUseController extends CController
         Yii::$app->db->createCommand($sql)->execute();
         $sql = "UPDATE pkg_did_use SET next_due_date = '' WHERE status = 0";
         Yii::$app->db->createCommand($sql)->execute();
+        $this->attributeOrder = $this->instanceModel::tableName() . '.status DESC, DAY( reservationdate ) ASC';
         parent::init();
     }
 }

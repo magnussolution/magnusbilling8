@@ -29,7 +29,7 @@ use app\models\OfferUse;
 
 class OfferUseController extends CController
 {
-    public $attributeOrder = 't.id';
+    public $attributeOrder;
     public $extraValues    = ['idOffer' => 'label', 'idUser' => 'username'];
 
     public $fieldsFkReport = [
@@ -56,6 +56,7 @@ class OfferUseController extends CController
                 'condition' => "idUser.id_user < 2",
             ];
         }
+        $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();
     }
 }

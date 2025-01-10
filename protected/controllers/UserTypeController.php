@@ -15,12 +15,13 @@ use app\models\UserType;
 
 class UserTypeController extends CController
 {
-    public $attributeOrder = 't.id';
+    public $attributeOrder;
 
     public function init()
     {
         $this->instanceModel = new UserType;
         $this->abstractModel = UserType::find();
+        $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();
     }
 }

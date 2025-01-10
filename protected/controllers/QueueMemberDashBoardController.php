@@ -31,7 +31,7 @@ use app\models\QueueMemberDashBoard;
 class QueueMemberDashBoardController extends CController
 {
 
-    public $attributeOrder = 't.id';
+    public $attributeOrder;
     public $extraValues    = ['idQueue' => 'name'];
 
     public function init()
@@ -40,6 +40,7 @@ class QueueMemberDashBoardController extends CController
         $this->abstractModel = QueueMemberDashBoard::find();
         $this->titleReport   = Yii::t('app', 'Queue Member DashBoard');
 
+        $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();
     }
 

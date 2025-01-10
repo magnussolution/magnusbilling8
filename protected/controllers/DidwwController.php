@@ -29,7 +29,7 @@ use app\models\Did;
 
 class DidwwController extends CController
 {
-    public $attributeOrder = 't.id';
+    public $attributeOrder;
 
     private $api_key;
     private $url;
@@ -38,6 +38,7 @@ class DidwwController extends CController
 
     public function init()
     {
+        $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();
         $this->api_key            = $this->config['global']['didww_api_key'];
         $this->url                = $this->config['global']['didww_url'];

@@ -30,7 +30,7 @@ use app\models\WHMCS;
 class WHMCSController extends CController
 {
 
-    public $attributeOrder = 'id';
+
     public $extraValues    = ['idUser' => 'username'];
     public function init()
     {
@@ -38,6 +38,7 @@ class WHMCSController extends CController
         $this->abstractModel = WHMCS::find();
         $this->titleReport   = Yii::t('app', 'WHMCS');
 
+        $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();
     }
 }

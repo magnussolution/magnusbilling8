@@ -33,7 +33,6 @@ use app\components\AccessManager;
 
 class SmsController extends CController
 {
-    public $attributeOrder = 'date DESC';
     public $extraValues    = ['idUser' => 'username'];
 
     public function init()
@@ -41,6 +40,7 @@ class SmsController extends CController
         $this->instanceModel = new Sms;
         $this->abstractModel = Sms::find();
         $this->titleReport   = 'SMS';
+        $this->attributeOrder = $this->instanceModel::tableName() . '.date DESC';
         parent::init();
     }
 

@@ -24,14 +24,13 @@ use app\models\CallSummaryPerMonth;
 
 class CallSummaryPerMonthController extends CController
 {
-    public $attributeOrder = 'month DESC';
-
     public function init()
     {
         $this->instanceModel = new CallSummaryPerMonth;
         $this->abstractModel = CallSummaryPerMonth::find();
         $this->titleReport   = Yii::t('app', 'Summary per Month');
 
+        $this->attributeOrder = $this->instanceModel::tableName() . '.month DESC';
         parent::init();
     }
 

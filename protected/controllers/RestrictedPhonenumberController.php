@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Acoes do modulo "Call".
+ * Acoes do modulo "RestrictedPhonenumber".
  *
  * =======================================
  * ###################################
@@ -9,7 +9,7 @@
  *
  * @package MagnusBilling
  * @author Adilson Leffa Magnus.
- * @copyright Copyright (C) 2005 - 2025 MagnusSolution. All rights reserved.
+ * @copyright Copyright (C) 2005 - 2023 MagnusSolution. All rights reserved.
  * ###################################
  *
  * This software is released under the terms of the GNU Lesser General Public License v2.1
@@ -17,25 +17,20 @@
  *
  * Please submit bug reports, patches, etc to https://github.com/magnusbilling/mbilling/issues
  * =======================================
- * Magnusbilling.org <info@magnusbilling.org>
- * 04/01/2025
+ * Magnusbilling.com <info@magnusbilling.com>
+ * 17/08/2012
  */
 
 namespace app\controllers;
 
 use Yii;
 use app\components\CController;
-use app\models\Callerid;
+use app\models\RestrictedPhonenumber;
 
-class CalleridController extends CController
+
+class RestrictedPhonenumberController extends CController
 {
-    public $attributeOrder        = 'pkg_callerid.id';
-    public $extraValues           = ['idUser' => 'username'];
-    public $fieldsInvisibleClient = [
-        'tipo',
-        'tmp',
-        'idUserusername',
-    ];
+    public $extraValues    = ['idUser' => 'username'];
 
     public $fieldsFkReport = [
         'id_user' => [
@@ -47,25 +42,18 @@ class CalleridController extends CController
 
     public function init()
     {
-        $this->instanceModel = new Callerid;
-        $this->abstractModel = Callerid::find();
-        $this->titleReport   = Yii::t('app', 'CallerID');
+
+        $this->instanceModel = new RestrictedPhonenumber;
+        $this->abstractModel = RestrictedPhonenumber::find();
+        $this->titleReport   = Yii::t('app', 'Refill Providers');
         $this->attributeOrder = $this->instanceModel::tableName() . '.id';
+
         parent::init();
     }
 
     public function importCsvSetAdditionalParams()
     {
         $values = $this->getAttributesRequest();
-        return [
-            [
-                'key'   => 'id_user',
-                'value' => $values['id_user'],
-            ],
-            [
-                'key'   => 'activated',
-                'value' => 1,
-            ],
-        ];
+        return [['key' => 'id_user', 'value' => $values['id_user']]];
     }
 }

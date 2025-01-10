@@ -29,12 +29,13 @@ use app\models\Holidays;
 
 class HolidaysController extends CController
 {
-    public $attributeOrder = 't.id';
+    public $attributeOrder;
     public function init()
     {
         $this->instanceModel = new Holidays;
         $this->abstractModel = Holidays::find();
         $this->titleReport   = Yii::t('app', 'Holidays');
+        $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();
     }
 }

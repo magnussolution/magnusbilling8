@@ -32,7 +32,7 @@ use app\models\Configuration;
 
 class ConfigurationController extends CController
 {
-    public $attributeOrder = 'config_group_title DESC';
+
     public $defaultFilter  = 'status =1';
 
     public function init()
@@ -40,6 +40,7 @@ class ConfigurationController extends CController
         $this->instanceModel = new Configuration;
         $this->abstractModel = Configuration::find();
         $this->titleReport   = Yii::t('app', 'Config');
+        $this->attributeOrder = $this->instanceModel::tableName() . '.config_group_title DESC';
         parent::init();
     }
 

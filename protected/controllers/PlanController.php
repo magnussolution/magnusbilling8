@@ -30,20 +30,15 @@ use app\models\Plan;
 
 class PlanController extends CController
 {
-    public $attributeOrder = 'name';
+
     public $extraValues    = ['idUser' => 'username'];
-
-
-
 
     public function init()
     {
         $this->instanceModel = new Plan();
         $this->abstractModel = Plan::find();
         $this->titleReport   = Yii::t('app', 'Plan');
-
-
-
+        $this->attributeOrder = $this->instanceModel::tableName() . '.name';
         parent::init();
     }
 }

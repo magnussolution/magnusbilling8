@@ -40,7 +40,7 @@ use Exception;
 
 class DidController extends CController
 {
-    public $attributeOrder = 't.id';
+    public $attributeOrder;
     public $extraValues    = ['idUser' => 'username', 'idServer' => 'name'];
     public $config;
 
@@ -166,6 +166,7 @@ class DidController extends CController
         if (Yii::$app->session['isClient']) {
             $this->attributeOrder = 't.id_user DESC';
         }
+        $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();
     }
 

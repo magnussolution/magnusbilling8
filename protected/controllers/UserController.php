@@ -24,7 +24,6 @@ use Exception;
 
 class UserController extends CController
 {
-    public $attributeOrder = 'credit DESC';
     public $titleReport    = 'User';
     public $subTitleReport = 'User';
 
@@ -110,6 +109,7 @@ class UserController extends CController
     {
         $this->instanceModel = new User;
         $this->abstractModel = User::find();
+        $this->attributeOrder = $this->instanceModel::tableName() . '.credit DESC';
         parent::init();
     }
 

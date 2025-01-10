@@ -29,7 +29,6 @@ use app\models\SendCreditSummary;
 
 class SendCreditSummaryController extends CController
 {
-    public $attributeOrder = 't.date DESC';
 
     public function actionRead($asJson = true, $condition = null)
     {

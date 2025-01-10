@@ -66,6 +66,7 @@ class TransferMobileCreditController extends CController
 
         $this->instanceModel = new User;
         $this->abstractModel = User::find();
+        $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();
 
         $this->login    = $this->config['global']['fm_transfer_to_username'];

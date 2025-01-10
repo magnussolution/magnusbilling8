@@ -25,7 +25,6 @@ use app\models\CallSummaryPerUser;
 class CallSummaryPerUserController extends CController
 {
     public $config;
-    public $attributeOrder = 't.id_user DESC';
     public $extraValues    = array('idUser' => 'username');
     public $join           = 'JOIN pkg_user c ON t.id_user = c.id';
     public $fieldsFkReport = array(
@@ -56,6 +55,7 @@ class CallSummaryPerUserController extends CController
         $this->instanceModel = new CallSummaryPerUser;
         $this->abstractModel = CallSummaryPerUser::find();
         $this->titleReport   = Yii::t('app', 'Summary Day User');
+        $this->attributeOrder = $this->instanceModel::tableName() . '.id_user DESC';
         parent::init();
     }
 

@@ -12,13 +12,13 @@ use app\models\CampaignLog;
 
 class CampaignLogController extends CController
 {
-    public $attributeOrder = 't.date DESC';
 
     public function init()
     {
         $this->instanceModel = new CampaignLog;
         $this->abstractModel = CampaignLog::find();
         $this->titleReport   = Yii::t('app', 'CampaignLog');
+        $this->attributeOrder = $this->instanceModel::tableName() . '.date DESC';
         parent::init();
     }
 }

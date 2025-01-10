@@ -12,10 +12,6 @@ use app\models\Plan;
 class SiteController extends CController
 {
 
-    public function init()
-    {
-        parent::init();
-    }
 
     public function actionError()
     {

@@ -29,7 +29,6 @@ use app\models\OfferCdr;
 
 class OfferCdrController extends CController
 {
-    public $attributeOrder = 'date_consumption DESC';
     public $extraValues    = ['idOffer' => 'label', 'idUser' => 'username'];
 
     public $fieldsFkReport = [
@@ -62,6 +61,7 @@ class OfferCdrController extends CController
         $filter         = $this->createCondition(json_decode($filter));
         $whereStarttime =  ! preg_match("/date_consumption/", $filter) ? ' AND date_consumption > "' . date('Y-m-d') . '"' : false;
         //$this->filter = $whereStarttime;
+        $this->attributeOrder = $this->instanceModel::tableName() . '.date_consumption DESC';
         parent::init();
     }
 

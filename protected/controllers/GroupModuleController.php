@@ -36,6 +36,7 @@ class GroupModuleController extends CController
     {
         $this->instanceModel = new GroupModule;
         $this->abstractModel = GroupModule::find();
+        $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();
     }
 }

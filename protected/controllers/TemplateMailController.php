@@ -30,7 +30,6 @@ use app\models\TemplateMail;
 
 class TemplateMailController extends CController
 {
-    public $attributeOrder = 't.language, t.mailtype';
 
     public function init()
     {
@@ -44,6 +43,7 @@ class TemplateMailController extends CController
                 'condition' => "idUser.id  = 1",
             ];
 
+            $this->attributeOrder = $this->instanceModel::tableName() . '.language, ' . $this->instanceModel::tableName() . '.mailtype';
             parent::init();
         }
     }

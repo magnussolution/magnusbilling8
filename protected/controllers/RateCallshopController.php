@@ -29,13 +29,14 @@ use app\models\RateCallshop;
 
 class RateCallshopController extends CController
 {
-    public $attributeOrder = 't.id';
+    public $attributeOrder;
 
     public function init()
     {
         $this->instanceModel = new RateCallshop;
         $this->abstractModel = RateCallshop::find();
         $this->titleReport   = Yii::t('app', 'Rates') . ' ' . Yii::t('app', 'CallShop');
+        $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();
     }
 

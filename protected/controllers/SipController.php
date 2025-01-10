@@ -29,7 +29,7 @@ use app\components\AsteriskAccess;
 
 class SipController extends CController
 {
-    public $attributeOrder = 't.id ASC';
+
     public $extraValues    = [
         'idUser'       => 'username',
         'idTrunkGroup' => 'name',
@@ -70,6 +70,7 @@ class SipController extends CController
     {
         $this->instanceModel = new Sip;
         $this->abstractModel = Sip::find();
+        $this->attributeOrder = $this->instanceModel::tableName() . '.id ASC';
         parent::init();
     }
 

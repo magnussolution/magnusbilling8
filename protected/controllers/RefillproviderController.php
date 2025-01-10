@@ -30,7 +30,7 @@ use app\models\Provider;
 
 class RefillproviderController extends CController
 {
-    public $attributeOrder = 'id';
+
     public $extraValues    = ['idProvider' => 'provider_name'];
     public $filterByUser   = false;
     public $fieldsFkReport = [
@@ -47,6 +47,7 @@ class RefillproviderController extends CController
         $this->abstractModel = Refillprovider::find();
         $this->titleReport   = Yii::t('app', 'Refill Providers');
 
+        $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();
     }
 

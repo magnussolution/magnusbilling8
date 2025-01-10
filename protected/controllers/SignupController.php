@@ -23,7 +23,7 @@ use app\models\GroupUser;
 
 class SignupController extends CController
 {
-    public $attributeOrder = 't.id';
+    public $attributeOrder;
     public function actions()
     {
         return array(

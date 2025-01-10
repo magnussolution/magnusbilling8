@@ -32,7 +32,7 @@ use Exception;
 
 class QueueController extends CController
 {
-    public $attributeOrder = 't.id';
+    public $attributeOrder;
     public $extraValues    = ['idUser' => 'username'];
 
     private $host     = 'localhost';
@@ -52,6 +52,7 @@ class QueueController extends CController
         $this->instanceModel = new Queue;
         $this->abstractModel = Queue::find();
         $this->titleReport   = Yii::t('app', 'Queue');
+        $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();
     }
 

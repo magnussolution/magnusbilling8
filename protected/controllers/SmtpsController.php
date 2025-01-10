@@ -32,7 +32,7 @@ use app\components\Mail;
 
 class SmtpsController extends CController
 {
-    public $attributeOrder = 't.id';
+    public $attributeOrder;
     public $extraValues    = ['idUser' => 'username'];
 
     public $fieldsFkReport = [
@@ -58,6 +58,7 @@ class SmtpsController extends CController
         $this->abstractModel = Smtps::find();
         $this->titleReport   = 'SMTP';
 
+        $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();
     }
 

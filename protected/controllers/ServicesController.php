@@ -30,7 +30,7 @@ use app\models\ServicesModule;
 
 class ServicesController extends CController
 {
-    public $attributeOrder = 't.id';
+    public $attributeOrder;
 
     public $nameModelRelated        = 'ServicesModule';
     public $extraFieldsRelated      = ['show_menu', 'action', 'id_module', 'createShortCut', 'createQuickStart'];
@@ -45,6 +45,7 @@ class ServicesController extends CController
         $this->titleReport          = Yii::t('app', 'Services');
         $this->abstractModelRelated = ServicesModule::find();
         $this->instanceModelRelated = new ServicesModule;
+        $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();
     }
 

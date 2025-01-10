@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use Yii;
 use app\components\CController;
+use app\models\TrunkSipCodes;
 
 class TrunkSipCodesController extends CController
 {
@@ -13,10 +14,11 @@ class TrunkSipCodesController extends CController
      *
      * @return string
      */
-    public function actionIndex()
+    public function init()
     {
-
-
-        echo 'ok';
+        $this->instanceModel = new TrunkSipCodes;
+        $this->abstractModel = TrunkSipCodes::find();
+        $this->attributeOrder = $this->instanceModel::tableName() . '.id DESC';
+        parent::init();
     }
 }

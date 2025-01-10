@@ -28,7 +28,18 @@ use app\models\CampaignPoll;
 
 class CampaignPollInfoChartController extends CController
 {
-    public $attributeOrder = 'id';
+
+
+    public function init()
+    {
+        $this->instanceModel = new CampaignPollInfo;
+        $this->abstractModel = CampaignPollInfo::find();
+        $this->titleReport   = Yii::t('app', 'CampaignPollInfo');
+
+        $this->attributeOrder = $this->instanceModel::tableName() . '.id';
+        parent::init();
+    }
+
 
     public function actionRead($asJson = true, $condition = null)
     {

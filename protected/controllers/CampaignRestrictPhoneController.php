@@ -30,13 +30,14 @@ use app\models\CampaignRestrictPhone;
 
 class CampaignRestrictPhoneController extends CController
 {
-    public $attributeOrder = 't.id';
+    public $attributeOrder;
 
     public function init()
     {
         $this->instanceModel = new CampaignRestrictPhone;
         $this->abstractModel = CampaignRestrictPhone::find();
         $this->titleReport   = Yii::t('app', 'Campaign Restrict Phone');
+        $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();
     }
 

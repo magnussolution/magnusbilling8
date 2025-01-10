@@ -37,7 +37,6 @@ use Exception;
 
 class CallController extends CController
 {
-    public $attributeOrder = 't.id DESC';
     public $extraValues    = [
         'idUser'     => 'username',
         'idPlan'     => 'name',
@@ -108,6 +107,7 @@ class CallController extends CController
         $this->abstractModel = Call::find();
         $this->titleReport   = Yii::t('app', 'Calls');
 
+        $this->attributeOrder = $this->instanceModel::tableName() . '.id DESC';
         parent::init();
 
         if (! Yii::$app->session['isAdmin']) {

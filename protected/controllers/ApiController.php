@@ -29,7 +29,7 @@ use app\models\Api;
 
 class ApiController extends CController
 {
-    public $attributeOrder = 't.id';
+    public $attributeOrder;
     public $extraValues    = ['idUser' => 'username'];
 
     public $fieldsFkReport = [
@@ -45,6 +45,7 @@ class ApiController extends CController
         $this->instanceModel = new Api;
         $this->abstractModel = Api::find();
         $this->titleReport   = Yii::t('app', 'API');
+        $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();
     }
 

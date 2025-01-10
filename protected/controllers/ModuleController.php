@@ -34,8 +34,6 @@ class ModuleController extends CController
     public $defaultSortDir = null;
     public $fixedWhere     = null;
     public $extraValues    = ['idModule' => 'text'];
-
-    public $attributeOrder = 'id_module ASC, priority ASC';
     public $titleReport    = 'Module';
     public $subTitleReport = 'Module';
     public $rendererReport = [
@@ -46,6 +44,7 @@ class ModuleController extends CController
     {
         $this->instanceModel = new Module;
         $this->abstractModel = Module::find();
+        $this->attributeOrder = $this->instanceModel::tableName() . '.id_module ASC, ' . $this->instanceModel::tableName() . '.priority ASC';
         parent::init();
     }
 

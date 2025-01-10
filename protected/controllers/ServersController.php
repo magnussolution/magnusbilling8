@@ -34,7 +34,7 @@ use Exception;
 
 class ServersController extends CController
 {
-    public $attributeOrder = 't.id';
+    public $attributeOrder ;
 
     public $nameModelRelated   = 'ServersServers';
     public $nameFkRelated      = 'id_proxy';
@@ -47,6 +47,7 @@ class ServersController extends CController
         $this->titleReport          = Yii::t('app', 'CallerID');
         $this->abstractModelRelated = ServersServers::find();
         $this->instanceModelRelated = new ServersServers;
+        $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();
     }
 

@@ -30,7 +30,7 @@ use app\models\Campaign;
 
 class CampaignPollController extends CController
 {
-    public $attributeOrder = 't.id';
+    public $attributeOrder;
     public $extraValues    = ['idCampaign' => 'name', 'idUser' => 'username'];
 
     private $uploaddir;
@@ -48,6 +48,7 @@ class CampaignPollController extends CController
         $this->instanceModel = new CampaignPoll;
         $this->abstractModel = CampaignPoll::find();
         $this->titleReport   = Yii::t('app', 'Poll');
+        $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();
     }
 

@@ -29,7 +29,6 @@ use app\components\AccessManager;
 
 class CallOnLineController extends CController
 {
-    public $attributeOrder = 't.duration DESC, status ASC';
     public $extraValues    = ['idUser' => 'username,credit'];
 
     public $fieldsInvisibleClient = [
@@ -45,7 +44,7 @@ class CallOnLineController extends CController
         $this->instanceModel = new CallOnLine;
         $this->abstractModel = CallOnLine::find();
         $this->titleReport   = Yii::t('app', 'Calls Online');
-
+        $this->attributeOrder = $this->instanceModel::tableName() . '.duration DESC, ' . $this->instanceModel::tableName() . '.status ASC';
         parent::init();
 
         if (Yii::$app->getSession()->get('isAgent')) {

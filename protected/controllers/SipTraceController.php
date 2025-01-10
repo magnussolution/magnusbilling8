@@ -31,13 +31,13 @@ use Exception;
 
 class SipTraceController extends CController
 {
-    public $attributeOrder = 't.id ASC';
     private $log_name      = 'resources/reports/siptrace.log';
     public function init()
     {
         $this->instanceModel = new SipTrace;
         $this->abstractModel = SipTrace::find();
         $this->titleReport   = Yii::t('app', 'SipTrace');
+        $this->attributeOrder = $this->instanceModel::tableName() . '.id ASC';
         parent::init();
     }
 

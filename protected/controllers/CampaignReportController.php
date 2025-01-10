@@ -25,7 +25,7 @@ use app\models\CampaignReport;
 
 class CampaignReportController extends CController
 {
-    public $attributeOrder = 't.id';
+    public $attributeOrder;
     public $defaultFilter  = 't.status = 1';
     private $interval      = 0;
     public function init()
@@ -33,6 +33,7 @@ class CampaignReportController extends CController
         $this->instanceModel = new Campaign;
         $this->abstractModel = Campaign::find();
         $this->titleReport   = Yii::t('app', 'Campaign Report');
+        $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();
     }
 

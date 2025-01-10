@@ -29,7 +29,7 @@ use app\models\PhoneNumber;
 
 class PhoneNumberController extends CController
 {
-    public $attributeOrder = 't.id';
+    public $attributeOrder;
     public $extraValues    = ['idPhonebook' => 'name'];
 
     public $fieldsFkReport = [
@@ -45,6 +45,7 @@ class PhoneNumberController extends CController
         $this->instanceModel = new PhoneNumber;
         $this->abstractModel = PhoneNumber::find();
         $this->titleReport   = Yii::t('app', 'Phonenumber');
+        $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();
     }
 

@@ -29,7 +29,7 @@ use app\models\ProviderCNL;
 
 class ProviderCNLController extends CController
 {
-    public $attributeOrder = 'id';
+
     public $filterByUser   = false;
     public $extraValues    = ['idProvider' => 'provider_name'];
 
@@ -45,6 +45,7 @@ class ProviderCNLController extends CController
         $this->instanceModel = new ProviderCNL;
         $this->abstractModel = ProviderCNL::find();
         $this->titleReport   = Yii::t('app', 'Provider CNL');
+        $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();
     }
 

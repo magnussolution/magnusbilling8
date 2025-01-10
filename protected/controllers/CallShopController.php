@@ -26,7 +26,6 @@ use app\components\CController;
 
 class CallShopController extends CController
 {
-    public $attributeOrder = 't.callerid';
     public $extraValues    = ['idUser' => 'username'];
     public $join           = ' INNER JOIN pkg_user c ON t.id_user = c.id';
     public $defaultFilter  = 'c.callshop = 1';
@@ -36,6 +35,7 @@ class CallShopController extends CController
         $this->instanceModel = new CallShop;
         $this->abstractModel = CallShop::find();
         $this->titleReport   = Yii::t('app', 'CallShop');
+        $this->attributeOrder = $this->instanceModel::tableName() . '.callerid';
         parent::init();
     }
 

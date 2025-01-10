@@ -32,7 +32,7 @@ class TrunkController extends CController
 {
     public $extraValues    = ['idProvider' => 'provider_name'];
     public $nameFkRelated  = 'failover_trunk';
-    public $attributeOrder = 'id';
+
     public $fieldsFkReport = [
         'id_provider'    => [
             'table'       => 'pkg_provider',
@@ -51,6 +51,7 @@ class TrunkController extends CController
         $this->abstractModel = Trunk::find();
         $this->titleReport   = Yii::t('app', 'Trunk');
 
+        $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();
     }
 

@@ -29,7 +29,6 @@ use app\models\Sipuras;
 
 class SipurasController extends CController
 {
-    public $attributeOrder = 'fultmov DESC';
     public $extraValues    = ['idUser' => 'username'];
 
     public function init()
@@ -37,6 +36,7 @@ class SipurasController extends CController
         $this->instanceModel = new Sipuras;
         $this->abstractModel = Sipuras::find();
         $this->titleReport   = Yii::t('app', 'ATA Linksys');
+        $this->attributeOrder = $this->instanceModel::tableName() . '.fultmov DESC';
         parent::init();
     }
 }

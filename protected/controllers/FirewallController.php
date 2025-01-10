@@ -12,14 +12,16 @@ namespace app\controllers;
 
 use Yii;
 use app\components\CController;
+use app\models\Firewall;
 
 class FirewallController extends CController
 {
-
-    public $attributeOrder = 'date DESC';
-
     public function init()
     {
+        $this->instanceModel = new Firewall;
+        $this->abstractModel = Firewall::find();
+        $this->titleReport   = Yii::t('app', 'Firewall');
+        $this->attributeOrder = $this->instanceModel::tableName() . '.date DESC';
 
         echo json_encode([
             $this->nameSuccess => $this->success,

@@ -37,6 +37,7 @@ class GroupUserController extends CController
         $this->abstractModel        = GroupUser::find();
         $this->abstractModelRelated = GroupModule::find();
         $this->instanceModelRelated = new GroupModule;
+        $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();
     }
 

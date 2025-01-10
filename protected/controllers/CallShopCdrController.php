@@ -29,7 +29,6 @@ use app\models\CallShopCdr;
 
 class CallShopCdrController extends CController
 {
-    public $attributeOrder = 't.date DESC';
     public $select         = 't.id, t.price_min, t.sessionid, t.destination, t.status, buycost, price, calledstation,
                     t.date, sessiontime, cabina, (((t.price - t.buycost) / t.buycost) * 100) markup';
 
@@ -49,6 +48,7 @@ class CallShopCdrController extends CController
         $this->instanceModel = new CallShopCdr;
         $this->abstractModel = CallShopCdr::find();
         $this->titleReport   = Yii::t('app', 'CallShop');
+        $this->attributeOrder = $this->instanceModel::tableName() . '.date DESC';
         parent::init();
     }
 

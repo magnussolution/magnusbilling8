@@ -24,7 +24,6 @@ use app\models\CallSummaryCallShop;
 
 class CallSummaryCallShopController extends CController
 {
-    public $attributeOrder = 'day DESC';
     public $extraValues    = array('idUser' => 'username');
     public $limit          = 7;
     public $group          = 'day';
@@ -78,6 +77,7 @@ class CallSummaryCallShopController extends CController
         $this->abstractModel = CallSummaryCallShop::find();
         $this->titleReport   = Yii::t('app', 'Summary per Day');
 
+        $this->attributeOrder = $this->instanceModel::tableName() . '.day DESC';
         parent::init();
     }
 

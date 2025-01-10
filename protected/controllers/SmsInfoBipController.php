@@ -11,6 +11,7 @@ class SmsInfoBipController extends CController
     public function init()
     {
 
+        $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();
     }
 

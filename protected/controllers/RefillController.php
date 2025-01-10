@@ -28,7 +28,6 @@ use app\models\SendCreditSummary;
 
 class RefillController extends CController
 {
-    public $attributeOrder = 'date DESC';
     public $extraValues    = ['idUser' => 'username'];
 
     public $fieldsFkReport = [
@@ -51,25 +50,27 @@ class RefillController extends CController
         $this->titleReport   = Yii::t('app', 'Refill');
 
         if (Yii::$app->session['isAdmin']) {
-            $this->relationFilter['idUser'] = [
-                'condition' => "idUser.id_user < 2",
-            ];
+
+            $this->relationFilter['idUser'] = function ($query) {
+                $query->andWhere(['<', 'pkg_user.id_user', '2']);
+            };
         }
 
+        $this->attributeOrder = $this->instanceModel::tableName() . '.date DESC';
         parent::init();
     }
 
     public function extraFilterCustomAgent($filter)
     {
-        if (array_key_exists('idUser', $this->relationFilter)) {
-            $this->relationFilter['idUser']['condition'] .= " AND idUser.id_user LIKE :agfby";
-        } else {
-            $this->relationFilter['idUser'] = [
-                'condition' => "t.id_user = :idagent5334 OR  idUser.id_user LIKE :agfby",
-            ];
-            $this->paramsFilter[':idagent5334'] = Yii::$app->session['id_user'];
-        }
-        $this->paramsFilter[':agfby'] = Yii::$app->session['id_user'];
+
+
+
+
+        $this->relationFilter['idUser'] = function ($query) {
+            $query->andWhere(['<', 'pkg_user.id_user', Yii::$app->session['id_user']]);
+            $query->andWhere(['<', 'pkg_refill.id_user', Yii::$app->session['id_user']]);
+        };
+
 
         return $filter;
     }
@@ -193,43 +194,53 @@ class RefillController extends CController
 
     public function recordsExtraSum($records)
     {
-        $criteria = new CDbCriteria([
-            'select'    => 'EXTRACT(YEAR_MONTH FROM date) AS CreditMonth , SUM(t.credit) AS sumCreditMonth',
-            'join'      => $this->join,
-            'condition' => $this->filter == '' ? 1 : $this->filter,
-            'params'    => $this->paramsFilter,
-            'with'      => $this->relationFilter,
-            'group'     => 'CreditMonth',
-        ]);
+
+        $query = $this->abstractModel;
+        $query->select(['EXTRACT(YEAR_MONTH FROM date) AS CreditMonth', 'SUM(pkg_refill.credit) AS sumCreditMonth']);
+        $query->join = $this->join;
+        $query->where($this->filter);
+
+        if (!empty($this->paramsFilter)) {
+            $query->addParams($this->paramsFilter);
+        }
+
+        if (!empty($this->relationFilter)) {
+            $query->joinWith($this->relationFilter);
+        }
+        $query->groupBy('CreditMonth');
 
         $this->nameSum = 'sum';
 
-        return $this->abstractModel->query()->select(['EXTRACT(YEAR_MONTH FROM date) AS CreditMonth', 'SUM(t.credit) AS sumCreditMonth'])->where($this->filter)->one();
+        return $query->one();
     }
 
     public function setAttributesModels($attributes, $models)
     {
-
         $query = $this->abstractModel;
         if (strlen($this->filter)) {
             $query->where($this->filter);
         }
-        $query->select = ['SUM(t.credit) AS credit'];
+        $query->select = ['SUM(pkg_refill.credit) AS credit'];
         $query->join   = $this->join;
         $query->params = $this->paramsFilter;
-        $query->with   = $this->relationFilter;
+        $this->relationFilter['idUser'] = function ($query) {
+            $query->andWhere(['<', 'pkg_user.id_user', '2']);
+        };
         if (!empty($this->addInCondition)) {
             $query->andWhere($this->addInCondition);
         }
-        $modelRefill = $query->all();
+        $query->groupBy = null;
+        $modelRefill = $query->one();
+
 
 
         $query = $this->abstractModel;
-        $query->select = ['EXTRACT(YEAR_MONTH FROM date) AS CreditMonth', 'SUM(t.credit) AS sumCreditMonth'];
-        $query->group = 'CreditMonth';
+        $query->select = ['EXTRACT(YEAR_MONTH FROM date) AS CreditMonth', 'SUM(pkg_refill.credit) AS sumCreditMonth'];
+        $query->groupBy = ['CreditMonth'];
         if (!empty($this->addInCondition)) {
             $query->andWhere($this->addInCondition);
         }
+        // $query->groupBy = 'id_user';
         $modelRefillSumm2 = $query->all();
 
         $pkCount = is_array($attributes) || is_object($attributes) ? $attributes : [];
@@ -264,18 +275,5 @@ class RefillController extends CController
 
         $modelRefill->description = preg_replace('/PENDING\: /', '', $modelRefill->description);
         $modelRefill->save();
-    }
-
-    public function subscribeColunms($columns = '')
-    {
-        if ($this->config['global']['base_country'] != 'BRL') {
-            for ($i = 0; $i < count($columns); $i++) {
-
-                if ($columns[$i]['dataIndex'] == 'credit') {
-                    $columns[$i]['dataIndex'] = 't.credit';
-                }
-            }
-        }
-        return $columns;
     }
 }

@@ -24,8 +24,6 @@ use app\models\CallSummaryMonthDid;
 
 class CallSummaryMonthDidController extends CController
 {
-    public $attributeOrder = 'month DESC';
-
     public $extraValues    = array('idDid' => 'did');
     public $fieldsFkReport = array(
         'id_did' => array(
@@ -40,6 +38,7 @@ class CallSummaryMonthDidController extends CController
         $this->instanceModel = new CallSummaryMonthDid;
         $this->abstractModel = CallSummaryMonthDid::find();
         $this->titleReport   = Yii::t('app', 'Summary Month DID');
+        $this->attributeOrder = $this->instanceModel::tableName() . '.month DESC';
         parent::init();
     }
 

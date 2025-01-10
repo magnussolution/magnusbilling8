@@ -24,7 +24,6 @@ use app\models\CallSummaryMonthTrunk;
 
 class CallSummaryMonthTrunkController extends CController
 {
-    public $attributeOrder = 'month DESC';
 
     public $extraValues = array('idTrunk' => 'trunkcode');
     public $join        = 'JOIN pkg_trunk c ON t.id_trunk = c.id';
@@ -43,6 +42,7 @@ class CallSummaryMonthTrunkController extends CController
         $this->instanceModel = new CallSummaryMonthTrunk;
         $this->abstractModel = CallSummaryMonthTrunk::find();
         $this->titleReport   = Yii::t('app', 'Summary Month Trunk');
+        $this->attributeOrder = $this->instanceModel::tableName() . '.month DESC';
         parent::init();
     }
 

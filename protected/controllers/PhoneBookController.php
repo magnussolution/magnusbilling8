@@ -53,6 +53,7 @@ class PhoneBookController extends CController
         $this->abstractModel = PhoneBook::find();
         $this->titleReport   = Yii::t('app', 'Phonenumbers');
 
+        $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();
     }
 

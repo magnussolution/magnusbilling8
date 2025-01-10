@@ -30,7 +30,7 @@ use app\models\TrunkGroupTrunk;
 
 class TrunkGroupController extends CController
 {
-    public $attributeOrder     = 't.id DESC';
+    public $attributeOrder     = 'id DESC';
     public $nameModelRelated   = 'TrunkGroupTrunk';
     public $nameFkRelated      = 'id_trunk_group';
     public $nameOtherFkRelated = 'id_trunk';
@@ -43,6 +43,7 @@ class TrunkGroupController extends CController
         $this->instanceModelRelated = new TrunkGroupTrunk;
         $this->titleReport          = Yii::t('app', 'Trunk Groups');
 
+        $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();
     }
 

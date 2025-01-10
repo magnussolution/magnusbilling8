@@ -29,7 +29,6 @@ use app\models\LogUsers;
 
 class LogUsersController extends CController
 {
-    public $attributeOrder = 't.date DESC';
     public $extraValues    = ['idUser' => 'username', 'idLogActions' => 'name'];
 
     public $fieldsFkReport = [
@@ -50,6 +49,7 @@ class LogUsersController extends CController
         $this->instanceModel = new LogUsers;
         $this->abstractModel = LogUsers::find();
         $this->titleReport   = Yii::t('app', 'Log Users');
+        $this->attributeOrder = $this->instanceModel::tableName() . '.date DESC';
         parent::init();
     }
 

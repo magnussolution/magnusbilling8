@@ -29,7 +29,7 @@ use app\models\Ivr;
 
 class IvrController extends CController
 {
-    public $attributeOrder = 't.id';
+    public $attributeOrder;
     public $extraValues    = ['idUser' => 'username'];
     private $uploaddir;
     public $fieldsFkReport = [
@@ -46,6 +46,7 @@ class IvrController extends CController
         $this->instanceModel = new Ivr;
         $this->abstractModel = Ivr::find();
         $this->titleReport   = Yii::t('app', 'IVR');
+        $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();
     }
 

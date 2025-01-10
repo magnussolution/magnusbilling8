@@ -24,8 +24,6 @@ use app\models\CallSummaryMonthUser;
 
 class CallSummaryMonthUserController extends CController
 {
-    public $attributeOrder = 'month DESC';
-
     public $extraValues    = ['idUser' => 'username'];
     public $join           = 'JOIN pkg_user c ON t.id_user = c.id';
     public $fieldsFkReport = [
@@ -58,6 +56,7 @@ class CallSummaryMonthUserController extends CController
         $this->instanceModel = new CallSummaryMonthUser;
         $this->abstractModel = CallSummaryMonthUser::find();
         $this->titleReport   = Yii::t('app', 'Summary Month User');
+        $this->attributeOrder = $this->instanceModel::tableName() . '.month DESC';
         parent::init();
     }
 

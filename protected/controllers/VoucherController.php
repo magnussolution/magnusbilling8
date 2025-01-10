@@ -52,6 +52,7 @@ class VoucherController extends CController
         $this->instanceModel = new Voucher;
         $this->abstractModel = Voucher::find();
         $this->titleReport   = Yii::t('app', 'Voucher');
+        $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();
     }
 

@@ -31,7 +31,7 @@ use app\components\CController;
 
 class CallFailedController extends CController
 {
-    public $attributeOrder = 't.id DESC';
+
     public $extraValues    = [
         'idUser'   => 'username',
         'idPlan'   => 'name',
@@ -87,6 +87,7 @@ class CallFailedController extends CController
         $this->abstractModel = CallFailed::find();
         $this->titleReport   = Yii::t('app', 'Call Failed');
 
+        $this->attributeOrder = $this->instanceModel::tableName() . '.id DESC';
         parent::init();
 
         if (! Yii::$app->session['isAdmin']) {

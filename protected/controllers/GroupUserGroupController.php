@@ -30,7 +30,7 @@ use app\models\GroupUserGroup;
 
 class GroupUserGroupController extends CController
 {
-    public $attributeOrder = 't.id';
+    public $attributeOrder;
     public $config;
     public $nameModelRelated   = 'GroupUserGroup';
     public $nameFkRelated      = 'id_group_user';
@@ -46,6 +46,7 @@ class GroupUserGroupController extends CController
         $this->abstractModelRelated = GroupUserGroup::find();
         $this->instanceModelRelated = new GroupUserGroup;
         $this->titleReport          = Yii::t('app', 'GroupUserGroup');
+        $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();
     }
 

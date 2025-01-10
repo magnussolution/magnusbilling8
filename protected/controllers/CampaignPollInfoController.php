@@ -24,7 +24,7 @@ use app\models\CampaignPollInfo;
 
 class CampaignPollInfoController extends CController
 {
-    public $attributeOrder = 't.id';
+    public $attributeOrder;
     public $extraValues    = ['idCampaignPoll' => 'name'];
 
     public $nameFileReport = 'exported';
@@ -42,6 +42,7 @@ class CampaignPollInfoController extends CController
         $this->instanceModel = new CampaignPollInfo;
         $this->abstractModel = CampaignPollInfo::find();
         $this->titleReport   = Yii::t('app', 'Poll Info');
+        $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();
     }
 

@@ -29,7 +29,7 @@ use app\models\Provider;
 
 class ProviderController extends CController
 {
-    public $attributeOrder = 'id';
+
     public $filterByUser   = false;
 
     public function init()
@@ -37,6 +37,7 @@ class ProviderController extends CController
         $this->instanceModel = new Provider;
         $this->abstractModel = Provider::find();
         $this->titleReport   = Yii::t('app', 'Provider');
+        $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();
     }
 }

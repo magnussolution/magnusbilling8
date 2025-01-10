@@ -63,6 +63,7 @@ class CampaignController extends CController
         $this->abstractModelRelated = CampaignPhonebook::find();
         $this->instanceModelRelated = new CampaignPhonebook;
         $this->titleReport          = Yii::t('app', 'Campaign');
+        $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();
     }
 

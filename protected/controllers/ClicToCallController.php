@@ -17,6 +17,7 @@ class ClicToCallController extends CController
 
     public function init()
     {
+        $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();
         if (!isset(Yii::$app->session['language'])) {
             $language = Configuration::find()->select('config_value')->where(['LIKE', 'config_key', 'base_language'])->all();

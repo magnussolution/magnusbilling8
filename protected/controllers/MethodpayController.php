@@ -29,7 +29,7 @@ use app\models\Methodpay;
 
 class MethodpayController extends CController
 {
-    public $attributeOrder = 'id';
+
     public $extraValues    = ['idUser' => 'username'];
 
     public $fieldsFkReport = [
@@ -65,6 +65,7 @@ class MethodpayController extends CController
         $this->instanceModel = new Methodpay;
         $this->abstractModel = Methodpay::find();
         $this->titleReport   = Yii::t('app', 'Payment Methods');
+        $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();
     }
 

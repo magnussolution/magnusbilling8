@@ -24,7 +24,14 @@ use app\models\Refill;
 
 class RefillChartController extends CController
 {
-    public $attributeOrder = 'date DESC';
+
+    public function init()
+    {
+        $this->instanceModel = new Refill;
+        $this->abstractModel = Refill::find();
+        $this->attributeOrder = $this->instanceModel::tableName() . '.date DESC';
+        parent::init();
+    }
 
     public function actionRead($asJson = true, $condition = null)
     {

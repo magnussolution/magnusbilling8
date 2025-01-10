@@ -38,7 +38,7 @@ use app\components\Mail;
 
 class DiddestinationController extends CController
 {
-    public $attributeOrder = 't.id';
+    public $attributeOrder;
     public $extraValues    = [
         'idUser'  => 'username',
         'idDid'   => 'did',
@@ -81,6 +81,7 @@ class DiddestinationController extends CController
         $this->instanceModel = new Diddestination;
         $this->abstractModel = Diddestination::find();
         $this->titleReport   = Yii::t('app', 'DID Destination');
+        $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();
     }
 

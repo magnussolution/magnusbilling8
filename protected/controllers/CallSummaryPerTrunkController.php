@@ -29,7 +29,6 @@ use app\models\CallSummaryPerTrunk;
 class CallSummaryPerTrunkController extends CController
 {
     public $config;
-    public $attributeOrder = 't.id_trunk DESC';
     public $extraValues    = ['idTrunk' => 'trunkcode'];
     public $join           = 'JOIN pkg_trunk c ON t.id_trunk = c.id';
 
@@ -47,6 +46,7 @@ class CallSummaryPerTrunkController extends CController
         $this->instanceModel = new CallSummaryPerTrunk;
         $this->abstractModel = CallSummaryPerTrunk::find();
         $this->titleReport   = Yii::t('app', 'Summary per Trunk');
+        $this->attributeOrder = $this->instanceModel::tableName() . '.id_trunk DESC';
         parent::init();
     }
 

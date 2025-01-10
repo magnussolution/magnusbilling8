@@ -24,7 +24,6 @@ use app\models\CallSummaryDayAgent;
 
 class CallSummaryDayAgentController extends CController
 {
-    public $attributeOrder = 'day DESC';
     public $join           = 'JOIN pkg_user ON t.id_user = pkg_user.id';
     public $extraValues    = array('idUser' => 'username');
 
@@ -38,6 +37,7 @@ class CallSummaryDayAgentController extends CController
         $this->instanceModel = new CallSummaryDayAgent;
         $this->abstractModel = CallSummaryDayAgent::find();
         $this->titleReport   = Yii::t('app', 'Summary Day Agent');
+        $this->attributeOrder = $this->instanceModel::tableName() . '.day DESC';
         parent::init();
     }
 

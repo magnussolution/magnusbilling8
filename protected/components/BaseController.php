@@ -102,6 +102,7 @@ class BaseController extends Controller
     public $config;
     public $addInCondition = '';
     public $instanceModelRelated;
+    public $attributeOrder;
     public function init()
     {
         //Yii::$app->clientScript->registerCssFile(Yii::$app->baseUrl . '/resources/init.css');
@@ -1250,7 +1251,15 @@ class BaseController extends Controller
     {
         $attributes = [];
         $namePk     = $this->instanceModel::primaryKey()[0];
+
+
+
         foreach ($models as $key => $item) {
+
+
+            if (!isset($item->attributes)) {
+                continue;
+            }
             $attributes[$key] = $item->attributes;
 
             if (isset(Yii::$app->session['isClient']) && Yii::$app->session['isClient']) {

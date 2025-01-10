@@ -31,7 +31,7 @@ use Exception;
 
 class RateProviderController extends CController
 {
-    public $attributeOrder = 't.id';
+    public $attributeOrder;
     public $extraValues    = [
         'idProvider' => 'provider_name',
         'idPrefix'   => 'destination,prefix',
@@ -60,6 +60,7 @@ class RateProviderController extends CController
         $this->instanceModel = new RateProvider;
         $this->abstractModel = RateProvider::find();
         $this->titleReport   = Yii::t('app', 'Provider rate');
+        $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();
     }
 

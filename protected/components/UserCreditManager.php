@@ -25,7 +25,6 @@ use app\models\User;
 use app\models\Refill;
 use app\components\Mail;
 use app\components\ServicesProcess;
-use app\components\UserCreditManager;
 
 class UserCreditManager
 {

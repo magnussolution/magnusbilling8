@@ -36,7 +36,7 @@ use Exception;
 
 class RateController extends CController
 {
-    public $attributeOrder = 't.id';
+    public $attributeOrder;
     public $extraValues    = [
         'idTrunkGroup' => 'name',
         'idPlan'       => 'name',
@@ -104,6 +104,7 @@ class RateController extends CController
 
         $this->titleReport = Yii::t('app', 'Tariffs');
 
+        $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();
         if (! Yii::$app->session['isAdmin']) {
             $this->extraValues = [

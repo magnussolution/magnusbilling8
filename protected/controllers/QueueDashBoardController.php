@@ -30,8 +30,6 @@ use Exception;
 
 class QueueDashBoardController extends CController
 {
-
-    public $attributeOrder = 'callId';
     public $extraValues    = ['idQueue' => 'name'];
 
     public function init()
@@ -40,6 +38,7 @@ class QueueDashBoardController extends CController
         $this->abstractModel = QueueDashBoard::find();
         $this->titleReport   = Yii::t('app', 'Queue DashBoard');
 
+        $this->attributeOrder = $this->instanceModel::tableName() . '.callId';
         parent::init();
     }
 

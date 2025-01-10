@@ -57,6 +57,7 @@ class BDServiceController extends CController
 
         $this->insertBDServiceSql();
 
+        $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();
     }
 

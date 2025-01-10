@@ -24,7 +24,6 @@ use app\models\CallSummaryPerDay;
 
 class CallSummaryPerDayController extends CController
 {
-    public $attributeOrder = 'day DESC';
 
     public function init()
     {
@@ -32,6 +31,7 @@ class CallSummaryPerDayController extends CController
         $this->instanceModel = new CallSummaryPerDay;
         $this->abstractModel = CallSummaryPerDay::find();
         $this->titleReport   = Yii::t('app', 'Summary per Day');
+        $this->attributeOrder = $this->instanceModel::tableName() . '.day DESC';
         parent::init();
     }
 

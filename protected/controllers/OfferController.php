@@ -29,7 +29,7 @@ use app\models\Offer;
 
 class OfferController extends CController
 {
-    public $attributeOrder = 't.id';
+    public $attributeOrder;
     public $filterByUser   = false;
     public $extraValues    = ['idUser' => 'username'];
     public $fieldsFkReport = [
@@ -47,6 +47,7 @@ class OfferController extends CController
         if (Yii::$app->session['isAdmin']) {
             $this->defaultFilter = '(t.id_user < 2 || t.id_user IS NULL)';
         }
+        $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();
     }
 

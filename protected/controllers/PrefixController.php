@@ -30,7 +30,7 @@ use app\models\Prefix;
 
 class PrefixController extends CController
 {
-    public $attributeOrder = 'id';
+
     public $filterByUser   = false;
 
     public function init()
@@ -39,6 +39,7 @@ class PrefixController extends CController
         $this->abstractModel = Prefix::find();
         $this->titleReport   = Yii::t('app', 'Prefix');
 
+        $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();
     }
 

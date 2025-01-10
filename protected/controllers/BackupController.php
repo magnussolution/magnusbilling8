@@ -36,6 +36,7 @@ class BackupController extends CController
         if (! Yii::$app->session['isAdmin']) {
             exit;
         }
+        $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();
     }
 

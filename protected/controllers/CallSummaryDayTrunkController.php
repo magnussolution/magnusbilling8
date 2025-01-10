@@ -24,7 +24,6 @@ use app\models\CallSummaryDayTrunk;
 
 class CallSummaryDayTrunkController extends CController
 {
-    public $attributeOrder = 'day DESC';
     public $join           = 'JOIN pkg_trunk c ON t.id_trunk = c.id';
     public $extraValues    = array('idTrunk' => 'trunkcode');
 
@@ -42,6 +41,7 @@ class CallSummaryDayTrunkController extends CController
         $this->instanceModel = new CallSummaryDayTrunk;
         $this->abstractModel = CallSummaryDayTrunk::find();
         $this->titleReport   = Yii::t('app', 'Summary Day Trunk');
+        $this->attributeOrder = $this->instanceModel::tableName() . '.day DESC';
         parent::init();
     }
 

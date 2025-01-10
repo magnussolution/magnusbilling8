@@ -31,13 +31,14 @@ use app\models\User;
 
 class GAuthenticatorController extends CController
 {
-    public $attributeOrder = 't.googleAuthenticator_enable DESC';
+
 
     public function init()
     {
         $this->instanceModel = new GAuthenticator;
         $this->abstractModel = GAuthenticator::find();
         $this->titleReport   = Yii::t('app', 'GAuthenticator');
+        $this->attributeOrder = $this->instanceModel::tableName() . '.googleAuthenticator_enable DESC';
         parent::init();
     }
 

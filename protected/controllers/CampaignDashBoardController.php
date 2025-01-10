@@ -33,7 +33,6 @@ use app\models\PhoneNumber;
 
 class CampaignDashBoardController extends CController
 {
-    public $attributeOrder = 't.id DESC';
     public $extraValues    = ['idUser' => 'username'];
     private $uploaddir;
 
@@ -42,6 +41,7 @@ class CampaignDashBoardController extends CController
         $this->instanceModel = new Campaign;
         $this->abstractModel = Campaign::find();
         $this->titleReport   = Yii::t('app', 'Campaign');
+        $this->attributeOrder = $this->instanceModel::tableName() . '.id DESC';
         parent::init();
     }
 

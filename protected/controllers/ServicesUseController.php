@@ -30,7 +30,6 @@ use app\models\ServicesProcess;
 
 class ServicesUseController extends CController
 {
-    public $attributeOrder = 'status DESC, DAY( reservationdate ) DESC';
     public $extraValues    = ['idServices' => 'name,price,type', 'idUser' => 'username'];
 
     public $fieldsInvisibleClient = [
@@ -49,6 +48,7 @@ class ServicesUseController extends CController
         $sql = "UPDATE pkg_services_use SET next_due_date = '' WHERE status = 0";
         Yii::$app->db->createCommand($sql)->execute();
 
+        $this->attributeOrder = $this->instanceModel::tableName() . '.status DESC, DAY( reservationdate ) DESC';
         parent::init();
     }
 

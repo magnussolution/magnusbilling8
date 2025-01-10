@@ -63,10 +63,14 @@ class  Sipuras extends Model
         $rules = [
             [['macadr', 'id_user'], 'required'],
             [['macadr'], 'string', 'max' => 12],
-            [['senha_admin', 'senha_user', 'Use_Pref_Codec_Only_1', 'Use_Pref_Codec_Only_2', 'Preferred_Codec_1', 'Preferred_Codec_2'], 'string', 'max' => 8],
-            [
+            [[
+                'senha_admin',
+                'senha_user',
+                'Preferred_Codec_1',
+                'Preferred_Codec_2'
+            ], 'string', 'max' => 8],
+            [[
                 'antireset',
-                'altera',
                 'Enable_Web_Server',
                 'STUN_Enable',
                 'NAT_Keep_Alive_Enable_1_',
@@ -75,11 +79,14 @@ class  Sipuras extends Model
                 'NAT_Mapping_Enable_2_',
                 'STUN_Test_Enable',
                 'Substitute_VIA_Addr',
-                'length',
-                'max' => 3
-            ],
+                'Use_Pref_Codec_Only_1',
+                'Use_Pref_Codec_Only_2',
+            ], 'integer'],
             [['lastmov'], 'string', 'max' => 20],
-            [['marca'], 'string', 'max' => 2],
+            [[
+                'marca',
+                'altera',
+            ], 'string', 'max' => 2],
             [['obs'], 'string', 'max' => 50],
             [['Proxy_1', 'Proxy_2'], 'string', 'max' => 100],
             [['last_ip', 'nserie'], 'string', 'max' => 15],
@@ -104,6 +111,9 @@ class  Sipuras extends Model
     {
         $config       = LoadConfig::getConfig();
         $this->altera = $this->remote == 1 ? $this->altera : 'si';
+        if ($this->getIsNewRecord()) {
+            $this->fultmov = '0000-00-00';
+        }
         return parent::beforeSave($insert);
     }
 }

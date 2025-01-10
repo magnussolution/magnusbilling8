@@ -32,7 +32,7 @@ use app\models\Queue;
 
 class QueueMemberController extends CController
 {
-    public $attributeOrder = 't.id';
+    public $attributeOrder;
     public $extraValues    = ['idUser' => 'username'];
 
     public $fieldsFkReport = [
@@ -48,6 +48,7 @@ class QueueMemberController extends CController
         $this->instanceModel = new QueueMember;
         $this->abstractModel = QueueMember::find();
         $this->titleReport   = Yii::t('app', 'Queue Member');
+        $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();
     }
 

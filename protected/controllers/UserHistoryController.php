@@ -24,7 +24,6 @@ use app\models\UserHistory;
 
 class UserHistoryController extends CController
 {
-    public $attributeOrder = 'date DESC';
     public $extraValues    = array('idUser' => 'username');
 
     public $fieldsFkReport = array(
@@ -41,6 +40,7 @@ class UserHistoryController extends CController
         $this->abstractModel = UserHistory::find();
         $this->titleReport   = Yii::t('app', 'User History');
 
+        $this->attributeOrder = $this->instanceModel::tableName() . '.date DESC';
         parent::init();
     }
 }

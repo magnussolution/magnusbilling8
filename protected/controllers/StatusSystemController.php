@@ -28,13 +28,13 @@ use app\models\CallSummaryPerMonth;
 
 class StatusSystemController extends CController
 {
-    public $attributeOrder = 'id DESC';
 
     public function init()
     {
         $this->instanceModel = new StatusSystem;
         $this->abstractModel = StatusSystem::find();
         $this->titleReport   = Yii::t('app', 'Status system');
+        $this->attributeOrder = $this->instanceModel::tableName() . '.id DESC';
         parent::init();
 
         if (!Yii::$app->session['isAdmin']) {

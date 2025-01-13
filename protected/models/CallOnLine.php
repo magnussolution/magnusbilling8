@@ -26,7 +26,7 @@ use Yii;
 use app\components\Model;
 use \Exception;
 
-class  CallOnLine extends Model
+class CallOnLine extends Model
 {
     protected $_module = 'callonline';
     /**
@@ -76,7 +76,7 @@ class  CallOnLine extends Model
         return $this->hasOne(User::class, ['id' => 'id_user']);
     }
 
-    public function insertCalls($sql)
+    public static function insertCalls($sql)
     {
 
         $sql = 'INSERT INTO pkg_call_online VALUES ' . implode(',', $sql) . ';';

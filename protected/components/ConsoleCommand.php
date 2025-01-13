@@ -22,26 +22,32 @@
 namespace app\components;
 
 use Yii;
-use CConsoleCommand;
 use app\components\LoadConfig;
 use app\components\MagnusLog;
+use yii\console\Controller;
+use yii\console\ExitCode;
 
-
-class ConsoleCommand extends CConsoleCommand
+class ConsoleCommand extends Controller
 {
     public $debug = 0;
     public $config;
     public function init()
     {
+
+        // Get part of the string before the first occurrence of a specific character
+        $routeParts = explode('/', Yii::$app->requestedRoute);
+        $className = $routeParts[0];
+
+
         $this->config        = LoadConfig::getConfig();
         Yii::$app->language = Yii::$app->sourceLanguage = isset($this->config['global']['base_language'])
             ? $this->config['global']['base_language']
             : Yii::$app->language;
 
-        define('LOGFILE', 'protected/runtime/' . $this->getName() . '.log');
+        define('LOGFILE', 'protected/runtime/' . $className . '.log');
 
         if (! defined('PID')) {
-            define("PID", '/var/run/magnus/' . $this->getName() . 'Pid.php');
+            define("PID", '/var/run/magnus/' . $className . 'Pid.php');
         }
 
         if (isset($_SERVER['argv'][2])) {

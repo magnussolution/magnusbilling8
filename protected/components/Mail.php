@@ -28,7 +28,6 @@
 namespace app\components;
 
 use Yii;
-use JPhpMailer;
 use app\models\User;
 use app\models\Smtps;
 use app\models\TemplateMail;
@@ -44,9 +43,10 @@ class Mail
     private $from_name  = '';
     private $to_email   = '';
     private $to_email2  = '';
-    private $language   = '';
     public $output;
     public $type;
+    private $id_agent;
+    private $language;
 
     public static $DESCRIPTION = '$description$';
 
@@ -172,7 +172,6 @@ class Mail
 
     public function __construct($type, $id_user = null, $id_agent = null, $msg = null, $title = null)
     {
-
         if (! empty($type)) {
             $this->type  = $type;
             $modelUser   = User::findOne((int) $id_user);
@@ -195,7 +194,7 @@ class Mail
             $order       = null;
             $order_field = null;
 
-            $this->id_agent = isset($modelUser->id) ? $modelUser->id_user : null;
+            $this->id_agent = isset($modelUser->id_user) ? $modelUser->id_user : null;
             $this->id_user  = isset($modelUser->id) ? $modelUser->id : null;
 
             if ($modelTemplate->id && $modelTemplate->status == 1) {
@@ -206,14 +205,14 @@ class Mail
                 $this->from_name  = isset($modelTemplate->fromname) ? $modelTemplate->fromname : null;
                 $this->language   = isset($modelTemplate->language) ? $modelTemplate->language : null;
             } else {
-                Yii::log("Template Type '$type' cannot be found into the database! or not active", 'error');
+                Yii::error("Template Type '$type' cannot be found into the database! or not active", 'error');
                 return true;
             }
         } elseif (! empty($msg) || ! empty($title)) {
             $this->message = $msg;
             $this->title   = $title;
         } else {
-            Yii::log("Error : no Type defined and neither message or subject is provided!", 'info');
+            Yii::error("Error : no Type defined and neither message or subject is provided!", 'info');
             return true;
         }
 
@@ -336,6 +335,7 @@ class Mail
     public function send($to_email = null)
     {
 
+
         $this->from_email =  ! empty($this->from_email) ? $this->from_email : $to_email;
         $this->to_email   =  ! empty($to_email) ? $to_email : $this->to_email;
 
@@ -366,6 +366,8 @@ class Mail
             }
         }
 
+        echo $this->id_agent;
+
         $modelSmtps = Smtps::find()->where(['id_user' => $this->id_agent])->one();
 
         if (! isset($modelSmtps->id)) {
@@ -385,46 +387,42 @@ class Mail
             return;
         }
 
-        Yii::import('application.extensions.phpmailer.JPhpMailer');
-        $mail = new JPhpMailer;
-        //$mail->SMTPDebug = SMTP::DEBUG_SERVER;
-        $mail->IsSMTP();
-        $mail->SMTPAuth = true;
-        $mail->Host     = $smtp_host;
 
-        if ($smtp_port == 465) {
-            $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS; //Enable implicit TLS encryption
-        } else if ($smtp_port == 587) {
-            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS; //Enable implicit TLS encryption
-        } else {
-            $mail->SMTPSecure = $smtp_encryption;
-        }
+        $mailServer = [
+            'mail' => [
+                'class' => 'yii\swiftmailer\Mailer',
+                'transport' => [
+                    'class' => 'Swift_SmtpTransport',
+                    'host' => $smtp_host,
+                    'username' => $smtp_username,
+                    'password' => $smtp_password,
+                    'port' => $smtp_port,
+                    'encryption' => $smtp_encryption,
+                ],
+            ]
+        ];
 
-        $mail->Username = $smtp_username;
-        $mail->Password = $smtp_password;
-        $mail->Port     = $smtp_port;
+        //$mailServer['mail']['viewPath'] = '@app/mail';
+        //$mailServer['mail']['useFileTransport'] = false;
 
+        Yii::$app->setComponents($mailServer);
+
+        $message = Yii::$app->mail->compose();
         if ($smtp_host == 'smtp.office365.com' || $this->from_email == 'noreply@site.com') {
-            $mail->SetFrom($smtp_username, $this->from_name);
+            $message->SetFrom([$smtp_username => $this->from_name]);
         } else {
-            $mail->SetFrom($this->from_email, $this->from_name);
+            $message->SetFrom([$this->from_email => $this->from_name]);
         }
-
-        $mail->SetLanguage($this->language == 'pt_BR' ? 'br' : $this->language);
-        $mail->Subject = mb_encode_mimeheader($this->title);
-        $mail->AltBody = 'To view the message, please use an HTML compatible email viewer!';
-        $mail->MsgHTML($this->message);
-        $mail->AddAddress($this->to_email);
+        $message->setSubject(mb_encode_mimeheader($this->title));
+        $message->setHtmlBody($this->message);
+        $to = [$this->to_email];
         if (strlen($this->to_email2)) {
-            $mail->AddAddress($this->to_email2);
+            array_push($to, $this->to_email2);
         }
-        $mail->CharSet = 'utf-8';
-        ob_start();
-        @$mail->Send();
+        $message->setTo($to);
 
-        Yii::log('Email sent to ' . $this->to_email . ' ' . $this->to_email2 . '. Subject -> ' . $mail->Subject . '. Email type: ' . $this->type, 'error');
-        $this->output = ob_get_contents();
-        ob_end_clean();
+        $message->send();
+
         return true;
     }
 }

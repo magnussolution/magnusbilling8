@@ -37,7 +37,15 @@ class SiteController extends CController
      */
     public function actionIndex()
     {
+
         /*
+        $modelUser = User::find()->where('id = 2')->one();
+
+        $modelUser->idPlan->updateAttributes(['name' => 'premium2']);
+
+
+
+       
         User::updateAll(['active' => '1'], ['username' => 'teste']);
      
            

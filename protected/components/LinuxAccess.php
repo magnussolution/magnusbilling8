@@ -9,13 +9,15 @@
 
 namespace app\components;
 
+use Yii;
+
 class LinuxAccess
 {
 
     public static function exec($command)
     {
 
-        Yii::log('LinuxAccess::exec -> ' . $command, 'error');
+        Yii::error('LinuxAccess::exec -> ' . $command, 'error');
         exec($command, $output);
         return $output;
     }

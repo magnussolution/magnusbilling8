@@ -26,7 +26,7 @@ Ext.define('MBilling.view.sipTrace.Filter', {
     labelWidthFields: 120,
     htmlTipInfo: '',
     fieldsImport: [],
-    initComponent: function() {
+    initComponent: function () {
         var me = this;
         me.items = [{
             xtype: 'form',
@@ -70,7 +70,7 @@ Ext.define('MBilling.view.sipTrace.Filter', {
         }];
         me.callParent(arguments);
     },
-    onStart: function(btn) {
+    onStart: function (btn) {
         var me = this,
             store = me.list.store;
         if (!me.down('form').isValid()) {
@@ -80,9 +80,9 @@ Ext.define('MBilling.view.sipTrace.Filter', {
         me.list.setLoading(true);
         Ext.Ajax.setTimeout(1000000);
         me.down('form').submit({
-            url: 'index.php/sipTrace/start',
+            url: 'index.php/sip-trace/start',
             scope: me,
-            success: function(form, action) {
+            success: function (form, action) {
                 var obj = Ext.decode(action.response.responseText);
                 console.log(obj);
                 if (obj.success) {
@@ -95,7 +95,7 @@ Ext.define('MBilling.view.sipTrace.Filter', {
                 store.load();
                 me.close();
             },
-            failure: function(form, action) {
+            failure: function (form, action) {
                 console.log(action.response.responseText);
                 if (action.response && Ext.isObject(action.response.responseText)) {
                     var obj = Ext.decode(action.response.responseText);

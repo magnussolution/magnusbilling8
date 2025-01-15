@@ -188,7 +188,7 @@ class DiddestinationController extends CController
         }
     }
 
-    public function actionbulkdestinatintion()
+    public function actionBulkdestinatintion()
     {
         $this->isNewRecord = true;
         $values            = $this->getAttributesRequest();

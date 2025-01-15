@@ -27,12 +27,12 @@ Ext.define('MBilling.view.trunkGroup.Combo', {
     editable: false,
     displayField: 'name',
     valueField: 'id',
-    initComponent: function() {
+    initComponent: function () {
         var me = this;
         me.store = Ext.create('MBilling.store.TrunkGroup', {
             proxy: {
                 type: 'uxproxy',
-                module: 'trunkGroup',
+                module: 'trunk-group',
                 limitParam: undefined
             }
         });

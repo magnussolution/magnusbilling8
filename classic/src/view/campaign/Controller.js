@@ -22,7 +22,7 @@ Ext.define('MBilling.view.campaign.Controller', {
     extend: 'Ext.ux.app.ViewController',
     alias: 'controller.campaign',
     isSubmitForm: true,
-    init: function() {
+    init: function () {
         var me = this;
         me.control({
             'typecampaigndestinationcombo': {
@@ -31,17 +31,17 @@ Ext.define('MBilling.view.campaign.Controller', {
         });
         me.callParent(arguments);
     },
-    onSelectMethod: function(combo, records) {
+    onSelectMethod: function (combo, records) {
         this.showFieldsRelated(records.getData().showFields);
     },
-    showFieldsRelated: function(showFields) {
+    showFieldsRelated: function (showFields) {
         var me = this,
             form = me.formPanel.getForm(),
             fields = me.formPanel.getForm().getFields(),
             activeField = Ext.get(Ext.Element.getActiveElement()).component;
         me.onSetVisibleFiel(activeField, form, activeField.value);
     },
-    onSetVisibleFiel: function(activeField, form, fieldShow) {
+    onSetVisibleFiel: function (activeField, form, fieldShow) {
         if (activeField.value == 'undefined') activeField.setValue('undefined');
         if (activeField.name.match("^type_0")) {
             form.findField('id_queue_0').setVisible(fieldShow.match("^queue"));
@@ -50,7 +50,7 @@ Ext.define('MBilling.view.campaign.Controller', {
             form.findField('extension_0').setVisible(fieldShow.match("^group|^number|^custom"));
         }
     },
-    onEdit: function() {
+    onEdit: function () {
         var me = this,
             form = me.formPanel.getForm(),
             record = me.list.getSelectionModel().getSelection()[0];
@@ -82,7 +82,7 @@ Ext.define('MBilling.view.campaign.Controller', {
         }
         me.callParent(arguments);
     },
-    onNew: function() {
+    onNew: function () {
         var me = this,
             form = me.formPanel.getForm(),
             record = me.list.getSelectionModel().getSelection()[0];
@@ -92,7 +92,7 @@ Ext.define('MBilling.view.campaign.Controller', {
         form.findField('extension_0').setVisible(false);
         me.callParent(arguments);
     },
-    submitForm: function(values) {
+    submitForm: function (values) {
         var me = this,
             store = me.store;
         Ext.apply(me.params, {
@@ -107,7 +107,7 @@ Ext.define('MBilling.view.campaign.Controller', {
             url: me.store.getProxy().api.create,
             params: me.params,
             scope: me,
-            success: function(form, action) {
+            success: function (form, action) {
                 var obj = Ext.decode(action.response.responseText);
                 if (obj.success) {
                     Ext.ux.Alert.alert(me.titleSuccess, obj.msg, 'success');
@@ -125,7 +125,7 @@ Ext.define('MBilling.view.campaign.Controller', {
                 me.formPanel.setLoading(false);
                 me.saveButton.enable();
             },
-            failure: function(form, action) {
+            failure: function (form, action) {
                 var obj = Ext.decode(action.response.responseText),
                     errors = Helper.Util.convertErrorsJsonToString(obj.errors);
                 if (!Ext.isObject(obj.errors)) {
@@ -140,7 +140,7 @@ Ext.define('MBilling.view.campaign.Controller', {
         });
         //delete me.params['id_phonebook_array'];
     },
-    onTestCampaign: function(btn) {
+    onTestCampaign: function (btn) {
         var me = this,
             selected = me.list.getSelectionModel().getSelection()[0];
         if (me.list.getSelectionModel().getSelection().length == 0) {
@@ -149,12 +149,12 @@ Ext.define('MBilling.view.campaign.Controller', {
             Ext.ux.Alert.alert(me.titleError, t('Please select only one campaign'), 'notification');
         } else {
             Ext.Ajax.request({
-                url: 'index.php/campaign/testCampaign',
+                url: 'index.php/campaign/test-campaign',
                 params: {
                     id: selected.get('id')
                 },
                 scope: me,
-                success: function(response) {
+                success: function (response) {
                     response = Ext.decode(response.responseText);
                     if (response[me.nameSuccessRequest]) {
                         Ext.ux.Alert.alert(me.titleSuccess, response[me.nameMsgRequest], 'success');

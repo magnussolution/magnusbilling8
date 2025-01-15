@@ -24,6 +24,7 @@ class BuyCreditController extends CController
     public function actionMethod()
     {
 
+
         if (isset($_GET['l'])) {
             $data           = explode('|', $_GET['l']);
             $user           = $data[0];
@@ -72,12 +73,13 @@ class BuyCreditController extends CController
                     $modelMethodPay = Methodpay::find('active = 1')->one();
                 }
 
-                $this->render('mobile', [
+                return $this->render('mobile', [
                     'modelMethodPay' => $modelMethodPay,
                     'modelUser'      => $modelUser,
                     'reference'      => date('YmdHis') . '-' . $modelUser->username . '-' . $modelUser->id,
                 ]);
-                exit;
+
+             
             }
         }
 

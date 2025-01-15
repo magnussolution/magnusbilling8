@@ -13,12 +13,12 @@ Ext.define('MBilling.view.groupUser.Combo', {
     valueField: 'id',
     forceSelection: true,
     editable: false,
-    initComponent: function() {
+    initComponent: function () {
         var me = this;
         me.store = Ext.create('MBilling.store.GroupUser', {
             proxy: {
                 type: 'uxproxy',
-                module: 'groupUser',
+                module: 'group-user',
                 limitParam: undefined
             }
         });
@@ -34,12 +34,12 @@ Ext.define('MBilling.view.groupUser.AgentUSerCombo', {
     forceSelection: true,
     editable: false,
     valueField: 'id',
-    initComponent: function() {
+    initComponent: function () {
         var me = this;
         me.store = Ext.create('MBilling.store.GroupUser', {
             proxy: {
                 type: 'uxproxy',
-                module: 'groupUser',
+                module: 'group-user',
                 limitParam: undefined
             }
         });

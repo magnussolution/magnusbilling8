@@ -91,7 +91,7 @@ class  CallFailed extends Model
         return $this->hasOne(Servers::class, ['id' => 'id_server']);
     }
 
-    public function createDataBaseIfNotExist()
+    public static function createDataBaseIfNotExist()
     {
         $sql = "CREATE TABLE IF NOT EXISTS pkg_cdr_failed_archive (
               `id` int(11) NOT NULL AUTO_INCREMENT,

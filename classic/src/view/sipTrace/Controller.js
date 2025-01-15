@@ -21,7 +21,7 @@
 Ext.define('MBilling.view.sipTrace.Controller', {
     extend: 'Ext.ux.app.ViewController',
     alias: 'controller.siptrace',
-    onNewFilter: function(btn) {
+    onNewFilter: function (btn) {
         var me = this,
             module = me.getView();
         Ext.widget('siptracefilter', {
@@ -29,14 +29,14 @@ Ext.define('MBilling.view.sipTrace.Controller', {
             list: me.list
         });
     },
-    onDeleteLog: function(btn) {
+    onDeleteLog: function (btn) {
         var me = this;
-        Ext.Msg.confirm(me.titleConfirmation, t('Confirm delete all log file?'), function(btn) {
+        Ext.Msg.confirm(me.titleConfirmation, t('Confirm delete all log file?'), function (btn) {
             if (btn === 'yes') {
                 Ext.Ajax.request({
-                    url: 'index.php/sipTrace/destroy',
+                    url: 'index.php/sip-trace/destroy',
                     scope: me,
-                    success: function(response) {
+                    success: function (response) {
                         Ext.ux.Alert.alert(me.titleSuccess, t('Success: The SipTrace file was deleted'), 'success');
                         me.store.load();
                     }
@@ -44,25 +44,25 @@ Ext.define('MBilling.view.sipTrace.Controller', {
             }
         });
     },
-    onClearAll: function(btn) {
+    onClearAll: function (btn) {
         var me = this;
         Ext.Ajax.request({
-            url: 'index.php/sipTrace/clearAll',
+            url: 'index.php/sip-trace/clear-all',
             scope: me,
-            success: function(response) {
+            success: function (response) {
                 Ext.ux.Alert.alert(me.titleSuccess, t('Success'), 'success');
                 me.store.load();
             }
         });
     },
-    onExportPcap: function(btn) {
+    onExportPcap: function (btn) {
         var me = this;
-        window.open('index.php/sipTrace/export');
+        window.open('index.php/sip-trace/export');
     },
-    onDetails: function(btn) {
+    onDetails: function (btn) {
         var me = this,
             callids = [];
-        Ext.each(me.list.getSelectionModel().getSelection(), function(record) {
+        Ext.each(me.list.getSelectionModel().getSelection(), function (record) {
             callids.push(record.get('callid'));
         });
         window.open('index.php/sipTrace/details?callid=' + Ext.encode(callids));

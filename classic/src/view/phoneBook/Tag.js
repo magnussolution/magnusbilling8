@@ -12,12 +12,12 @@ Ext.define('MBilling.view.phoneBook.Tag', {
     displayField: 'name',
     valueField: 'id',
     filterPickList: true,
-    initComponent: function() {
+    initComponent: function () {
         var me = this;
         me.store = Ext.create('MBilling.store.PhoneBook', {
             proxy: {
                 type: 'uxproxy',
-                module: 'phoneBook',
+                module: 'phone-book',
                 limitParam: undefined
             }
         });

@@ -21,13 +21,13 @@
 Ext.define('MBilling.view.sendCreditRates.Controller', {
     extend: 'Ext.ux.app.ViewController',
     alias: 'controller.sendcreditrates',
-    onResetPrice: function(btn) {
+    onResetPrice: function (btn) {
         var me = this,
             selected = me.list.getSelectionModel().getSelection()[0];
         Ext.Ajax.request({
-            url: 'index.php/SendCreditRates/resetSellPrice',
+            url: 'index.php/send-credit-rates/reset-sell-price',
             scope: me,
-            success: function(response) {
+            success: function (response) {
                 response = Ext.decode(response.responseText);
                 if (response[me.nameSuccessRequest]) {
                     Ext.ux.Alert.alert(me.titleSuccess, response[me.nameMsgRequest], 'success');
@@ -39,13 +39,13 @@ Ext.define('MBilling.view.sendCreditRates.Controller', {
         });
         me.store.load();
     },
-    onResetRetail: function(btn) {
+    onResetRetail: function (btn) {
         var me = this,
             selected = me.list.getSelectionModel().getSelection()[0];
         Ext.Ajax.request({
-            url: 'index.php/SendCreditRates/resetRetailPrice',
+            url: 'index.php/send-credit-rates/reset-retail-price',
             scope: me,
-            success: function(response) {
+            success: function (response) {
                 response = Ext.decode(response.responseText);
                 if (response[me.nameSuccessRequest]) {
                     Ext.ux.Alert.alert(me.titleSuccess, response[me.nameMsgRequest], 'success');

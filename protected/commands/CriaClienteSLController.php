@@ -49,6 +49,7 @@ class CriaClienteSLController extends ConsoleCommand
                 $user->save();
             }
         }
+        return ExitCode::OK;
     }
 
     public function saveUserSLCurl($model, $SLAppToken, $SLAccessToken)

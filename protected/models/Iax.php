@@ -82,7 +82,7 @@ class  Iax extends Model
             [['type'], 'string', 'max' => 6],
             [['disallow', 'allow', 'useragent'], 'string', 'max' => 100],
             [['username'], 'checkusername'],
-            [['username'], 'unique', 'caseSensitive' => 'false'],
+            [['username'], 'unique'],
         ];
         return $this->getExtraField($rules);
     }

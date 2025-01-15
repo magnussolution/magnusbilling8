@@ -98,10 +98,10 @@ class MethodpayController extends CController
     {
         if (Yii::$app->session['user_type'] > 1 && $this->filterByUser) {
             if (Yii::$app->session['isAgent']) {
-                $filter .= ' AND t.id_user = :dfbyb AND active = :dfbyb';
+                $filter .= ' AND ' . $this->instanceModel::tableName() . '.id_user = :dfbyb AND active = :dfbyb';
                 $this->paramsFilter[':dfbyb'] = 1;
             } else if (Yii::$app->session['isClient']) {
-                $filter .= ' AND t.id_user = :dfbya AND active = :dfbyb';
+                $filter .= ' AND ' . $this->instanceModel::tableName() . '.id_user = :dfbya AND active = :dfbyb';
                 $this->paramsFilter[':dfbya'] = Yii::$app->session['id_agent'];
                 $this->paramsFilter[':dfbyb'] = 1;
             }

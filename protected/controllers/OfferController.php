@@ -45,7 +45,7 @@ class OfferController extends CController
         $this->abstractModel = Offer::find();
         $this->titleReport   = Yii::t('app', 'Offer');
         if (Yii::$app->session['isAdmin']) {
-            $this->defaultFilter = '(t.id_user < 2 || t.id_user IS NULL)';
+            $this->defaultFilter = '(pkg_offer.id_user < 2 || pkg_offer.id_user IS NULL)';
         }
         $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();
@@ -53,7 +53,7 @@ class OfferController extends CController
 
     public function extraFilterCustomAgent($filter)
     {
-        $filter                       = 't.id_user = :agfby';
+        $filter                       = 'pkg_offer.id_user = :agfby';
         $this->paramsFilter[':agfby'] = Yii::$app->session['id_user'];
 
         return $filter;

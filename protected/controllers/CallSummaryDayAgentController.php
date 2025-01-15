@@ -24,7 +24,7 @@ use app\models\CallSummaryDayAgent;
 
 class CallSummaryDayAgentController extends CController
 {
-    public $join           = 'JOIN pkg_user ON t.id_user = pkg_user.id';
+    public $join           = 'JOIN pkg_user ON pkg_cdr_summary_day_agent.id_user = pkg_user.id';
     public $extraValues    = array('idUser' => 'username');
 
     public $fieldsInvisibleAgent = array(
@@ -56,7 +56,7 @@ class CallSummaryDayAgentController extends CController
 
     public function extraFilterCustomAgent($filter)
     {
-        $filter .= ' AND t.id_user = :agfby';
+        $filter .= ' AND ' . $this->instanceModel::tableName() . '.id_user = :agfby';
         $this->paramsFilter[':agfby'] = Yii::$app->session['id_user'];
 
         return $filter;

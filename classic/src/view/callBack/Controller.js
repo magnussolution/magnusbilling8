@@ -21,17 +21,17 @@
 Ext.define('MBilling.view.callBack.Controller', {
     extend: 'Ext.ux.app.ViewController',
     alias: 'controller.callback',
-    onReative: function(btn) {
+    onReative: function (btn) {
         var me = this,
             store = me.store,
             filter = me.list.filters.getFilterData().length ? Ext.encode(me.list.filters.getFilterData()) : store.proxy.extraParams.filter;
         Ext.Ajax.request({
-            url: 'index.php/callBack/reprocesar/',
+            url: 'index.php/call-back/reprocesar/',
             params: {
                 filter: filter
             },
             scope: me,
-            success: function(response) {
+            success: function (response) {
                 response = Ext.decode(response.responseText);
                 if (response[me.nameSuccessRequest]) {
                     Ext.ux.Alert.alert(me.titleSuccess, response[me.nameMsgRequest], 'success', true, false, 15000);

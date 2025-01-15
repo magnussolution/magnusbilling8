@@ -25,7 +25,7 @@ use app\models\CallSummaryDayUser;
 class CallSummaryDayUserController extends CController
 {
 
-    public $join           = 'JOIN pkg_user c ON t.id_user = c.id';
+
     public $extraValues    = ['idUser' => 'username'];
 
     public $fieldsFkReport = [
@@ -59,6 +59,7 @@ class CallSummaryDayUserController extends CController
         $this->abstractModel = CallSummaryDayUser::find();
         $this->titleReport   = Yii::t('app', 'Summary Day User');
         $this->attributeOrder = $this->instanceModel::tableName() . '.day DESC';
+        $this->joinWith         = 'idUser';
         parent::init();
     }
 

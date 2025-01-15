@@ -18,7 +18,7 @@ use app\models\Sip;
 use app\models\Iax;
 use app\models\Servers;
 use app\models\Diddestination;
-use AGI_AsteriskManager;
+use app\components\AGI_AsteriskManager;
 use PDO;
 
 class AsteriskAccess
@@ -954,7 +954,7 @@ class AsteriskAccess
                         }
 
                         if ($iax->calllimit > 0) {
-                            $line .= 'call-limit=' . $sip->calllimit . "\n";
+                            $line .= 'call-limit=' . $iax->calllimit . "\n";
                         }
 
                         if (fwrite($fd, $line) === false) {

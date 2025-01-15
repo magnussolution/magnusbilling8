@@ -21,7 +21,7 @@
 Ext.define('MBilling.view.buycredit.Controller', {
     extend: 'Ext.ux.app.ViewController',
     alias: 'controller.buycredit',
-    buyCreditClose: function(btn) {
+    buyCreditClose: function (btn) {
         var me = this,
             getForm = me.lookupReference('buycreditPanel'),
             getBtnCancel = me.lookupReference('btnCancel');
@@ -32,7 +32,7 @@ Ext.define('MBilling.view.buycredit.Controller', {
         getForm.getForm().findField('method').setValue('');
         getBtnCancel.setVisible(false);
     },
-    buyCredit: function(btn) {
+    buyCredit: function (btn) {
         var me = this,
             getForm = me.lookupReference('buycreditPanel'),
             getBtnCancel = me.lookupReference('btnCancel'),
@@ -44,9 +44,9 @@ Ext.define('MBilling.view.buycredit.Controller', {
             if (fielCard_num) {
                 getForm.setLoading(me.msgWait);
                 Ext.Ajax.request({
-                    url: 'index.php/buyCredit/method/?amount=' + fieldAmount + '&id_method=' + fieldMethod + '&cc=' + fielCard_num + '&ed=' + fieldExpDate,
+                    url: 'index.php/buy-credit/method/?amount=' + fieldAmount + '&id_method=' + fieldMethod + '&cc=' + fielCard_num + '&ed=' + fieldExpDate,
                     scope: me,
-                    success: function(response) {
+                    success: function (response) {
                         response = Ext.decode(response.responseText);
                         if (response.success) {
                             Ext.ux.Alert.alert(t('Success'), response.msg, 'success', 10000);
@@ -83,7 +83,7 @@ Ext.define('MBilling.view.buycredit.Controller', {
             Ext.ux.Alert.alert(me.titleWarning, t('Select a valid amount'), 'warning');
             return;
         } else {
-            url = 'index.php/buyCredit/method/?amount=' + fieldAmount + '&id_method=' + fieldMethod;
+            url = 'index.php/buy-credit/method/?amount=' + fieldAmount + '&id_method=' + fieldMethod;
             getForm.getForm().findField('method').setValue('');
             getForm.getForm().findField('card_num').setValue('');
             getForm.getForm().findField('exp_date').setValue('');

@@ -23,12 +23,14 @@ namespace app\commands;
 
 use Yii;
 use app\components\ConsoleCommand;
-use yii\console\ExitCode;
-
-namespace app\commands;
-
-use Yii;
-use app\components\ConsoleCommand;
+use app\models\Alarm;
+use app\models\Call;
+use app\models\CallOnLine;
+use app\models\CallSummaryDayUser;
+use app\models\Smtps;
+use app\models\TemplateMail;
+use app\models\Trunk;
+use app\models\User;
 use yii\console\ExitCode;
 
 class AlarmController extends ConsoleCommand

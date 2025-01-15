@@ -31,6 +31,7 @@ use app\components\Model;
 class  User extends Model
 {
     public $newPassword = null;
+    protected $_module = 'user';
 
     /**
      * @inheritdoc

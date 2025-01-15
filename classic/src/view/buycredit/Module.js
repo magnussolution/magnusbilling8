@@ -11,10 +11,10 @@ Ext.define('MBilling.view.buycredit.Module', {
     resizable: false,
     autoShow: true,
     header: false,
-    initComponent: function() {
+    initComponent: function () {
         var me = this;
         if (window.isTablet == true) {
-            window.open('index.php/buyCredit/method/?mobile=true', "_self");
+            window.open('index.php/buy-credit/method/?mobile=true', "_self");
             me.items = [];
         } else {
             me.items = [{

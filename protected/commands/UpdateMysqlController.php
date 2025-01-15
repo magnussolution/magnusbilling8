@@ -2066,6 +2066,8 @@ exten => s,1,Set(MASTER_CHANNEL(TRUNKANSWERTIME)=\${EPOCH})
             $version = '7.8.5.0';
             $this->update($version);
         }
+
+        return ExitCode::OK;
     }
 
     public function executeDB($sql)

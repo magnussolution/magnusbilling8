@@ -21,7 +21,7 @@
 Ext.define('MBilling.view.servicesUse.Controller', {
     extend: 'Ext.ux.app.ViewController',
     alias: 'controller.servicesuse',
-    onSelectionChange: function(selModel, selections) {
+    onSelectionChange: function (selModel, selections) {
         var me = this,
             btnDelete = me.lookupReference('cancelService'),
             btnPay = me.lookupReference('payService');
@@ -29,7 +29,7 @@ Ext.define('MBilling.view.servicesUse.Controller', {
         btnPay && btnPay.setDisabled(!selections.length);
         me.callParent(arguments);
     },
-    init: function() {
+    init: function () {
         var me = this;
         me.control({
             'serviceslookup': {
@@ -38,25 +38,25 @@ Ext.define('MBilling.view.servicesUse.Controller', {
         });
         me.callParent(arguments);
     },
-    onNew: function() {
+    onNew: function () {
         var me = this,
             form = me.formPanel.getForm();
         form.findField('method').setVisible(false);
         form.findField('price').setVisible(false);
         me.callParent(arguments);
     },
-    onEdit: function() {
+    onEdit: function () {
         var me = this;
         if (App.user.isClient) return;
         me.callParent(arguments);
     },
-    setValorItem: function(comboProduto, record) {
+    setValorItem: function (comboProduto, record) {
         var me = this,
             form = me.formPanel.getForm(),
             fieldPrice = form.findField('price');
         if (me.formPanel.getForm().findField('id').getValue() === '') me.findService(record, fieldPrice);
     },
-    findService: function(record, fieldPrice) {
+    findService: function (record, fieldPrice) {
         var me = this;
         if (record < 1) return;
         filterService = Ext.encode([{
@@ -67,7 +67,7 @@ Ext.define('MBilling.view.servicesUse.Controller', {
         }]);
         Ext.Ajax.request({
             url: 'index.php/services/read?filter=' + filterService,
-            success: function(r) {
+            success: function (r) {
                 r = Ext.decode(r.responseText);
                 if (r.rows) {
                     fieldPrice.setValue(r.rows[0].price);
@@ -118,7 +118,7 @@ Ext.define('MBilling.view.servicesUse.Controller', {
             })
         }
     },*/
-    onCancelService: function(btn) {
+    onCancelService: function (btn) {
         var me = this,
             selected = me.list.getSelectionModel().getSelection()[0];
         me.formPanel.collapse();
@@ -131,13 +131,13 @@ Ext.define('MBilling.view.servicesUse.Controller', {
             } else if (selected.get('Status') == 2) {
                 me.ondSendRequest(selected.get('id'));
             } else {
-                Ext.Msg.confirm(me.titleConfirmation, '<font color=red>' + t('ALERT: Do you really want cancel this service to this user?') + '</font>', function(btn) {
+                Ext.Msg.confirm(me.titleConfirmation, '<font color=red>' + t('ALERT: Do you really want cancel this service to this user?') + '</font>', function (btn) {
                     if (btn === 'yes') {
-                        Ext.Msg.confirm(me.titleConfirmation, '<font color=blue>' + t('ALERT: This action was to return the balance, referring to the days not used. Do you confirm?') + '</font>', function(btn) {
+                        Ext.Msg.confirm(me.titleConfirmation, '<font color=blue>' + t('ALERT: This action was to return the balance, referring to the days not used. Do you confirm?') + '</font>', function (btn) {
                             if (btn === 'yes') {
                                 me.ondSendRequest(selected.get('id'));
                                 Ext.ux.Alert.alert(t('Notification'), t('The system will reload in 3 seconds'), 'information', true);
-                                setTimeout(function() {
+                                setTimeout(function () {
                                     location.reload()
                                 }, 3000);
                             }
@@ -151,34 +151,34 @@ Ext.define('MBilling.view.servicesUse.Controller', {
             me.list.setLoading(false);
         }
     },
-    onPayServiceLink: function(argument) {
+    onPayServiceLink: function (argument) {
         var me = this,
             selected = me.list.getSelectionModel().getSelection()[0],
             ids = [];
         me.formPanel.collapse();
         me.list.setLoading(true);
         if (selected) {
-            Ext.each(me.list.getSelectionModel().getSelection(), function(rec) {
+            Ext.each(me.list.getSelectionModel().getSelection(), function (rec) {
                 ids.push(rec.get(me.idProperty));
             });
         }
-        url = 'index.php/buyCredit/payServiceLink?id_service_use=' + Ext.encode(ids);
+        url = 'index.php/buy-credit/pay-service-link?id_service_use=' + Ext.encode(ids);
         window.open(url, "_blank");
         me.list.setLoading(false);
         me.store.load();
-        Ext.Msg.confirm(me.titleConfirmation, '<font color=blue>' + t('The system will reload in 3 seconds') + '</font>', function(btn) {
+        Ext.Msg.confirm(me.titleConfirmation, '<font color=blue>' + t('The system will reload in 3 seconds') + '</font>', function (btn) {
             location.reload()
         });
     },
-    ondSendRequest: function(id) {
+    ondSendRequest: function (id) {
         var me = this;
         Ext.Ajax.request({
-            url: 'index.php/servicesUse/cancelService',
+            url: 'index.php/services-use/cancel-service',
             params: {
                 id: id
             },
             scope: me,
-            success: function(response) {
+            success: function (response) {
                 response = Ext.decode(response.responseText);
                 if (response[me.nameSuccessRequest]) {
                     Ext.ux.Alert.alert(me.titleSuccess, response[me.nameMsgRequest], 'success');

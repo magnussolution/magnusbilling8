@@ -27,12 +27,12 @@ Ext.define('MBilling.view.phoneBook.Combo', {
     forceSelection: true,
     editable: true,
     valueField: 'id',
-    initComponent: function() {
+    initComponent: function () {
         var me = this;
         me.store = Ext.create('MBilling.store.PhoneBook', {
             proxy: {
                 type: 'uxproxy',
-                module: 'phoneBook',
+                module: 'phone-book',
                 limitParam: undefined
             }
         });

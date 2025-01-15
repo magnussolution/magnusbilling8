@@ -67,7 +67,7 @@ class  Methodpay extends Model
     {
         $rules = [
             [['id', 'payment_method', 'country'], 'required'],
-            [['active', 'id_user', 'fee', 'SLIdProduto,min,max'], 'integer', 'integerOnly' => true],
+            [['active', 'id_user', 'fee', 'SLIdProduto', 'min', 'max'], 'integer', 'integerOnly' => true],
             [['obs', 'client_id', 'client_secret'], 'string', 'max' => 500],
             [['P2P_tax_amount'], 'string', 'max' => 10],
             [['P2P_CustomerSiteID', 'P2P_KeyID', 'P2P_Passphrase', 'P2P_RecipientKeyID'], 'string', 'max' => 100],

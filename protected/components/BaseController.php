@@ -103,9 +103,10 @@ class BaseController extends Controller
     public $addInCondition = '';
     public $instanceModelRelated;
     public $attributeOrder;
+    public $joinWith;
     public function init()
     {
-        //Yii::$app->clientScript->registerCssFile(Yii::$app->baseUrl . '/resources/init.css');
+
 
         SqlInject::sanitize($_REQUEST);
         $this->config = LoadConfig::getConfig();
@@ -350,6 +351,8 @@ class BaseController extends Controller
     {
         $query = $this->abstractModel;
 
+        //$query->from($this->instanceModel::tableName() . ' AS t');
+
         $query->andWhere($this->filter);
 
         if ($this->select != '*') {
@@ -360,6 +363,9 @@ class BaseController extends Controller
             $query->join($this->join);
         }
 
+        if (!empty($this->joinWith)) {
+            $query->joinWith($this->joinWith);
+        }
 
         if (!empty($this->paramsFilter)) {
             $query->addParams($this->paramsFilter);
@@ -403,7 +409,7 @@ class BaseController extends Controller
             return $result[0]['Rows'];
         } else {
 
-            $sql = "SELECT COUNT(*) AS " . $this->instanceModel::primaryKey()[0] . " FROM " . $this->instanceModel::tableName() . " t $this->join WHERE $this->filter";
+            $sql = "SELECT COUNT(*) AS " . $this->instanceModel::primaryKey()[0] . " FROM " . $this->instanceModel::tableName() . "  $this->join WHERE $this->filter";
             $command = Yii::$app->db->createCommand($sql);
             if (is_array($this->paramsFilter)) {
                 foreach ($this->paramsFilter as $key => $value) {
@@ -475,7 +481,7 @@ class BaseController extends Controller
             echo '<pre>';
             print_r($this->paramsFilter);
 
-            echo $sql = "SELECT $this->select FROM  " . $this->instanceModel::tableName() . " t $this->join WHERE $this->filter GROUP BY $this->group LIMIT $this->limit";
+            echo $sql = "SELECT $this->select FROM  " . $this->instanceModel::tableName() . " $this->join WHERE $this->filter GROUP BY $this->group LIMIT $this->limit";
             try {
                 $command = Yii::$app->db->createCommand($sql);
                 if (is_array($this->paramsFilter)) {
@@ -533,7 +539,7 @@ class BaseController extends Controller
             && Yii::$app->session['user_type'] == 1 && Yii::$app->session['adminLimitUsers'] == true
         ) {
 
-            $this->filter .= " AND t.id_user IN ( SELECT id FROM pkg_user WHERE id_group IN ( SELECT gug.id_group FROM pkg_group_user_group gug WHERE gug.id_group_user = :idgA0 ) )";
+            $this->filter .= " AND id_user IN ( SELECT id FROM pkg_user WHERE id_group IN ( SELECT gug.id_group FROM pkg_group_user_group gug WHERE gug.id_group_user = :idgA0 ) )";
 
             $this->paramsFilter['idgA0'] = Yii::$app->session['id_group'];
         }
@@ -969,7 +975,7 @@ class BaseController extends Controller
             $header .= '"' . ($value['header']) . '",';
         }
 
-        $sql = "SELECT " . substr($header, 0, -1) . " UNION ALL SELECT " . $this->getColumnsFromReport($columns) . " FROM " . $this->instanceModel::tableName() . " t $this->join WHERE $this->filter";
+        $sql = "SELECT " . substr($header, 0, -1) . " UNION ALL SELECT " . $this->getColumnsFromReport($columns) . " FROM " . $this->instanceModel::tableName() . " $this->join WHERE $this->filter";
 
         $command = Yii::$app->db->createCommand($sql);
         if ((is_array($this->paramsFilter) || is_object($this->paramsFilter)) && count($this->paramsFilter)) {
@@ -1043,7 +1049,7 @@ class BaseController extends Controller
 
                 $this->convertRelationFilter();
 
-                $sql     = 'DELETE t FROM ' . $this->instanceModel::tableName() . ' t ' . $this->join . ' WHERE ' . $this->filter;
+                $sql     = 'DELETE FROM ' . $this->instanceModel::tableName() . ' ' . $this->join . ' WHERE ' . $this->filter;
                 $command = Yii::$app->db->createCommand($sql);
                 foreach ($this->paramsFilter as $key => $value) {
                     $key = preg_replace('/^\:/', '', $key);
@@ -1806,12 +1812,12 @@ class BaseController extends Controller
                     ($fieldName == 'idPrefixprefix' && $fieldReport == 'destination')
                 ) {
                     //altera as colunas para poder pegar o destino das tarifas
-                    $subSelect = "(SELECT $fieldReport FROM $table WHERE $table.$pk = t.id_prefix) AS destination";
+                    $subSelect = "(SELECT $fieldReport FROM $table WHERE $table.$pk = $table.id_prefix) AS destination";
                 } else {
                     if (isset($fk['where'])) {
-                        $subSelect = "(SELECT $fieldReport FROM $table WHERE $table.$pk = t." . $fk['where'] . ") AS $fieldName";
+                        $subSelect = "(SELECT $fieldReport FROM $table WHERE $table.$pk = $table." . $fk['where'] . ") AS $fieldName";
                     } else {
-                        $subSelect = "(SELECT $fieldReport FROM $table WHERE $table.$pk = t.$fieldName) AS $fieldName";
+                        $subSelect = "(SELECT $fieldReport FROM $table WHERE $table.$pk = $table.$fieldName) AS $fieldName";
                     }
                 }
 
@@ -1827,7 +1833,7 @@ class BaseController extends Controller
                     } elseif (strtoupper($this->config['global']['base_country']) == 'BRL' && preg_match('/sessionbill|buycost|lucro|buyrate|rateinitial/', $fieldName)) {
                         array_push($arrayColumns, " REPLACE( $fieldName,  '.',  ',' ) AS $fieldName ");
                     } elseif (strtoupper($this->config['global']['base_country']) == 'BRL' && preg_match('/credit/', $fieldName)) {
-                        array_push($arrayColumns, " REPLACE( t.$fieldName,  '.',  ',' ) AS credit ");
+                        array_push($arrayColumns, " REPLACE( " . $this->instanceModel::tableName() . ".$fieldName,  '.',  ',' ) AS credit ");
                     } else {
                         array_push($arrayColumns, $fieldName);
                     }
@@ -1850,18 +1856,8 @@ class BaseController extends Controller
 
     public function columnsReplace($arrayColumns)
     {
-        $patterns = [
-            '/,credit/',
-            '/,id_user/',
-            '/^id_user/',
-            '/^name/',
-        ];
-        $arrayReplace = [
-            't.credit',
-            ',t.id_user',
-            't.id_user',
-            't.name',
-        ];
+        $patterns = [];
+        $arrayReplace = [];
 
         $arrayColumns = preg_replace($patterns, $arrayReplace, $arrayColumns);
         return $arrayColumns;
@@ -1871,15 +1867,15 @@ class BaseController extends Controller
     {
         if (preg_match('/idPrefixdestination/', $this->order)) {
             if (! preg_match("/JOIN pkg_prefix/", $this->join)) {
-                $this->join .= ' LEFT JOIN pkg_prefix b ON t.id_prefix = b.id';
+                $this->join .= ' LEFT JOIN pkg_prefix b ON pkg_rate.id_prefix = b.id';
             }
         }
         //ajustar para ordenar corretamente no modulo rates
-        $this->order = preg_replace("/idPrefixprefix/", 't.id_prefix', $this->order);
-        $this->order = preg_replace("/idPrefixdestination/", 'b.destination', $this->order);
-        $this->order = preg_replace("/idPhonebookname/", 'b.name', $this->order);
-        $this->order = preg_replace("/idUserusername/", 't.id_user', $this->order);
-        $this->order = preg_replace("/idDiddid/", 't.id_did', $this->order);
+        $this->order = preg_replace("/idPrefixprefix/", 'pkg_prefix.id_prefix', $this->order);
+        $this->order = preg_replace("/idPrefixdestination/", 'pkg_prefix.destination', $this->order);
+        $this->order = preg_replace("/idPhonebookname/", 'pkg_phonebook.name', $this->order);
+        $this->order = preg_replace("/idUserusername/", 'pkg_user.id_user', $this->order);
+        $this->order = preg_replace("/idDiddid/", 'pkg_did.id_did', $this->order);
         $this->order = preg_replace("/^id /", 'id ', $this->order);
     }
 
@@ -1914,7 +1910,7 @@ class BaseController extends Controller
     {
 
         //se for cliente filtrar pelo pkg_user.id
-        $filter .= ' AND t.id_user = :clfby';
+        $filter .= ' AND id_user = :clfby';
         $this->paramsFilter[':clfby'] = Yii::$app->session['id_user'];
 
         return $filter;
@@ -1923,14 +1919,9 @@ class BaseController extends Controller
     public function extraFilterCustomAgent($filter)
     {
         //se é agente filtrar pelo user.id_user
-        if (array_key_exists('idUser', $this->relationFilter)) {
-            $this->relationFilter['idUser']['condition'] .= " AND idUser.id_user = :agfby";
-        } else {
-            $this->relationFilter['idUser'] = [
-                'condition' => "idUser.id_user = :agfby",
-            ];
-        }
-        $this->paramsFilter[':agfby'] = Yii::$app->session['id_user'];
+        $this->relationFilter['idUser'] = function ($query) {
+            $query->andWhere(['=', 'pkg_user.id_user',  Yii::$app->session['id_user']]);
+        };
 
         return $filter;
     }
@@ -1957,9 +1948,9 @@ class BaseController extends Controller
             } else if ($columns[$i]['dataIndex'] == 'idTrunktrunkcode') {
                 $columns[$i]['dataIndex'] = 'id_trunk';
             } else if ($columns[$i]['dataIndex'] == 'idProviderprovider_name') {
-                $columns[$i]['dataIndex'] = 't.id_provider';
+                $columns[$i]['dataIndex'] = '.id_provider';
             } else if ($columns[$i]['dataIndex'] == 'id') {
-                $columns[$i]['dataIndex'] = 't.id';
+                $columns[$i]['dataIndex'] = $this->instanceModel::tableName() . '.id';
             }
         }
 
@@ -2030,7 +2021,7 @@ class BaseController extends Controller
     {
         //check remote login
         $filterUser = '((s.username COLLATE utf8_bin = :key OR s.email COLLATE utf8_bin LIKE :key) AND UPPER(MD5(s.password)) = :key1)';
-        $filterSip  = '(t.name COLLATE utf8_bin = :key AND UPPER(MD5(t.secret)) = :key1 )';
+        $filterSip  = 'pkg_sip.name COLLATE utf8_bin = :key AND UPPER(MD5(pkg_sip.secret)) = :key1 )';
         $modelSip = Sip::find()
             ->joinWith('idUser')
             ->where($filterUser . ' OR ' . $filterSip)

@@ -12,7 +12,7 @@ Ext.define('MBilling.view.main.GoogleAuthenticatorController', {
             keyup: 'onKeyUpField'
         }
     },
-    onGoogleAuthenticator: function(btn) {
+    onGoogleAuthenticator: function (btn) {
         var me = this,
             loginWin = me.getView(),
             fieldOneCode = me.lookupReference('oneCode'),
@@ -23,11 +23,11 @@ Ext.define('MBilling.view.main.GoogleAuthenticatorController', {
         }
         loginWin.setLoading(me.msgAuthenticating);
         Ext.Ajax.request({
-            url: 'index.php/authentication/googleAuthenticator',
+            url: 'index.php/authentication/google-authenticator',
             params: {
                 oneCode: oneCode
             },
-            success: function(response) {
+            success: function (response) {
                 response = Ext.decode(response.responseText);
                 if (response.success) {
                     loginWin.setLoading(me.msgEnteringInSystem);
@@ -45,19 +45,19 @@ Ext.define('MBilling.view.main.GoogleAuthenticatorController', {
             }
         });
     },
-    onShowLogin: function() {
+    onShowLogin: function () {
         this.lookupReference('user').focus(false, 10);
     },
-    onKeyUpField: function(field, evt) {
+    onKeyUpField: function (field, evt) {
         if (evt.getKey() === evt.ENTER) {
             this.onGoogleAuthenticator();
         }
     },
-    onLogout: function() {
+    onLogout: function () {
         var me = this;
         Ext.Ajax.request({
             url: 'index.php/authentication/logoff',
-            success: function() {
+            success: function () {
                 App.user.logged = false;
                 location.reload();
             }

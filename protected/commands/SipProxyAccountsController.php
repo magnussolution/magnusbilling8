@@ -169,5 +169,6 @@ class SipProxyAccountsController extends ConsoleCommand
                 print_r($e);
             }
         }
+        return ExitCode::OK;
     }
 }

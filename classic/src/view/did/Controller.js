@@ -23,7 +23,7 @@ Ext.define('MBilling.view.did.Controller', {
     requires: ['MBilling.view.did.Bulk'],
     alias: 'controller.did',
     isSubmitForm: true,
-    init: function() {
+    init: function () {
         var me = this;
         me.control({
             'booleancombo[name=cbr]': {
@@ -35,14 +35,14 @@ Ext.define('MBilling.view.did.Controller', {
         });
         me.callParent(arguments);
     },
-    onSelectcbr: function(combo, records) {
+    onSelectcbr: function (combo, records) {
         me = this,
             form = me.formPanel.getForm();
         form.findField('cbr_ua').setVisible(records.data.field1);
         form.findField('cbr_total_try').setVisible(records.data.field1);
         form.findField('cbr_time_try').setVisible(records.data.field1);
     },
-    onSelectcbrAu: function(combo, records) {
+    onSelectcbrAu: function (combo, records) {
         me = this,
             form = me.formPanel.getForm();
         form.findField('cbr_em').setVisible(records.data.field1);
@@ -52,7 +52,7 @@ Ext.define('MBilling.view.did.Controller', {
         form.findField('workaudio').setVisible(records.data.field1);
         form.findField('noworkaudio').setVisible(records.data.field1);
     },
-    onNew: function(btn) {
+    onNew: function (btn) {
         var me = this,
             form = me.formPanel.getForm();
         form.findField('cbr_ua').setVisible(false);
@@ -66,7 +66,7 @@ Ext.define('MBilling.view.did.Controller', {
         form.findField('cbr_time_try').setVisible(false);
         me.callParent(arguments);
     },
-    onEdit: function() {
+    onEdit: function () {
         var me = this,
             record = me.list.getSelectionModel().getSelection()[0];
         if (record.get('cbr') == 0) {
@@ -96,11 +96,11 @@ Ext.define('MBilling.view.did.Controller', {
         me.lookupReference('generalTab').show();
         me.callParent(arguments);
     },
-    onDelete: function(btn) {
+    onDelete: function (btn) {
         var me = this,
             records = me.list.getSelectionModel().getSelection(),
             allowDelete = true;
-        Ext.each(records, function(selected) {
+        Ext.each(records, function (selected) {
             if (selected.get('reserved') === 1) {
                 Ext.ux.Alert.alert(me.titleError, t('Please, first release the DID') + ' ' + selected.get('did'), 'error');
                 allowDelete = false;
@@ -111,20 +111,20 @@ Ext.define('MBilling.view.did.Controller', {
             me.callParent(arguments);
         };
     },
-    onRelease: function(btn, pressed) {
+    onRelease: function (btn, pressed) {
         var me = this,
             records,
             record = me.list.getSelectionModel().getSelection()[0],
             idRecord = []
         if (record) {
             dids = "";
-            Ext.each(me.list.getSelectionModel().getSelection(), function(record) {
+            Ext.each(me.list.getSelectionModel().getSelection(), function (record) {
                 dids = dids + ', ' + record.get('did');
             });
             msgConfirmation = t('Confirm release DIDs') + dids,
-                Ext.Msg.confirm(me.titleConfirmation, msgConfirmation, function(btn) {
+                Ext.Msg.confirm(me.titleConfirmation, msgConfirmation, function (btn) {
                     if (btn === 'yes') {
-                        Ext.each(me.list.getSelectionModel().getSelection(), function(record) {
+                        Ext.each(me.list.getSelectionModel().getSelection(), function (record) {
                             idRecord.push(record.get('id'));
                         });
                         Ext.Ajax.request({
@@ -133,7 +133,7 @@ Ext.define('MBilling.view.did.Controller', {
                                 ids: Ext.encode(idRecord)
                             },
                             scope: me,
-                            success: function(response) {
+                            success: function (response) {
                                 response = Ext.decode(response.responseText);
                                 if (response[me.nameSuccessRequest]) {
                                     var msg = Helper.Util.convertErrorsJsonToString(response[me.nameMsgRequest]);
@@ -151,29 +151,29 @@ Ext.define('MBilling.view.did.Controller', {
             Ext.ux.Alert.alert(me.titleError, t('Please select one or more records'), 'notification');
         }
     },
-    onBuy: function(btn, pressed) {
+    onBuy: function (btn, pressed) {
         var me = this,
             records,
             record = me.list.getSelectionModel().getSelection()[0],
             idRecord = []
         if (record) {
             dids = "";
-            Ext.each(me.list.getSelectionModel().getSelection(), function(record) {
+            Ext.each(me.list.getSelectionModel().getSelection(), function (record) {
                 dids = dids + ', ' + record.get('did');
             });
             msgConfirmation = t('Confirm buy DIDs') + dids,
-                Ext.Msg.confirm(me.titleConfirmation, msgConfirmation, function(btn) {
+                Ext.Msg.confirm(me.titleConfirmation, msgConfirmation, function (btn) {
                     if (btn === 'yes') {
-                        Ext.each(me.list.getSelectionModel().getSelection(), function(record) {
+                        Ext.each(me.list.getSelectionModel().getSelection(), function (record) {
                             idRecord.push(record.get('id'));
                         });
                         Ext.Ajax.request({
-                            url: 'index.php/did/buyBulk',
+                            url: 'index.php/did/buy-bulk',
                             params: {
                                 ids: Ext.encode(idRecord)
                             },
                             scope: me,
-                            success: function(response) {
+                            success: function (response) {
                                 response = Ext.decode(response.responseText);
                                 if (response[me.nameSuccessRequest]) {
                                     var msg = Helper.Util.convertErrorsJsonToString(response[me.nameMsgRequest]);
@@ -191,7 +191,7 @@ Ext.define('MBilling.view.did.Controller', {
             Ext.ux.Alert.alert(me.titleError, t('Please select one or more records'), 'notification');
         }
     },
-    onBuyDid: function() {
+    onBuyDid: function () {
         var me = this,
             getForm = me.lookupReference('buydidPanel'),
             fieldDid = getForm.getForm().findField('did').getValue(),
@@ -199,14 +199,14 @@ Ext.define('MBilling.view.did.Controller', {
             msgConfirmation = t('Do you confirm buy this DID?');
         if (fieldDid < 1) Ext.ux.Alert.alert(me.titleError, t('Please, select a DID'), 'warning');
         else {
-            Ext.Msg.confirm(t('Confirmation'), msgConfirmation + ' <br>' + valueDid, function(btn) {
+            Ext.Msg.confirm(t('Confirmation'), msgConfirmation + ' <br>' + valueDid, function (btn) {
                 if (btn === 'yes') {
                     Ext.Ajax.request({
-                        url: 'index.php/did/buyBulk',
+                        url: 'index.php/did/buy-bulk',
                         params: {
                             ids: Ext.encode(fieldDid)
                         },
-                        success: function(response) {
+                        success: function (response) {
                             response = Ext.decode(response.responseText);
                             if (response['success']) {
                                 Ext.ux.Alert.alert(me.titleSuccess, t(response['msg']), 'success', true, true, 5000);

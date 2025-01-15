@@ -22,7 +22,7 @@ Ext.define('MBilling.view.ivr.Controller', {
     extend: 'Ext.ux.app.ViewController',
     alias: 'controller.ivr',
     isSubmitForm: true,
-    init: function() {
+    init: function () {
         var me = this;
         me.control({
             'typedestinationcombo': {
@@ -31,10 +31,10 @@ Ext.define('MBilling.view.ivr.Controller', {
         });
         me.callParent(arguments);
     },
-    onSelectMethod: function(combo, records) {
+    onSelectMethod: function (combo, records) {
         this.showFieldsRelated(records.getData().showFields);
     },
-    showFieldsRelated: function(showFields) {
+    showFieldsRelated: function (showFields) {
         var me = this,
             form = me.formPanel.getForm(),
             fields = me.formPanel.getForm().getFields(),
@@ -42,7 +42,7 @@ Ext.define('MBilling.view.ivr.Controller', {
             number = activeField.name.substr(-2); //get the last two caracter from active field 
         me.onSetVisibleFiel(activeField, form, number, activeField.value);
     },
-    onSetVisibleFiel: function(activeField, form, number, fieldShow) {
+    onSetVisibleFiel: function (activeField, form, number, fieldShow) {
         if (activeField.value == 'undefined') activeField.setValue('undefined');
         if (activeField.name.match("^type_10")) {
             form.findField('id_queue_10').setVisible(fieldShow.match("^queue"));
@@ -66,7 +66,7 @@ Ext.define('MBilling.view.ivr.Controller', {
             form.findField('extension_out' + number).setVisible(fieldShow.match("^group|^number|^custom"));
         }
     },
-    onEdit: function() {
+    onEdit: function () {
         var me = this,
             form = me.formPanel.getForm(),
             record = me.list.getSelectionModel().getSelection()[0];
@@ -128,7 +128,7 @@ Ext.define('MBilling.view.ivr.Controller', {
         }
         me.callParent(arguments);
     },
-    onNew: function() {
+    onNew: function () {
         var me = this,
             form = me.formPanel.getForm(),
             record = me.list.getSelectionModel().getSelection()[0];
@@ -142,17 +142,17 @@ Ext.define('MBilling.view.ivr.Controller', {
         }
         me.callParent(arguments);
     },
-    onDeleteAudio: function(btn) {
+    onDeleteAudio: function (btn) {
         var me = this,
             selected = me.list.getSelectionModel().getSelection()[0];
         if (me.list.getSelectionModel().getSelection().length == 1) {
             Ext.Ajax.request({
-                url: 'index.php/ivr/deleteAudio',
+                url: 'index.php/ivr/delete-audio',
                 params: {
                     id_ivr: selected.get('id')
                 },
                 scope: me,
-                success: function(response) {
+                success: function (response) {
                     response = Ext.decode(response.responseText);
                     if (response[me.nameSuccessRequest]) {
                         Ext.ux.Alert.alert(me.titleSuccess, response[me.nameMsgRequest], 'success');

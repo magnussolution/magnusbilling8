@@ -21,7 +21,7 @@
 Ext.define('MBilling.view.sip.Controller', {
     extend: 'Ext.ux.app.ViewController',
     alias: 'controller.sip',
-    init: function() {
+    init: function () {
         var me = this;
         me.control({
             'typesipforwardcombo': {
@@ -30,10 +30,10 @@ Ext.define('MBilling.view.sip.Controller', {
         });
         me.callParent(arguments);
     },
-    onSelectMethod: function(combo, records) {
+    onSelectMethod: function (combo, records) {
         this.showFieldsRelated(records.getData().showFields);
     },
-    showFieldsRelated: function(showFields) {
+    showFieldsRelated: function (showFields) {
         var me = this,
             form = me.formPanel.getForm(),
             fields = me.formPanel.getForm().getFields(),
@@ -41,7 +41,7 @@ Ext.define('MBilling.view.sip.Controller', {
             number = activeField.name.substr(-2); //get the last two caracter from active field
         me.onSetVisibleFiel(activeField, form, number, activeField.value);
     },
-    onSetVisibleFiel: function(activeField, form, number, fieldShow) {
+    onSetVisibleFiel: function (activeField, form, number, fieldShow) {
         if (activeField.value == 'undefined') activeField.setValue('undefined');
         form.findField('id_queue').setValue('');
         form.findField('id_sip').setValue('');
@@ -52,38 +52,38 @@ Ext.define('MBilling.view.sip.Controller', {
         form.findField('id_ivr').setVisible(fieldShow.match("^ivr"));
         form.findField('extension').setVisible(fieldShow.match("^group|^number|^custom"));
     },
-    onGetDiskSpaceService: function(callback) {
-        filterGroupp = Ext.encode([{
-                type: 'numeric',
-                comparison: 'eq',
-                value: App.user.id,
-                field: 'id_user'
-            }, {
-                type: 'numeric',
-                comparison: 'eq',
-                value: 1,
-                field: 'status'
-            }]),
+    onGetDiskSpaceService: function (callback) {
+        filtergroupp = Ext.encode([{
+            type: 'numeric',
+            comparison: 'eq',
+            value: App.user.id,
+            field: 'id_user'
+        }, {
+            type: 'numeric',
+            comparison: 'eq',
+            value: 1,
+            field: 'status'
+        }]),
             Ext.Ajax.request({
-                url: 'index.php/servicesUse/read?filter=' + filterGroupp,
-                success: function(r) {
+                url: 'index.php/services-use/read?filter=' + filtergroupp,
+                success: function (r) {
                     r = Ext.decode(r.responseText);
                     callback(r.rows);
                 }
             });
     },
-    onEdit: function() {
+    onEdit: function () {
         var me = this,
             form = me.formPanel.getForm(),
             record = me.list.getSelectionModel().getSelection()[0];
         if (App.user.isAdmin) {
             Ext.Ajax.request({
-                url: 'index.php/sip/getSipShowPeer',
+                url: 'index.php/sip/get-sip-show-peer',
                 params: {
                     name: record.getData()['name']
                 },
                 scope: me,
-                success: function(response) {
+                success: function (response) {
                     response = Ext.decode(response.responseText);
                     form.findField('sipshowpeer').setValue(response.sipshowpeer);
                 }
@@ -91,8 +91,8 @@ Ext.define('MBilling.view.sip.Controller', {
         }
         if (App.user.isClient) {
             form.findField('record_call').setVisible(false);
-            me.onGetDiskSpaceService(function(result) {
-                Ext.each(result, function(record) {
+            me.onGetDiskSpaceService(function (result) {
+                Ext.each(result, function (record) {
                     if (record.idServicestype == 'disk_space') {
                         me.formPanel.getForm().findField('record_call').setVisible(true);
                     }
@@ -134,7 +134,7 @@ Ext.define('MBilling.view.sip.Controller', {
             allow: valueAllow
         });
     },
-    onNew: function() {
+    onNew: function () {
         var me = this,
             form = me.formPanel.getForm(),
             record = me.list.getSelectionModel().getSelection()[0];

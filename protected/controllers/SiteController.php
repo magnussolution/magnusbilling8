@@ -38,6 +38,7 @@ class SiteController extends CController
     public function actionIndex()
     {
 
+
         /*
         $modelUser = User::find()->where('id = 2')->one();
 

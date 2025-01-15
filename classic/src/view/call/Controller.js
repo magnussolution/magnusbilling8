@@ -21,7 +21,7 @@
 Ext.define('MBilling.view.call.Controller', {
     extend: 'Ext.ux.app.ViewController',
     alias: 'controller.call',
-    onRecordCall: function(btn) {
+    onRecordCall: function (btn) {
         var me = this,
             record = me.list.getSelectionModel().getSelection()[0],
             filter = Ext.encode(me.list.filters.getFilterData()),
@@ -30,7 +30,7 @@ Ext.define('MBilling.view.call.Controller', {
         if (!record && filter.length < 5) {
             Ext.ux.Alert.alert(me.titleError, t('Please select one or more records'), 'notification');
         } else {
-            Ext.each(me.list.getSelectionModel().getSelection(), function(record) {
+            Ext.each(me.list.getSelectionModel().getSelection(), function (record) {
                 idRecord.push(record.get(me.idProperty));
             });
             if (App.user.isAdmin && idRecord.length > 250) {
@@ -38,14 +38,14 @@ Ext.define('MBilling.view.call.Controller', {
             } else if (!App.user.isAdmin && idRecord.length > 25) {
                 Ext.ux.Alert.alert(me.titleError, t('Your limit to download record is') + ' 25', 'error');
             } else {
-                window.open('index.php/call/downloadRecord?ids=' + Ext.encode(idRecord) + '&filter=' + filter);
+                window.open('index.php/call/download-record?ids=' + Ext.encode(idRecord) + '&filter=' + filter);
             }
         }
     },
-    onDownloadClick: function(grid, rowIndex, colIndex) {
-        window.open('index.php/call/downloadRecord?id=' + grid.getStore().getAt(rowIndex).getData().id);
+    onDownloadClick: function (grid, rowIndex, colIndex) {
+        window.open('index.php/call/download-record?id=' + grid.getStore().getAt(rowIndex).getData().id);
     },
-    onShowTotal: function(button) {
+    onShowTotal: function (button) {
         var me = this;
         var me = this,
             store = me.list.getStore(),
@@ -54,18 +54,18 @@ Ext.define('MBilling.view.call.Controller', {
         button.setText(t('Wait...'));
         button.setWidth(120);
         Ext.Ajax.request({
-            url: 'index.php/call/getTotal',
+            url: 'index.php/call/get-total',
             params: {
                 filter: filter
             },
             scope: me,
-            success: function(r) {
+            success: function (r) {
                 r = Ext.decode(r.responseText);
                 Ext.ux.Alert.alert(me.titleSuccess, '<b> ' + t('Total buy price') + ': ' + App.user.currency + ' ' + r.sumbuycost + "<br>" + t('Total sell price') + ': ' + App.user.currency + ' ' + r.sumsessionbill + "<br>" + t('Total profit') + ': ' + App.user.currency + ' ' + r.totalCall + '</b>', 'information', true, false);
                 button.enable();
                 button.setText(t('Show total'));
             },
-            failure: function(r) {
+            failure: function (r) {
                 button.enable();
                 button.setText('<font color=red>' + t('Failed. Try again...') + '<font>');
                 button.setWidth(300);

@@ -3,7 +3,7 @@ Ext.define('MBilling.view.user.Controller', {
     requires: ['MBilling.view.userType.Combo'],
     alias: 'controller.user',
     groupIsAdmin: false,
-    init: function() {
+    init: function () {
         var me = this;
         me.control({
             'groupusercombo': {
@@ -15,7 +15,7 @@ Ext.define('MBilling.view.user.Controller', {
         });
         me.callParent(arguments);
     },
-    onSelectTypeRestriction: function(combo, records) {
+    onSelectTypeRestriction: function (combo, records) {
         var me = this,
             fieldUse = me.formPanel.getForm().findField('restriction_use'),
             fieldRestriction = me.formPanel.getForm().findField('restriction');
@@ -25,35 +25,35 @@ Ext.define('MBilling.view.user.Controller', {
             fieldUse.setVisible(false);
         }
     },
-    onSelectType: function(combo, records) {
+    onSelectType: function (combo, records) {
         this.showFieldsRelated(records.getData().showFields);
     },
-    showFieldsRelated: function(showFields) {
+    showFieldsRelated: function (showFields) {
         var me = this,
             fields = me.formPanel.getForm().getFields(),
             fieldGroupAgent = me.formPanel.getForm().findField('id_group_agent'),
             form = me.formPanel.getForm();
-        me.onGetUserType(me.formPanel.getForm().findField('id_group').getValue(), function(result) {
+        me.onGetUserType(me.formPanel.getForm().findField('id_group').getValue(), function (result) {
             me.groupIsAdmin = result;
             me.formPanel.getForm().findField('id_plan').setVisible(!result);
             me.formPanel.getForm().findField('id_plan').setAllowBlank(result);
             me.formPanel.getForm().findField('id_offer').setVisible(!result);
             me.formPanel.getForm().findField('prefix_local').setVisible(!result);
         });
-        fields.each(function(field) {
+        fields.each(function (field) {
             if (field.name == 'id_group') {
                 filterGroupp = Ext.encode([{
-                        type: 'numeric',
-                        comparison: 'eq',
-                        value: 2,
-                        field: 'id_user_type'
-                    }]),
+                    type: 'numeric',
+                    comparison: 'eq',
+                    value: 2,
+                    field: 'id_user_type'
+                }]),
                     Ext.Ajax.request({
-                        url: 'index.php/groupUser/index',
+                        url: 'index.php/group-user/index',
                         params: {
                             filter: filterGroupp
                         },
-                        success: function(r) {
+                        success: function (r) {
                             r = Ext.decode(r.responseText);
                             var res = r.rows;
                             for (i = 0; i < res.length; i++) {
@@ -71,7 +71,7 @@ Ext.define('MBilling.view.user.Controller', {
             }
         });
     },
-    onNew: function() {
+    onNew: function () {
         var me = this,
             fieldPasswordGen = me.formPanel.getForm().findField('password'),
             fieldCallingcard_pin = me.formPanel.getForm().findField('callingcard_pin'),
@@ -82,32 +82,32 @@ Ext.define('MBilling.view.user.Controller', {
         fieldGroupAgent['hide']();
         fieldPasswordGen.setVisible(true);
         Ext.Ajax.request({
-            url: 'index.php/user/getNewPassword',
+            url: 'index.php/user/get-new-password',
             scope: me,
-            success: function(response) {
+            success: function (response) {
                 response = Ext.decode(response.responseText);
                 fieldPasswordGen.setValue(response.newPassword);
             }
         });
         Ext.Ajax.request({
-            url: 'index.php/user/getNewPinCallingcard',
+            url: 'index.php/user/get-new-pin-callingcard',
             scope: me,
-            success: function(response) {
+            success: function (response) {
                 response = Ext.decode(response.responseText);
                 fieldCallingcard_pin.setValue(response.newCallingcardPin);
             }
         });
         Ext.Ajax.request({
-            url: 'index.php/user/getNewUsername',
+            url: 'index.php/user/get-new-username',
             scope: me,
-            success: function(response) {
+            success: function (response) {
                 response = Ext.decode(response.responseText);
                 console.log(response);
                 fieldUsername.setValue(response.newUsername);
             }
         });
     },
-    onEdit: function() {
+    onEdit: function () {
         var me = this,
             record = me.list.getSelectionModel().getSelection()[0];
         fieldUsername = record.get('username'),
@@ -144,7 +144,7 @@ Ext.define('MBilling.view.user.Controller', {
             }
         };
         me.callParent(arguments);
-        me.onGetUserType(record.get('id_group'), function(result) {
+        me.onGetUserType(record.get('id_group'), function (result) {
             me.formPanel.getForm().findField('password').setVisible(!result);
             me.formPanel.getForm().findField('id_plan').setVisible(!result);
             me.formPanel.getForm().findField('id_plan').setAllowBlank(result);
@@ -157,29 +157,29 @@ Ext.define('MBilling.view.user.Controller', {
             fieldGroupAgent['hide']();
         }
     },
-    onGetUserType: function(id_group, callback) {
+    onGetUserType: function (id_group, callback) {
         filterGroupp = Ext.encode([{
-                type: 'numeric',
-                comparison: 'eq',
-                value: id_group,
-                field: 'id'
-            }]),
+            type: 'numeric',
+            comparison: 'eq',
+            value: id_group,
+            field: 'id'
+        }]),
             Ext.Ajax.request({
-                url: 'index.php/groupUser/getUserType',
+                url: 'index.php/group-user/get-user-type',
                 params: {
                     filter: filterGroupp
                 },
-                success: function(r) {
+                success: function (r) {
                     r = Ext.decode(r.responseText);
                     callback(r.rows);
                 }
             });
     },
-    onDelete: function(btn) {
+    onDelete: function (btn) {
         var me = this,
             records;
         notDelete = false;
-        Ext.each(me.list.getSelectionModel().getSelection(), function(record) {
+        Ext.each(me.list.getSelectionModel().getSelection(), function (record) {
             if (record.get('id') == 1) {
                 Ext.ux.Alert.alert(me.titleError, t('You cannot delete the') + ' user id 1', 'error');
                 notDelete = true;
@@ -187,7 +187,7 @@ Ext.define('MBilling.view.user.Controller', {
         });
         if (notDelete == false) me.callParent(arguments);
     },
-    onResendActivation: function() {
+    onResendActivation: function () {
         var me = this,
             record = me.list.getSelectionModel().getSelection()[0];
         if (record.get('email').length < 5) {
@@ -199,9 +199,9 @@ Ext.define('MBilling.view.user.Controller', {
                 id: record.get(me.idProperty)
             },
             timeout: 500000,
-            url: 'index.php/user/resendActivationEmail',
+            url: 'index.php/user/resend-activation-email',
             scope: me,
-            success: function(response) {
+            success: function (response) {
                 Ext.ux.Alert.alert(me.titleError, t('Success'), 'success');
             }
         });

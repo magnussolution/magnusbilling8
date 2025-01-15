@@ -117,7 +117,7 @@ class UserController extends CController
     public function applyFilterToLimitedAdmin()
     {
         if (Yii::$app->session['user_type'] == 1 && Yii::$app->session['adminLimitUsers'] == true) {
-            $this->filter .= " AND t.id_group IN (SELECT gug.id_group
+            $this->filter .= " AND " . $this->instanceModel::tableName() . ".id_group IN (SELECT gug.id_group
                                 FROM pkg_group_user_group gug
                                 WHERE gug.id_group_user = :idgA0)";
             $this->paramsFilter['idgA0'] = Yii::$app->session['id_group'];
@@ -474,8 +474,7 @@ class UserController extends CController
             die("Access denied to save in module: $module");
             exit;
         }
-
-        $modelUser = $this->abstractModel->query('id = :key', [':key' => (int) $_POST['id']])->one();
+        $modelUser = $this->abstractModel->where('id = :key', [':key' => $_REQUEST['id']])->one();
         $credit    = ['rows' => ['credit' => $modelUser->credit]];
 
         echo json_encode($credit);
@@ -484,7 +483,7 @@ class UserController extends CController
     public function extraFilterCustomClient($filter)
     {
         //se for cliente filtrar pelo pkg_user.id
-        $filter .= ' AND t.id = :dfby';
+        $filter .= ' AND ' . $this->instanceModel::tableName() . '.id = :dfby';
         $this->paramsFilter[':dfby'] = Yii::$app->session['id_user'];
 
         return $filter;
@@ -493,8 +492,8 @@ class UserController extends CController
     public function extraFilterCustomAgent($filter)
     {
         //se é agente filtrar pelo t.id_user e t.id
-        $this->join .= ' JOIN pkg_user user ON t.id_user = user.id ';
-        $filter .= ' AND ( t.id_user = :agfby OR t.id = :agfby)';
+        $this->join .= ' JOIN pkg_user user ON ' . $this->instanceModel::tableName() . '.id_user = user.id ';
+        $filter .= ' AND ( ' . $this->instanceModel::tableName() . '.id_user = :agfby OR ' . $this->instanceModel::tableName() . '.id = :agfby)';
         $this->paramsFilter[':agfby'] = Yii::$app->session['id_user'];
 
         return $filter;
@@ -575,7 +574,12 @@ class UserController extends CController
                 $modelSip->insecure    = 'no';
                 $modelSip->defaultuser = $modelUser->username;
                 $modelSip->secret      = $modelUser->password;
-                $modelSip->save();
+                try {
+                    $modelSip->save();
+                } catch (\Throwable $th) {
+                    print_r($th);
+                    exit;
+                }
             }
 
             if ($values['credit'] > 0) {

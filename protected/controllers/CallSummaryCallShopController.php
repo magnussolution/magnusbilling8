@@ -27,12 +27,7 @@ class CallSummaryCallShopController extends CController
     public $extraValues    = array('idUser' => 'username');
     public $limit          = 7;
     public $group          = 'day';
-    public $select         = 't.id, t.id_user, DATE(date) AS day, date as starttime, cabina,
-            sum(sessiontime) AS sessiontime,
-            sum(price) AS price,
-            count(*) as nbcall,
-            sum(buycost) AS buycost,
-            sum(price) - sum(buycost) AS lucro';
+
 
     public $fieldsInvisibleClient = array(
         'id',
@@ -78,6 +73,20 @@ class CallSummaryCallShopController extends CController
         $this->titleReport   = Yii::t('app', 'Summary per Day');
 
         $this->attributeOrder = $this->instanceModel::tableName() . '.day DESC';
+
+        $this->select         = [
+            $this->instanceModel::tableName() . '.id',
+            $this->instanceModel::tableName() . '.id_user',
+            'DATE(date) AS day',
+            'date as starttime',
+            'cabina',
+            'sum(sessiontime) AS sessiontime',
+            'sum(price) AS price',
+            'count(*) as nbcall',
+            'sum(buycost) AS buycost',
+            'sum(price) - sum(buycost) AS lucro'
+        ];
+
         parent::init();
     }
 

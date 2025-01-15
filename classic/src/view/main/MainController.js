@@ -12,26 +12,26 @@ Ext.define('MBilling.view.main.MainController', {
     routes: {
         ':node': 'onRouteChange'
     },
-    onRouteChange: function(id) {
+    onRouteChange: function (id) {
         id = (id || '').toLowerCase();
         window.hashTag = id;
     },
-    init: function() {
+    init: function () {
         var me = this;
         me.runnerInfoSystem = Ext.create('Ext.util.TaskRunner');
         me.callParent(arguments);
         App.callLogout = me.callLogout;
     },
-    loadMenuStandard: function(menu) {
+    loadMenuStandard: function (menu) {
         var me = this,
             modules = [],
             menuText,
             text,
             iconCls;
         menu.setLoading();
-        Ext.each(App.user.menu, function(menuItem) {
+        Ext.each(App.user.menu, function (menuItem) {
             if (!Ext.isEmpty(menuItem.rows)) {
-                Ext.each(menuItem.rows, function(item) {
+                Ext.each(menuItem.rows, function (item) {
                     text = (item.text.indexOf('t(') !== -1) ? eval(item.text) : item.text;
                     modules.push({
                         text: text,
@@ -67,17 +67,17 @@ Ext.define('MBilling.view.main.MainController', {
         }, me);
         menu.setLoading(false);
     },
-    formatSubModuleStandard: function(menu) {
+    formatSubModuleStandard: function (menu) {
         var me = this,
             text;
-        Ext.each(menu, function(item) {
+        Ext.each(menu, function (item) {
             text = (item.text.indexOf('t(') !== -1) ? eval(item.text) : item.text;
             item.text = text;
             item.children = me.formatSubModuleStandard(item.rows);
         }, me);
         return menu;
     },
-    createTabStandard: function(view, record) {
+    createTabStandard: function (view, record) {
         var me = this,
             tabOpen,
             module,
@@ -87,7 +87,7 @@ Ext.define('MBilling.view.main.MainController', {
             iconCls = record.get('iconCls') || 'file3',
             tabPanelCenter = me.lookupReference('tabPanelCenter');
         if (record.get('leaf')) {
-            tabOpen = tabPanelCenter.items.findBy(function(tab) {
+            tabOpen = tabPanelCenter.items.findBy(function (tab) {
                 return tab.title === txt;
             });
             if (!tabOpen) {
@@ -114,7 +114,7 @@ Ext.define('MBilling.view.main.MainController', {
             me.lookupReference('tabPanelMenu').collapse();
         }
     },
-    importLogo: function(menuItem) {
+    importLogo: function (menuItem) {
         var me = this;
         if (me.winLogo && me.winLogo.isVisible()) {
             return;
@@ -124,7 +124,7 @@ Ext.define('MBilling.view.main.MainController', {
             glyph: menuItem.glyph
         });
     },
-    saveLogo: function() {
+    saveLogo: function () {
         var me = this,
             view = me.getView(),
             btnSave = me.lookupReference('saveImportLogo'),
@@ -140,9 +140,9 @@ Ext.define('MBilling.view.main.MainController', {
         btnSave.disable();
         formPanel.setLoading();
         formPanel.getForm().submit({
-            url: 'index.php/authentication/importLogo',
+            url: 'index.php/authentication/import-logo',
             params: values,
-            success: function(form, action) {
+            success: function (form, action) {
                 var obj = Ext.decode(action.response.responseText);
                 if (obj.success) {
                     Ext.ux.Alert.alert(me.titleSuccess, t(obj.msg), 'success');
@@ -159,7 +159,7 @@ Ext.define('MBilling.view.main.MainController', {
             }
         });
     },
-    importWallpaper: function(menuItem) {
+    importWallpaper: function (menuItem) {
         var me = this;
         if (me.winImportwallpaper && me.winImportwallpaper.isVisible()) {
             return;
@@ -169,7 +169,7 @@ Ext.define('MBilling.view.main.MainController', {
             glyph: menuItem.glyph
         });
     },
-    importLoginBackground: function(menuItem) {
+    importLoginBackground: function (menuItem) {
         var me = this;
         if (me.winLoginBackground && me.winLoginBackground.isVisible()) {
             return;
@@ -179,7 +179,7 @@ Ext.define('MBilling.view.main.MainController', {
             glyph: menuItem.glyph
         });
     },
-    saveImportLoginBackground: function() {
+    saveImportLoginBackground: function () {
         var me = this,
             view = me.getView(),
             btnSave = me.lookupReference('saveImportLoginBackground'),
@@ -199,9 +199,9 @@ Ext.define('MBilling.view.main.MainController', {
             btnSave.disable();
             formPanel.setLoading();
             formPanel.getForm().submit({
-                url: 'index.php/authentication/importLoginBackground',
+                url: 'index.php/authentication/import-login-background',
                 params: values,
-                success: function(form, action) {
+                success: function (form, action) {
                     var obj = Ext.decode(action.response.responseText);
                     if (obj.success) {
                         Ext.ux.Alert.alert(me.titleSuccess, t(obj.msg), 'success');
@@ -219,7 +219,7 @@ Ext.define('MBilling.view.main.MainController', {
             });
         }
     },
-    saveWallpaper: function() {
+    saveWallpaper: function () {
         var me = this,
             view = me.getView(),
             btnSave = me.lookupReference('saveImportWallpaper'),
@@ -239,9 +239,9 @@ Ext.define('MBilling.view.main.MainController', {
         btnSave.disable();
         formPanel.setLoading();
         formPanel.getForm().submit({
-            url: 'index.php/authentication/importWallpapers',
+            url: 'index.php/authentication/import-wallpapers',
             params: values,
-            success: function(form, action) {
+            success: function (form, action) {
                 var obj = Ext.decode(action.response.responseText);
                 if (obj.success) {
                     Ext.ux.Alert.alert(me.titleSuccess, t(obj.msg), 'success');
@@ -258,7 +258,7 @@ Ext.define('MBilling.view.main.MainController', {
             }
         });
     },
-    onSetData: function(btn) {
+    onSetData: function (btn) {
         var me = this,
             loginWin = me.getView(),
             fieldEmail = me.lookupReference('email'),
@@ -270,13 +270,13 @@ Ext.define('MBilling.view.main.MainController', {
         }
         loginWin.setLoading(me.msgAuthenticating);
         Ext.Ajax.request({
-            url: 'index.php/configuration/setData',
+            url: 'index.php/configuration/set-data',
             params: {
                 email: fieldEmail.getValue(),
                 countryiso: fieldCountryiso.getValue(),
                 currency: fieldCurrency.getValue()
             },
-            success: function(response) {
+            success: function (response) {
                 response = Ext.decode(response.responseText);
                 if (response.success) {
                     location.reload()
@@ -288,7 +288,7 @@ Ext.define('MBilling.view.main.MainController', {
             }
         });
     },
-    openHelp: function(menuItem) {
+    openHelp: function (menuItem) {
         var me = this;
         if (me.winHelp && me.winHelp.isVisible()) {
             return;
@@ -306,7 +306,7 @@ Ext.define('MBilling.view.main.MainController', {
             }
         });
     },
-    openChangePassword: function(menuItem) {
+    openChangePassword: function (menuItem) {
         var me = this;
         if (me.winChangePassword && me.winChangePassword.isVisible()) {
             return;
@@ -316,7 +316,7 @@ Ext.define('MBilling.view.main.MainController', {
             glyph: menuItem.glyph
         });
     },
-    openAbout: function(menuItem) {
+    openAbout: function (menuItem) {
         var me = this;
         if (me.winAbout && me.winAbout.isVisible()) {
             return;
@@ -326,7 +326,7 @@ Ext.define('MBilling.view.main.MainController', {
             glyph: menuItem.glyph
         });
     },
-    openSettings: function(menuItem) {
+    openSettings: function (menuItem) {
         var me = this;
         if (me.winSettings && me.winSettings.isVisible()) {
             return;
@@ -344,26 +344,26 @@ Ext.define('MBilling.view.main.MainController', {
             }
         });
     },
-    logout: function() {
+    logout: function () {
         var me = this;
-        Ext.Msg.confirm(me.textLogout, me.msgLogout, function(opt) {
+        Ext.Msg.confirm(me.textLogout, me.msgLogout, function (opt) {
             if (opt === 'yes') {
                 me.callLogout();
             }
         });
     },
-    callLogout: function() {
+    callLogout: function () {
         var me = this;
         window.isDesktop ? App.desktop.setLoading() : App.mainView.setLoading();
         Ext.Ajax.request({
             url: 'index.php/authentication/logoff',
-            success: function() {
+            success: function () {
                 App.user.logged = false;
                 location.reload();
             }
         });
     },
-    getManual: function(view, record) {
+    getManual: function (view, record) {
         if (!record.get('leaf')) {
             return;
         }
@@ -371,7 +371,7 @@ Ext.define('MBilling.view.main.MainController', {
         panelManual.getLoader().url = record.get('url');
         panelManual.getLoader().load();
     },
-    changeActivatedTab: function(tabPanel, newCard) {
+    changeActivatedTab: function (tabPanel, newCard) {
         var me = this;
         //get the menu tab panel
         tabPanelMenu = me.lookupReference('tabPanelMenu');
@@ -392,7 +392,7 @@ Ext.define('MBilling.view.main.MainController', {
         }
     },
     // active_class: 'active',
-    setRunnerInfoSystem: function() {
+    setRunnerInfoSystem: function () {
         var me = this;
         if (!window.isDesktop || !App.user.isAdmin || window.isTablets) {
             return;
@@ -404,11 +404,11 @@ Ext.define('MBilling.view.main.MainController', {
             scope: me
         });
     },
-    setInfoSystem: function() {
+    setInfoSystem: function () {
         var me = this;
         Ext.Ajax.request({
-            url: 'index.php/statusSystem/statusSystemDesktop',
-            success: function(response) {
+            url: 'index.php/status-system/status-system-desktop',
+            success: function (response) {
                 response = Ext.decode(response.responseText);
                 me.lookupReference('avgCpuCount').setText(response.rows.cpuCount);
                 me.lookupReference('avgCpuModel').setText(response.rows.cpuModel);
@@ -422,7 +422,7 @@ Ext.define('MBilling.view.main.MainController', {
             }
         });
     },
-    saveForgetPass: function(btn) {
+    saveForgetPass: function (btn) {
         var me = this,
             forgetWin = me.getView(),
             fieldEmail = me.lookupReference('email'),
@@ -434,11 +434,11 @@ Ext.define('MBilling.view.main.MainController', {
         }
         forgetWin.setLoading(me.msgAuthenticating);
         Ext.Ajax.request({
-            url: 'index.php/authentication/forgetPassword',
+            url: 'index.php/authentication/forget-password',
             params: {
                 email: email
             },
-            success: function(response) {
+            success: function (response) {
                 response = Ext.decode(response.responseText);
                 if (response.success) {
                     forgetWin.setLoading(false);

@@ -123,7 +123,7 @@ class  TransferToMobile extends Model
             [['address', 'email', 'description', 'doc'], 'string', 'max' => 100],
             [['credit'], 'type', 'type' => 'double'],
             [['expirationdate', 'password', 'lastuse'], 'string', 'max' => 100],
-            [['username'], 'unique', 'caseSensitive' => 'false'],
+            [['username'], 'unique'],
 
         ];
         return $this->getExtraField($rules);

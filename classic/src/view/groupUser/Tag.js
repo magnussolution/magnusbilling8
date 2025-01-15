@@ -11,12 +11,12 @@ Ext.define('MBilling.view.groupUser.Tag', {
     fieldLabel: t('Group user'),
     displayField: 'name',
     valueField: 'id',
-    initComponent: function() {
+    initComponent: function () {
         var me = this;
         me.store = Ext.create('MBilling.store.GroupUser', {
             proxy: {
                 type: 'uxproxy',
-                module: 'groupUser',
+                module: 'group-user',
                 limitParam: undefined
             }
         });

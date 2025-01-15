@@ -22,7 +22,7 @@ Ext.define('MBilling.view.queue.Controller', {
     extend: 'Ext.ux.app.ViewController',
     alias: 'controller.queue',
     isSubmitForm: true,
-    init: function() {
+    init: function () {
         var me = this;
         me.control({
             'combobox[name=ring_or_moh]': {
@@ -31,39 +31,39 @@ Ext.define('MBilling.view.queue.Controller', {
         });
         me.callParent(arguments);
     },
-    onSelectringOrMOH: function(combo, records) {
+    onSelectringOrMOH: function (combo, records) {
         me = this,
             form = me.formPanel.getForm();
         form.findField('musiconhold').setVisible(records.data.field1 == 'moh');
     },
-    onNew: function() {
+    onNew: function () {
         var me = this;
         me.formPanel.getForm().findField('musiconhold').setVisible(true);
         me.callParent(arguments);
     },
-    onEdit: function() {
+    onEdit: function () {
         var me = this;
         me.callParent(arguments);
         ringOrMoh = me.formPanel.getForm().findField('ring_or_moh').getValue();
         me.formPanel.getForm().findField('musiconhold').setVisible(ringOrMoh == 'moh');
     },
-    onResetQueueStats: function(btn) {
+    onResetQueueStats: function (btn) {
         var me = this,
             record = me.list.getSelectionModel().getSelection()[0],
             filter = Ext.encode(me.list.filters.getFilterData()),
             idRecord = [];
         if (record) {
-            Ext.each(me.list.getSelectionModel().getSelection(), function(record) {
+            Ext.each(me.list.getSelectionModel().getSelection(), function (record) {
                 idRecord.push(record.get(me.idProperty));
             });
             Ext.Ajax.request({
-                url: 'index.php/queue/resetQueueStats',
+                url: 'index.php/queue/reset-queue-stats',
                 params: {
                     ids: Ext.encode(idRecord),
                     filter: filter
                 },
                 scope: me,
-                success: function(response) {
+                success: function (response) {
                     response = Ext.decode(response.responseText);
                     if (response[me.nameSuccessRequest]) {
                         Ext.ux.Alert.alert(me.titleSuccess, response.msg, 'success');
@@ -77,17 +77,17 @@ Ext.define('MBilling.view.queue.Controller', {
             Ext.ux.Alert.alert(me.titleError, t('Please select one or more queue'), 'notification');
         }
     },
-    onDeleteMusic: function(btn) {
+    onDeleteMusic: function (btn) {
         var me = this,
             selected = me.list.getSelectionModel().getSelection()[0];
         if (me.list.getSelectionModel().getSelection().length == 1) {
             Ext.Ajax.request({
-                url: 'index.php/queue/deleteMusicOnHold',
+                url: 'index.php/queue/delete-music-on-hold',
                 params: {
                     id_queue: selected.get('id')
                 },
                 scope: me,
-                success: function(response) {
+                success: function (response) {
                     response = Ext.decode(response.responseText);
                     if (response[me.nameSuccessRequest]) {
                         Ext.ux.Alert.alert(me.titleSuccess, response[me.nameMsgRequest], 'success');

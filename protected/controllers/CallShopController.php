@@ -27,8 +27,8 @@ use app\components\CController;
 class CallShopController extends CController
 {
     public $extraValues    = ['idUser' => 'username'];
-    public $join           = ' INNER JOIN pkg_user c ON t.id_user = c.id';
-    public $defaultFilter  = 'c.callshop = 1';
+    public $joinWith           = 'idUser';
+    public $defaultFilter  = 'pkg_user.callshop = 1';
 
     public function init()
     {

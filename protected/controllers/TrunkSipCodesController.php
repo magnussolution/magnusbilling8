@@ -19,6 +19,14 @@ class TrunkSipCodesController extends CController
         $this->instanceModel = new TrunkSipCodes;
         $this->abstractModel = TrunkSipCodes::find();
         $this->attributeOrder = $this->instanceModel::tableName() . '.id DESC';
+
+        if (! Yii::$app->session['isAdmin']) {
+            echo json_encode([
+                $this->nameSuccess   => true,
+                $this->nameMsgErrors => '',
+            ]);
+            exit();
+        }
         parent::init();
     }
 }

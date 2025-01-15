@@ -70,7 +70,7 @@ class  Sip extends Model
     {
         $rules = [
             [['id_user'], 'required'],
-            [
+            [[
                 'id_user',
                 'calllimit',
                 'ringfalse',
@@ -80,10 +80,8 @@ class  Sip extends Model
                 'trace',
                 'amd',
                 'voicemail_password',
-                'id_trunk_group',
-                'integer',
-                'integerOnly' => true
-            ],
+                'id_trunk_group'
+            ], 'integer'],
             [['name', 'callerid', 'context', 'fromuser', 'fromdomain', 'md5secret', 'secret', 'fullcontact'], 'string', 'max' => 80],
             [['regexten', 'insecure', 'regserver', 'vmexten', 'callingpres', 'mohsuggest', 'allowtransfer'], 'string', 'max' => 20],
             [['amaflags', 'dtmfmode', 'qualify'], 'string', 'max' => 7],
@@ -104,7 +102,7 @@ class  Sip extends Model
             [['defaultuser'], 'checkusername'],
             [['secret'], 'checksecret'],
             [['secret'], 'string', 'min' => 4, 'max' => 30],
-            [['defaultuser'], 'unique', 'caseSensitive' => 'false'],
+            [['defaultuser'], 'unique'],
             [['techprefix', 'cnl'], 'string', 'max' => 6],
             [['techprefix'], 'checktechprefix'],
             [['host'], 'checkHost'],

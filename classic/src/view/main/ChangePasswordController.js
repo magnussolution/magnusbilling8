@@ -2,10 +2,10 @@ Ext.define('MBilling.view.main.ChangePasswordController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.changepassword',
     requires: ['Ext.form.Panel', 'Ext.ux.form.field.Password'],
-    onShowWinChangePass: function() {
+    onShowWinChangePass: function () {
         this.lookupReference('formChangePass').getForm().findField('current_password').focus(10);
     },
-    savePassword: function() {
+    savePassword: function () {
         var me = this,
             view = me.getView(),
             btnSave = me.lookupReference('saveChangePass'),
@@ -31,9 +31,9 @@ Ext.define('MBilling.view.main.ChangePasswordController', {
         btnSave.disable();
         formPanel.setLoading();
         Ext.Ajax.request({
-            url: 'index.php/authentication/changePassword',
+            url: 'index.php/authentication/change-password',
             params: values,
-            success: function(response) {
+            success: function (response) {
                 response = Ext.decode(response.responseText);
                 if (response.success) {
                     Ext.ux.Alert.alert(view.titleSuccess, response.msg, 'success');
@@ -54,7 +54,7 @@ Ext.define('MBilling.view.main.ChangePasswordController', {
             }
         });
     },
-    checkKeyEnterChangePass: function(field, evt) {
+    checkKeyEnterChangePass: function (field, evt) {
         if (evt.getKey() === evt.ENTER) {
             this.savePassword();
         }

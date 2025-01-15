@@ -27,7 +27,7 @@ Ext.define('MBilling.view.did.Combo', {
     forceSelection: true,
     editable: true,
     valueField: 'id',
-    initComponent: function() {
+    initComponent: function () {
         var me = this;
         me.store = Ext.create('MBilling.store.Did', {
             proxy: {
@@ -50,7 +50,7 @@ Ext.define('MBilling.view.did.BuyCombo', {
     valueField: 'id',
     triggerAction: 'all',
     multiSelect: true,
-    initComponent: function() {
+    initComponent: function () {
         var me = this;
         me.listConfig = {
             itemTpl: Ext.create('Ext.XTemplate', '<div>{did}  (' + t('Setup') + ': ' + App.user.currency + ' {connection_charge} --> ' + t('Monthly payment') + ': ' + App.user.currency + ' {fixrate})</div>')
@@ -60,7 +60,7 @@ Ext.define('MBilling.view.did.BuyCombo', {
             proxy: {
                 type: 'uxproxy',
                 module: 'did',
-                actionRead: 'readBuy',
+                actionRead: 'read-buy',
                 limitParam: undefined
             }
         });

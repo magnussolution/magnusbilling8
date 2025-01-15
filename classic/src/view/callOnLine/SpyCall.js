@@ -24,7 +24,7 @@ Ext.define('MBilling.view.callOnLine.SpyCall', {
     height: window.isThemeNeptune || window.isThemeCrisp ? 170 : window.isThemeTriton ? 290 : 170,
     labelWidthFields: 80,
     channel: 0,
-    initComponent: function() {
+    initComponent: function () {
         var me = this
         if (me.list.getSelectionModel().getSelection().length == 1) {
             selected = me.list.getSelectionModel().getSelection()[0];
@@ -76,7 +76,7 @@ Ext.define('MBilling.view.callOnLine.SpyCall', {
         }
         me.callParent(arguments);
     },
-    onSendSpy: function(btn) {
+    onSendSpy: function (btn) {
         var me = this,
             store = me.list.store;
         if (!me.down('form').isValid()) {
@@ -87,14 +87,14 @@ Ext.define('MBilling.view.callOnLine.SpyCall', {
         me.list.setLoading(true);
         Ext.Ajax.setTimeout(1000000);
         me.down('form').submit({
-            url: 'index.php/callOnLine/spyCall',
+            url: 'index.php/call-on-line/spy-call',
             params: {
                 id_sip: selected.get('id_sip'),
                 type: selected.get('Type'),
                 channel: me.channel
             },
             scope: me,
-            success: function(form, action) {
+            success: function (form, action) {
                 var obj = Ext.decode(action.response.responseText);
                 if (obj.success) {
                     Ext.ux.Alert.alert(t('Success'), obj.msg, 'success');
@@ -106,7 +106,7 @@ Ext.define('MBilling.view.callOnLine.SpyCall', {
                 store.load();
                 me.close();
             },
-            failure: function(form, action) {
+            failure: function (form, action) {
                 if (action.response && Ext.isObject(action.response.responseText)) {
                     var obj = Ext.decode(action.response.responseText);
                     Ext.ux.Alert.alert(t('Error1'), obj.errors, 'error');

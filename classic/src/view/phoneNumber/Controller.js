@@ -21,7 +21,7 @@
 Ext.define('MBilling.view.phoneNumber.Controller', {
     extend: 'Ext.ux.app.ViewController',
     alias: 'controller.phonenumber',
-    reprocessar: function(btn) {
+    reprocessar: function (btn) {
         var me = this,
             store = me.list.getStore(),
             filter = me.list.filters.getFilterData().length ? Ext.encode(me.list.filters.getFilterData()) : store.proxy.extraParams.filter;
@@ -33,15 +33,15 @@ Ext.define('MBilling.view.phoneNumber.Controller', {
             me.list.setLoading(false);
             return;
         };
-        Ext.Msg.confirm('Confirm', 'Confirme que quer reprocessar os numeros pendentes?', function(btnYes) {
+        Ext.Msg.confirm('Confirm', 'Confirme que quer reprocessar os numeros pendentes?', function (btnYes) {
             if (btnYes === 'yes') {
                 Ext.Ajax.request({
-                    url: 'index.php/phoneNumber/reprocesar/',
+                    url: 'index.php/phone-number/reprocesar/',
                     params: {
                         filter: filter
                     },
                     scope: me,
-                    success: function(response) {
+                    success: function (response) {
                         response = Ext.decode(response.responseText);
                         if (response[me.nameSuccessRequest]) {
                             Ext.ux.Alert.alert(me.titleSuccess, response[me.nameMsgRequest], 'success');

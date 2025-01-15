@@ -50,7 +50,7 @@ class CallOnLineController extends CController
         if (Yii::$app->getSession()->get('isAgent')) {
             $this->filterByUser        = true;
             $this->defaultFilterByUser = 'b.id_user';
-            $this->join                = 'JOIN pkg_user b ON t.id_user = b.id';
+            $this->join                = 'JOIN pkg_user b ON ' . $this->instanceModel::tableName() . '.id_user = b.id';
         }
     }
 

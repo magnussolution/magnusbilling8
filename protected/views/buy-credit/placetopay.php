@@ -1,62 +1,105 @@
 ﻿<?php
 
-require_once 'lib/PlacetoPay/vendor/autoload.php';
-
-use Dnetix\Redirection\PlacetoPay;
-
 /**
- * Instanciates the PlacetoPay object providing the login and tranKey, also the url that will be
- * used for the service
- * @return PlacetoPay
+ * =======================================
+ * ###################################
+ * MagnusBilling
+ *
+ * @package MagnusBilling
+ * @author Adilson Leffa Magnus.
+ * @copyright Copyright (C) 2005 - 2023 MagnusSolution. All rights reserved.
+ * ###################################
+ *
+ * This software is released under the terms of the GNU Lesser General Public License v2.1
+ * A copy of which is available from http://www.gnu.org/copyleft/lesser.html
+ *
+ * Please submit bug reports, patches, etc to https://github.com/magnusbilling/mbilling/issues
+ * =======================================
+ * Magnusbilling.com <info@magnusbilling.com>
+ *
  */
-function placetopay($modelMethodPay)
-{
+
+
+use app\assets\AppAsset;
+use yii\bootstrap4\Html;
+
+
+AppAsset::register($this);
+?>
+<?php $this->beginPage() ?>
+<!DOCTYPE html>
+<html lang="<?= Yii::$app->language ?>" class="h-100">
+
+<head>
+    <meta charset="<?= Yii::$app->charset ?>">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <?php $this->registerCsrfMetaTags() ?>
+    <title><?= Html::encode($this->title) ?></title>
+    <?php $this->head() ?>
+</head>
+
+<body class="d-flex flex-column h-100">
+    <?php $this->beginBody() ?>
+
+    <?php
+
+    require_once 'lib/PlacetoPay/vendor/autoload.php';
+
+    use Yii;
+    use app\models\Refill;
+    use Dnetix\Redirection\PlacetoPay;
+
+    /**
+    * Instanciates the PlacetoPay object providing the login and tranKey, also the url that will be
+    * used for the service
+    * @return PlacetoPay
+    */
+    function placetopay($modelMethodPay)
+    {
 
     return new PlacetoPay([
-        'login'   => $modelMethodPay->P2P_CustomerSiteID,
-        'tranKey' => $modelMethodPay->P2P_KeyID,
-        'url'     => 'https://secure.placetopay.com/redirection/',
-        'type'    => getenv('P2P_TYPE') ?: PlacetoPay::TP_REST,
+    'login' => $modelMethodPay->P2P_CustomerSiteID,
+    'tranKey' => $modelMethodPay->P2P_KeyID,
+    'url' => 'https://secure.placetopay.com/redirection/',
+    'type' => getenv('P2P_TYPE') ?: PlacetoPay::TP_REST,
     ]);
-}
+    }
 
-$totalAmount = $_GET['amount'];
-$totalAmount = $selectdAmount = preg_replace("/,/", '', $totalAmount);
+    $totalAmount = $_GET['amount'];
+    $totalAmount = $selectdAmount = preg_replace("/,/", '', $totalAmount);
 
-if ((isset($_GET['iva']) && $_GET['iva'] == 1) || strlen($modelUser->vat) > 1) {
+    if ((isset($_GET['iva']) && $_GET['iva'] == 1) || strlen($modelUser->vat) > 1) {
 
     if (preg_match("/\+/", $modelUser->vat)) {
-        $totalAmount = $totalAmount * ((intval($modelUser->vat) / 100) + 1);
-        //$totalAmount = $total - $totalAmount;
+    $totalAmount = $totalAmount * ((intval($modelUser->vat) / 100) + 1);
+    //$totalAmount = $total - $totalAmount;
     } else {
-        $totalAmount = $totalAmount / ((intval($modelUser->vat) / 100) + 1);
+    $totalAmount = $totalAmount / ((intval($modelUser->vat) / 100) + 1);
     }
-}
-$totalAmount = number_format($totalAmount, 2, '.', '');
+    }
+    $totalAmount = number_format($totalAmount, 2, '.', '');
 
-$modelRefill = Refill::model()->find(
-    'id_user = :key AND payment = 0 AND description LIKE :key1',
-    array(
-        ':key'  => Yii::$app->session['id_user'],
-        ':key1' => '%Pendiente%',
-    )
-);
-if (isset($modelRefill->id) > 0) {
+    $modelRefill = Refill::find()
+    ->where(['id_user' => Yii::$app->session['id_user'], 'payment' => 0])
+    ->andWhere(['like', 'description', '%Pendiente%'])
+    ->one();
+    if (isset($modelRefill->id) > 0) {
     exit('Usted tiene una recarga ' . $modelRefill->description);
-}
+    }
 
-$description = 'Recarga PlaceToPay <font color=blue>Pendiente</font>';
+    $description = 'Recarga PlaceToPay <font color=blue>Pendiente</font>';
 
-$modelRefill              = new Refill();
-$modelRefill->description = $description;
-$modelRefill->id_user     = Yii::$app->session['id_user'];
-$modelRefill->credit      = $selectdAmount;
-$modelRefill->payment     = 0;
-$modelRefill->save();
+    $modelRefill = new Refill();
+    $modelRefill->description = $description;
+    $modelRefill->id_user = Yii::$app->session['id_user'];
+    $modelRefill->credit = $selectdAmount;
+    $modelRefill->payment = 0;
+    $modelRefill->save();
 
-// Creating a random reference for the test
-$reference = $modelRefill->id;
-//echo '<pre>';
+    // Creating a random reference for the test
+    $reference = $modelRefill->id;
+    //echo '
+    <pre>';
 //print_r($modelUser->getAttributes());
 // Request Information
 $request = [
@@ -109,3 +152,11 @@ try {
 } catch (Exception $e) {
     var_dump($e->getMessage());
 }
+
+?>
+<?php $this->endBody() ?>
+</body>
+
+</html>
+<?php $this->endPage() ?>
+<?php die(); ?>

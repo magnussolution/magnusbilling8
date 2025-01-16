@@ -10,9 +10,7 @@
 
 <br />
 <?php
-$modelUser = User::model()->findAll([
-    'order' => 'username ASC',
-]);
+$modelUser = User::find()->orderBy(['username' => SORT_ASC])->all();
 $users = CHtml::listData($modelUser, 'id', 'username'); ?>
 <div class="field">
     <?php echo $form->labelEx($model, Yii::t('app', 'Select a user')) ?>
@@ -27,3 +25,4 @@ $users = CHtml::listData($modelUser, 'id', 'username'); ?>
 <?php echo CHtml::submitButton(Yii::t('app', 'Filter'), array('class' => 'button')); ?>
 
 <?php $this->endWidget(); ?>
+use app\models\User;

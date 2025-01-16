@@ -18,49 +18,78 @@
  * Magnusbilling.com <info@magnusbilling.com>
  *
  */
+
+
+use app\assets\AppAsset;
+use yii\bootstrap4\Html;
+
+
+AppAsset::register($this);
 ?>
-<div id="load"><?php echo Yii::t('app', 'Please wait while loading...') ?></div>
+<?php $this->beginPage() ?>
+<!DOCTYPE html>
+<html lang="<?= Yii::$app->language ?>" class="h-100">
 
-<script languaje="JavaScript">
-    window.onload = function() {
-        var form = document.getElementById("buyForm");
-        form.submit();
-    };
-</script>
+<head>
+    <meta charset="<?= Yii::$app->charset ?>">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <?php $this->registerCsrfMetaTags() ?>
+    <title><?= Html::encode($this->title) ?></title>
+    <?php $this->head() ?>
+</head>
 
-<?php
+<body class="d-flex flex-column h-100">
+    <?php $this->beginBody() ?>
+    <div id="load"><?php echo Yii::t('app', 'Please wait while loading...') ?></div>
 
-if (Yii::$app->session['currency'] == 'U$S') {
-    $currency = 'USD';
-} else if (Yii::$app->session['currency'] == 'R$') {
-    $currency = 'BRL';
-} elseif (Yii::$app->session['currency'] == '€') {
-    $currency = 'EUR';
-} else {
-    $currency = Yii::$app->session['currency'];
-}
+    <script languaje="JavaScript">
+        window.onload = function() {
+            var form = document.getElementById("buyForm");
+            form.submit();
+        };
+    </script>
 
-if (Yii::$app->session['language'] == 'pt_BR') {
-    $language = 'pt';
-}
+    <?php
 
-if (Yii::$app->session['language'] == 'es') {
-    $language = 'es';
-} else {
-    $language = 'en';
-}
+    if (Yii::$app->session['currency'] == 'U$S') {
+        $currency = 'USD';
+    } else if (Yii::$app->session['currency'] == 'R$') {
+        $currency = 'BRL';
+    } elseif (Yii::$app->session['currency'] == '€') {
+        $currency = 'EUR';
+    } else {
+        $currency = Yii::$app->session['currency'];
+    }
 
-?>
-<form method="POST" action="<?php echo $modelMethodPay->url ?>" target="_parent" id="buyForm">
-    <input type="hidden" name="merchantId" value="<?php echo $modelMethodPay->username ?>">
-    <input type="hidden" name="referenceCode" value="<?php echo $reference ?>">
-    <input type="hidden" name="description" value="Voip Credit">
-    <input type="hidden" name="ApiKey" value="<?php echo $modelMethodPay->username ?>">
-    <input type="hidden" name="amount" value="<?php echo $_GET['amount'] ?>">
-    <input type="hidden" name="currency" value="<?php echo $currency ?>">
-    <input type="hidden" name="lng" value="<?php echo $language ?>">
-    <input type="hidden" name="return" value="http://<?php echo $_SERVER['HTTP_HOST'] ?>/index.php">
-    <input type="hidden" name="buyerEmail" value="<?php echo $modelUser->email; ?>">
-    <input type="hidden" name="buyerFullName" value="<?php echo $modelUser->firstname . ' ' . $modelUser->lastname; ?>">
-    <input type="hidden" name="payerPhone" value="<?php echo $modelUser->phone; ?>">
-</form>
+    if (Yii::$app->session['language'] == 'pt_BR') {
+        $language = 'pt';
+    }
+
+    if (Yii::$app->session['language'] == 'es') {
+        $language = 'es';
+    } else {
+        $language = 'en';
+    }
+
+    ?>
+    <form method="POST" action="<?php echo $modelMethodPay->url ?>" target="_parent" id="buyForm">
+        <input type="hidden" name="merchantId" value="<?php echo $modelMethodPay->username ?>">
+        <input type="hidden" name="referenceCode" value="<?php echo $reference ?>">
+        <input type="hidden" name="description" value="Voip Credit">
+        <input type="hidden" name="ApiKey" value="<?php echo $modelMethodPay->username ?>">
+        <input type="hidden" name="amount" value="<?php echo $_GET['amount'] ?>">
+        <input type="hidden" name="currency" value="<?php echo $currency ?>">
+        <input type="hidden" name="lng" value="<?php echo $language ?>">
+        <input type="hidden" name="return" value="http://<?php echo $_SERVER['HTTP_HOST'] ?>/index.php">
+        <input type="hidden" name="buyerEmail" value="<?php echo $modelUser->email; ?>">
+        <input type="hidden" name="buyerFullName" value="<?php echo $modelUser->firstname . ' ' . $modelUser->lastname; ?>">
+        <input type="hidden" name="payerPhone" value="<?php echo $modelUser->phone; ?>">
+    </form>
+
+    ?>
+    <?php $this->endBody() ?>
+</body>
+
+</html>
+<?php $this->endPage() ?>
+<?php die(); ?>

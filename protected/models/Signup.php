@@ -73,7 +73,7 @@ class  Signup extends Model
             [['mobile', 'phone'], 'string', 'min' => 10],
             [['email'], 'checkemail'],
             [['email', 'username'], 'unique'],
-            [['verifyCode'], 'captcha', 'captchaAction' => 'site/captcha', 'skipOnEmpty' => !Captcha::checkRequirements() || $this->captcha == false],
+            [['verifyCode'], 'captcha'],
             [['accept_terms'], 'required', 'requiredValue' => 1, 'message' => 'You must accept the Terms and Conditons in order to register.'],
         ];
         return $this->getExtraField($rules);

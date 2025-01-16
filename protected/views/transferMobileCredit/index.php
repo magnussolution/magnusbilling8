@@ -47,14 +47,10 @@ $fieldOption['readonly'] = true;
 
 <?php
 
-$modelSendCreditProducts = SendCreditProducts::model()->findAll(array(
-    'condition' => 'country = :key AND type = :key1 AND status = 1',
-    'params'    => array(
-        ':key'  => $modelTransferToMobile->country,
-        ':key1' => 'Mobile Credit',
-    ),
-    'group'     => 'operator_name',
-));
+$modelSendCreditProducts = \app\models\SendCreditProducts::find()
+    ->where(['country' => $modelTransferToMobile->country, 'type' => 'Mobile Credit', 'status' => 1])
+    ->groupBy('operator_name')
+    ->all();
 
 $operators = CHtml::listData($modelSendCreditProducts, 'operator_name', 'operator_name'); ?>
 <div class="field">
@@ -76,6 +72,8 @@ $operators = CHtml::listData($modelSendCreditProducts, 'operator_name', 'operato
 
 
 <?php if (isset($_POST['TransferMobileCredit']['operator_name']) && ($_POST['TransferMobileCredit']['operator_name'] == 'SENELEC - Senegal' || $_POST['TransferMobileCredit']['operator_name'] == 'NAWEC - Gambia' || $_POST['TransferMobileCredit']['operator_name'] == 'EDM - Mali' || $_POST['TransferMobileCredit']['operator_name'] == 'EEDC - Nigeria')): ?>
+
+    use app\models\SendCreditProducts;
     <div class="field" id='metric'>
     <?php else: ?>
         <div class="field" id='metric' style="display:none; border:0">

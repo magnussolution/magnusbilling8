@@ -32,13 +32,11 @@ $fieldOption = array('class' => 'input');
 
 <?php
 
-$modelSendCreditProduct = SendCreditProducts::model()->findAll(array(
-    'condition' => ' type = :key1',
-    'params'    => array(
-        ':key1' => 'Mobile money',
-    ),
-    'group'     => 'country',
-));
+$modelSendCreditProduct = \app\models\SendCreditProducts::find()
+    ->select(['country'])
+    ->where(['type' => 'Mobile money'])
+    ->groupBy('country')
+    ->all();
 
 $country = CHtml::listData($modelSendCreditProduct, 'country', 'country');
 

@@ -14,7 +14,7 @@ $form = $this->beginWidget('CActiveForm', array(
 <?php
 if (Yii::$app->session['isAdmin'] == 1):
 
-  $modelUser = User::model()->findAll();
+  $modelUser = User::find()->all();
   $users     = CHtml::listData($modelUser, 'id', 'username'); ?>
   <div class="field">
     <?php echo $form->labelEx($model, Yii::t('app', 'Select a user')) ?>
@@ -109,6 +109,10 @@ if (Yii::$app->session['isAdmin'] == 1):
   <?php $total_sale += $value->sell; ?>
   <?php $total_earned += $value->earned; ?>
 <?php endforeach ?>
+
+use Yii;
+use CHtml;
+use app\models\User;
 <div class="rounded">
   <br>
   <table class="blueTable" align="right" style="width: 420px; ">

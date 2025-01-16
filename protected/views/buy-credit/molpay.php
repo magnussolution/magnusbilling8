@@ -18,33 +18,62 @@
  * Magnusbilling.com <info@magnusbilling.com>
  *
  */
+
+
+use app\assets\AppAsset;
+use yii\bootstrap4\Html;
+
+
+AppAsset::register($this);
 ?>
-<div id="load"><?php echo Yii::t('app', 'Please wait while loading...') ?></div>
-<script languaje="JavaScript">
-    window.onload = function() {
-        var form = document.getElementById("buyForm");
-        form.submit();
-    };
-</script>
-<?php
+<?php $this->beginPage() ?>
+<!DOCTYPE html>
+<html lang="<?= Yii::$app->language ?>" class="h-100">
 
-$amount = intval($_GET['amount'] * 1.06);
+<head>
+    <meta charset="<?= Yii::$app->charset ?>">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <?php $this->registerCsrfMetaTags() ?>
+    <title><?= Html::encode($this->title) ?></title>
+    <?php $this->head() ?>
+</head>
 
-$merchantID = $modelMethodPay->username; // "teztelcom";
-$orderid    = $reference;
-$verifykey  = $modelMethodPay->pagseguro_TOKEN;
-$vcode      = md5($amount . $merchantID . $orderid . $verifykey);
+<body class="d-flex flex-column h-100">
+    <?php $this->beginBody() ?>
+    <div id="load"><?php echo Yii::t('app', 'Please wait while loading...') ?></div>
+    <script languaje="JavaScript">
+        window.onload = function() {
+            var form = document.getElementById("buyForm");
+            form.submit();
+        };
+    </script>
+    <?php
 
-?>
+    $amount = intval($_GET['amount'] * 1.06);
 
-<form method="GET" action="https://www.onlinepayment.com.my/NBepay/pay/<?php echo $modelMethodPay->username ?>" target="_parent" id="buyForm">
-    <input type="hidden" name="amount" value="<?php echo $amount; ?>">
-    <input type="hidden" name="orderid" value="<?php echo $orderid; ?>">
-    <input type="hidden" name="bill_name" value="<?php echo $modelUser->lastname . ' ' . $modelUser->firstname; ?>">
-    <input type="hidden" name="bill_email" value="<?php echo $modelUser->email; ?>">
-    <input type="hidden" name="bill_mobile" value="<?php echo $modelUser->phone; ?>">
-    <input type="hidden" name="bill_desc" value="Voip Credit to                                                            <?php echo $modelUser->username ?>">
-    <input type="hidden" name="cur" value="rm">
-    <input type="hidden" name="vcode" value="<?php echo $vcode; ?>">
-    <input type="hidden" name="returnurl" value="http://<?php echo $_SERVER['HTTP_HOST'] ?>/mbilling/index.php/molPay">
-</form>
+    $merchantID = $modelMethodPay->username; // "teztelcom";
+    $orderid    = $reference;
+    $verifykey  = $modelMethodPay->pagseguro_TOKEN;
+    $vcode      = md5($amount . $merchantID . $orderid . $verifykey);
+
+    ?>
+
+    <form method="GET" action="https://www.onlinepayment.com.my/NBepay/pay/<?php echo $modelMethodPay->username ?>" target="_parent" id="buyForm">
+        <input type="hidden" name="amount" value="<?php echo $amount; ?>">
+        <input type="hidden" name="orderid" value="<?php echo $orderid; ?>">
+        <input type="hidden" name="bill_name" value="<?php echo $modelUser->lastname . ' ' . $modelUser->firstname; ?>">
+        <input type="hidden" name="bill_email" value="<?php echo $modelUser->email; ?>">
+        <input type="hidden" name="bill_mobile" value="<?php echo $modelUser->phone; ?>">
+        <input type="hidden" name="bill_desc" value="Voip Credit to                                                            <?php echo $modelUser->username ?>">
+        <input type="hidden" name="cur" value="rm">
+        <input type="hidden" name="vcode" value="<?php echo $vcode; ?>">
+        <input type="hidden" name="returnurl" value="http://<?php echo $_SERVER['HTTP_HOST'] ?>/mbilling/index.php/molPay">
+    </form>
+
+    
+    <?php $this->endBody() ?>
+</body>
+
+</html>
+<?php $this->endPage() ?>
+<?php die(); ?>

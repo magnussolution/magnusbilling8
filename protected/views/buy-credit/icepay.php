@@ -19,87 +19,116 @@
  *
  */
 
-require_once "lib/icepay/icepay.php";
 
-if (preg_match("/ /", $modelMethodPay->show_name)) {
-    $type        = explode(" ", $modelMethodPay->show_name);
-    $typePayment = 'ICEPAY_' . $type[0];
-} else {
-    $typePayment = 'ICEPAY_' . $modelMethodPay->show_name;
-}
+use app\assets\AppAsset;
+use yii\bootstrap4\Html;
 
-if (isset($_GET['sussess'])) {
 
-    $order = Yii::$app->session['id_user'] . '_' . date('his');
+AppAsset::register($this);
+?>
+<?php $this->beginPage() ?>
+<!DOCTYPE html>
+<html lang="<?= Yii::$app->language ?>" class="h-100">
 
-    $method = new $typePayment($modelMethodPay->username, $modelMethodPay->pagseguro_TOKEN);
+<head>
+    <meta charset="<?= Yii::$app->charset ?>">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <?php $this->registerCsrfMetaTags() ?>
+    <title><?= Html::encode($this->title) ?></title>
+    <?php $this->head() ?>
+</head>
 
-    if (! $method->OnSuccess()) {
+<body class="d-flex flex-column h-100">
+    <?php $this->beginBody() ?>
+
+    <?php
+    require_once "lib/icepay/icepay.php";
+
+    if (preg_match("/ /", $modelMethodPay->show_name)) {
+        $type        = explode(" ", $modelMethodPay->show_name);
+        $typePayment = 'ICEPAY_' . $type[0];
+    } else {
+        $typePayment = 'ICEPAY_' . $modelMethodPay->show_name;
+    }
+
+    if (isset($_GET['sussess'])) {
+
+        $order = Yii::$app->session['id_user'] . '_' . date('his');
+
+        $method = new $typePayment($modelMethodPay->username, $modelMethodPay->pagseguro_TOKEN);
+
+        if (! $method->OnSuccess()) {
+            exit('error');
+        }
+
+        $data = $method->GetData();
+
+        if ($data->status == "OK") {
+            echo '<h1>Thank You! You have successfully completed the payment!</h1>';
+        }
+
         exit('error');
     }
 
-    $data = $method->GetData();
-
-    if ($data->status == "OK") {
-        echo '<h1>Thank You! You have successfully completed the payment!</h1>';
-    }
-
-    exit('error');
-}
-
-?>
+    ?>
 
 
 
 
-<?php if (! isset($_POST['bank']) && $typePayment == 'ICEPAY_iDEAL'): ?>
-    <link rel="stylesheet" type="text/css" href="../../../resources/css/signup.css" />
-    <form class="rounded" id="contactform" action="" method="post">
+    <?php if (! isset($_POST['bank']) && $typePayment == 'ICEPAY_iDEAL'): ?>
+        <link rel="stylesheet" type="text/css" href="../../../resources/css/signup.css" />
+        <form class="rounded" id="contactform" action="" method="post">
 
-        <h2><?php echo Yii::t('app', 'Select the Bank') ?></h2>
+            <h2><?php echo Yii::t('app', 'Select the Bank') ?></h2>
 
-        <div class="field">
-            <div class="styled-select">
-                <?php echo CHtml::dropDownList('bank', '', [
-                    'ABNAMRO'      => 'ABN AMRO Bank',
-                    'ASNBANK'      => 'ASN Bank',
-                    'FRIESLAND'    => 'Friesland Bank',
-                    'RABOBANK'     => 'Rabobank',
-                    'ING'          => 'ING Bank',
-                    'SNSBANK'      => 'SNS Bank',
-                    'SNSREGIOBANK' => 'SNS Regio Bank',
-                    'TRIODOSBANK'  => 'Triodos Bank',
-                    'VANLANSCHOT'  => 'Van Lanschot Bankiers',
-                ]); ?>
+            <div class="field">
+                <div class="styled-select">
+                    <?php echo CHtml::dropDownList('bank', '', [
+                        'ABNAMRO'      => 'ABN AMRO Bank',
+                        'ASNBANK'      => 'ASN Bank',
+                        'FRIESLAND'    => 'Friesland Bank',
+                        'RABOBANK'     => 'Rabobank',
+                        'ING'          => 'ING Bank',
+                        'SNSBANK'      => 'SNS Bank',
+                        'SNSREGIOBANK' => 'SNS Regio Bank',
+                        'TRIODOSBANK'  => 'Triodos Bank',
+                        'VANLANSCHOT'  => 'Van Lanschot Bankiers',
+                    ]); ?>
+                </div>
             </div>
-        </div>
 
-        <input class="button" type="submit" value="<?php echo Yii::t('app', 'Continue') ?>" />
-    </form>
+            <input class="button" type="submit" value="<?php echo Yii::t('app', 'Continue') ?>" />
+        </form>
 
-    <?php exit; ?>
-<?php endif; ?>
+        <?php exit; ?>
+    <?php endif; ?>
 
 
-<?php
+    <?php
 
-$method = new $typePayment($modelMethodPay->username, $modelMethodPay->pagseguro_TOKEN);
+    $method = new $typePayment($modelMethodPay->username, $modelMethodPay->pagseguro_TOKEN);
 
-if (isset($_GET['amount'])) {
+    if (isset($_GET['amount'])) {
 
-    if ($typePayment == 'ICEPAY_iDEAL') {
+        if ($typePayment == 'ICEPAY_iDEAL') {
 
-        $sql     = "INSERT INTO pkg_refill_icepay (id_user, credit) VALUES (:id_user, :amount)";
-        $command = Yii::$app->db->createCommand($sql);
-        $command->bindValue(":id_user", $_SESSION["id_user"], PDO::PARAM_STR);
-        $command->bindValue(":amount", $_GET['amount'], PDO::PARAM_STR);
-        $command->execute();
+            $sql     = "INSERT INTO pkg_refill_icepay (id_user, credit) VALUES (:id_user, :amount)";
+            $command = Yii::$app->db->createCommand($sql);
+            $command->bindValue(":id_user", $_SESSION["id_user"], PDO::PARAM_STR);
+            $command->bindValue(":amount", $_GET['amount'], PDO::PARAM_STR);
+            $command->execute();
 
-        $OrderID = Yii::$app->db->lastInsertID;
+            $OrderID = Yii::$app->db->lastInsertID;
 
-        $method->SetOrderID($OrderID);
-        $url = $method->Pay($_POST['bank'], $_GET['amount'] . '00', "Credit payment " . $_SESSION["username"]);
+            $method->SetOrderID($OrderID);
+            $url = $method->Pay($_POST['bank'], $_GET['amount'] . '00', "Credit payment " . $_SESSION["username"]);
+        }
+        header("location: " . $url);
     }
-    header("location: " . $url);
-}
-?>
+    ?>
+    <?php $this->endBody() ?>
+</body>
+
+</html>
+<?php $this->endPage() ?>
+<?php die(); ?>

@@ -18,46 +18,77 @@
  * Magnusbilling.com <info@magnusbilling.com>
  *
  */
+
+
+//menu Seu Negocio, Configuraçoes, credenciais, criar credencial, ou usar credencial nova. Usar o Client ID e Client Secret
+
+use app\assets\AppAsset;
+use yii\bootstrap4\Html;
+
+
+AppAsset::register($this);
 ?>
-<div id="load"><?php echo Yii::t('app', 'Please wait while loading...') ?></div>
+<?php $this->beginPage() ?>
+<!DOCTYPE html>
+<html lang="<?= Yii::$app->language ?>" class="h-100">
 
-<?php
-if (Yii::$app->session['currency'] == 'U$S') {
-    $currency = 'USD';
-} else if (Yii::$app->session['currency'] == 'R$') {
-    $currency = 'BRL';
-} elseif (Yii::$app->session['currency'] == '€') {
-    $currency = 'EUR';
-} else {
-    $currency = 'USD';
-}
+<head>
+    <meta charset="<?= Yii::$app->charset ?>">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <?php $this->registerCsrfMetaTags() ?>
+    <title><?= Html::encode($this->title) ?></title>
+    <?php $this->head() ?>
+</head>
 
-?>
+<body class="d-flex flex-column h-100">
+    <?php $this->beginBody() ?>
+    <div id="load"><?php echo Yii::t('app', 'Please wait while loading...') ?></div>
 
-<?php
-require_once 'lib/mercadopago/mercadopago.php';
+    <?php
+    if (Yii::$app->session['currency'] == 'U$S') {
+        $currency = 'USD';
+    } else if (Yii::$app->session['currency'] == 'R$') {
+        $currency = 'BRL';
+    } elseif (Yii::$app->session['currency'] == '€') {
+        $currency = 'EUR';
+    } else {
+        $currency = 'USD';
+    }
 
-$mp = new MP($modelMethodPay->username, $modelMethodPay->pagseguro_TOKEN);
+    ?>
 
-$preference_data = [
-    "items" => [
-        [
-            "title"       => $reference,
-            "quantity"    => 1,
-            "currency_id" => $currency,
-            "unit_price"  => floatval($_GET['amount']),
+    <?php
+    require_once 'lib/mercadopago/mercadopago.php';
+
+    $mp = new MP($modelMethodPay->username, $modelMethodPay->pagseguro_TOKEN);
+
+    $preference_data = [
+        "items" => [
+            [
+                "title"       => $reference,
+                "quantity"    => 1,
+                "currency_id" => $currency,
+                "unit_price"  => floatval($_GET['amount']),
+            ],
         ],
-    ],
-];
+    ];
 
-$preference = $mp->create_preference($preference_data);
-?>
-<script type="text/javascript">
-    window.location.href = '<?php echo $preference['response']['init_point']; ?>';
-</script>
-<div id="load">
-    <a id='link' href="<?php echo $preference['response']['init_point']; ?>">
-        <?php echo Yii::t('app', 'Pay Now') ?>
-    </a>
+    $preference = $mp->create_preference($preference_data);
+    ?>
+    <script type="text/javascript">
+        window.location.href = '<?php echo $preference['response']['init_point']; ?>';
+    </script>
+    <div id="load">
+        <a id='link' href="<?php echo $preference['response']['init_point']; ?>">
+            <?php echo Yii::t('app', 'Pay Now') ?>
+        </a>
 
-</div>
+    </div>
+
+
+    <?php $this->endBody() ?>
+</body>
+
+</html>
+<?php $this->endPage() ?>
+<?php die(); ?>

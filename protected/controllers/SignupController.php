@@ -27,8 +27,12 @@ class SignupController extends CController
     public function actions()
     {
         return array(
+            'error' => [
+                'class' => 'yii\web\ErrorAction',
+            ],
             'captcha' => array(
-                'class'     => 'CCaptchaAction',
+                'class' => 'yii\captcha\CaptchaAction',
+                'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
                 'backColor' => 0xFFFFFF,
             ),
         );

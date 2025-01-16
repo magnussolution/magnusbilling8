@@ -31,14 +31,11 @@
 
 
  <?php
-
-    $modelSendCreditProduct = SendCreditProducts::model()->findAll(array(
-        'condition' => ' type = :key1 AND status = 1',
-        'params'    => array(
-            ':key1' => 'Payment',
-        ),
-        'group'     => 'country',
-    ));
+    $modelSendCreditProduct = \app\models\SendCreditProducts::find()
+        ->select(['country'])
+        ->where(['type' => 'Payment', 'status' => 1])
+        ->groupBy('country')
+        ->all();
 
     $country = CHtml::listData($modelSendCreditProduct, 'country', 'country');
 

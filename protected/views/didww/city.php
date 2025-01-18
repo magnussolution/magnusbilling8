@@ -17,9 +17,9 @@ $cities = CHtml::listData($cities, 'id', 'name'); ?>
 
 <?php if (count($cities) > 1): ?>
     <div class="field">
-        <?php echo $form->labelEx($did, Yii::t('app', 'City')) ?>
+        <?php echo $form->labelEx($did, Yii::t('zii', 'City')) ?>
         <div class="styled-select">
-            <?php echo $form->dropDownList($did, 'city', $cities, array('prompt' => Yii::t('app', 'Select a city'))); ?>
+            <?php echo $form->dropDownList($did, 'city', $cities, array('prompt' => Yii::t('zii', 'Select a city'))); ?>
         </div>
     </div>
 
@@ -30,7 +30,7 @@ $cities = CHtml::listData($cities, 'id', 'name'); ?>
 
 
 
-<?php echo CHtml::submitButton(Yii::t('app', 'Next'), array('class' => 'button')); ?>
+<?php echo CHtml::submitButton(Yii::t('zii', 'Next'), array('class' => 'button')); ?>
 
 <?php echo CHtml::button('Cancel', array('class' => 'button', 'onclick' => 'js:document.location.href="add"')); ?>
 

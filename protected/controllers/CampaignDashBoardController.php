@@ -40,7 +40,7 @@ class CampaignDashBoardController extends CController
     {
         $this->instanceModel = new Campaign;
         $this->abstractModel = Campaign::find();
-        $this->titleReport   = Yii::t('app', 'Campaign');
+        $this->titleReport   = Yii::t('zii', 'Campaign');
         $this->attributeOrder = $this->instanceModel::tableName() . '.id DESC';
         parent::init();
     }

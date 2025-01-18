@@ -43,7 +43,7 @@ class OfferController extends CController
     {
         $this->instanceModel = new Offer;
         $this->abstractModel = Offer::find();
-        $this->titleReport   = Yii::t('app', 'Offer');
+        $this->titleReport   = Yii::t('zii', 'Offer');
         if (Yii::$app->session['isAdmin']) {
             $this->defaultFilter = '(pkg_offer.id_user < 2 || pkg_offer.id_user IS NULL)';
         }

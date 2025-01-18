@@ -131,7 +131,7 @@ class UserController extends CController
             echo json_encode([
                 'success' => false,
                 'rows'    => [],
-                'errors'  => Yii::t('app', 'You cannot EDIT your account.'),
+                'errors'  => Yii::t('zii', 'You cannot EDIT your account.'),
             ]);
             exit();
         }
@@ -164,7 +164,7 @@ class UserController extends CController
                     echo json_encode([
                         'success' => false,
                         'rows'    => [],
-                        'errors'  => Yii::t('app', 'Group no allow for agent users'),
+                        'errors'  => Yii::t('zii', 'Group no allow for agent users'),
                     ]);
                     exit();
                 }
@@ -215,19 +215,19 @@ class UserController extends CController
             if (count($methodModel) > 0 && $idUserType == 3) {
 
                 if (strlen($values['lastname']) < 5) {
-                    $error = Yii::t('app', 'Last name');
+                    $error = Yii::t('zii', 'Last name');
                 } else if (strlen($values['firstname']) < 5) {
-                    $error = Yii::t('app', 'First name');
+                    $error = Yii::t('zii', 'First name');
                 } else if (strlen($values['doc']) < 11) {
-                    $error = Yii::t('app', 'DOC');
+                    $error = Yii::t('zii', 'DOC');
                 } else if (! preg_match('/^[^0-9][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[@][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[.][a-zA-Z]{2,4}$/', $values['email'])) {
-                    $error = Yii::t('app', 'Email');
+                    $error = Yii::t('zii', 'Email');
                 }
                 if (isset($error)) {
                     echo json_encode([
                         'success' => false,
                         'rows'    => [],
-                        'errors'  => Yii::t('app', $error) . ' ' . Yii::t('app', 'Is required'),
+                        'errors'  => Yii::t('zii', $error) . ' ' . Yii::t('zii', 'Is required'),
                     ]);
                     exit();
                 }
@@ -254,7 +254,7 @@ class UserController extends CController
                 echo json_encode([
                     'success' => false,
                     'rows'    => [],
-                    'errors'  => Yii::t('app', 'You are not allowed to edit this field'),
+                    'errors'  => Yii::t('zii', 'You are not allowed to edit this field'),
                 ]);
                 exit;
             }
@@ -264,7 +264,7 @@ class UserController extends CController
                 echo json_encode([
                     'success' => false,
                     'rows'    => [],
-                    'errors'  => Yii::t('app', 'You cannot change user type group'),
+                    'errors'  => Yii::t('zii', 'You cannot change user type group'),
                 ]);
                 exit;
             }
@@ -393,7 +393,7 @@ class UserController extends CController
                             echo json_encode([
                                 'success' => false,
                                 'rows'    => [],
-                                'errors'  => Yii::t('app', 'You have no permission to delete administrator users'),
+                                'errors'  => Yii::t('zii', 'You have no permission to delete administrator users'),
                             ]);
                             exit();
                         }
@@ -402,7 +402,7 @@ class UserController extends CController
                             echo json_encode([
                                 'success' => false,
                                 'rows'    => [],
-                                'errors'  => Yii::t('app', 'You have no permission to create administrator users'),
+                                'errors'  => Yii::t('zii', 'You have no permission to create administrator users'),
                             ]);
                             exit();
                         }
@@ -411,7 +411,7 @@ class UserController extends CController
                             echo json_encode([
                                 'success' => false,
                                 'rows'    => [],
-                                'errors'  => Yii::t('app', 'You have no permission to update administrator users'),
+                                'errors'  => Yii::t('zii', 'You have no permission to update administrator users'),
                             ]);
                             exit();
                         }
@@ -587,7 +587,7 @@ class UserController extends CController
                 $modelRefill->id_user     = $modelUser->id;
                 $modelRefill->payment     = 1;
                 $modelRefill->credit      = $values['credit'];
-                $modelRefill->description = Yii::t('app', 'Automatic credit');
+                $modelRefill->description = Yii::t('zii', 'Automatic credit');
                 $modelRefill->save();
             }
         }

@@ -40,7 +40,7 @@ class CallSummaryDayTrunkController extends CController
 
         $this->instanceModel = new CallSummaryDayTrunk;
         $this->abstractModel = CallSummaryDayTrunk::find();
-        $this->titleReport   = Yii::t('app', 'Summary Day Trunk');
+        $this->titleReport   = Yii::t('zii', 'Summary Day Trunk');
         $this->attributeOrder = $this->instanceModel::tableName() . '.day DESC';
         parent::init();
     }

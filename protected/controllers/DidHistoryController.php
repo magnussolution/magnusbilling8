@@ -35,7 +35,7 @@ class DidHistoryController extends CController
     {
         $this->instanceModel = new DidHistory;
         $this->abstractModel = DidHistory::find();
-        $this->titleReport   = Yii::t('app', 'DID History');
+        $this->titleReport   = Yii::t('zii', 'DID History');
         $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();
     }

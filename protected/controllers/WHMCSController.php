@@ -36,7 +36,7 @@ class WHMCSController extends CController
     {
         $this->instanceModel = new WHMCS;
         $this->abstractModel = WHMCS::find();
-        $this->titleReport   = Yii::t('app', 'WHMCS');
+        $this->titleReport   = Yii::t('zii', 'WHMCS');
 
         $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();

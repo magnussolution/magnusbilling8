@@ -78,8 +78,6 @@ class BuyCreditController extends CController
                     'modelUser'      => $modelUser,
                     'reference'      => date('YmdHis') . '-' . $modelUser->username . '-' . $modelUser->id,
                 ]);
-
-             
             }
         }
 
@@ -94,8 +92,8 @@ class BuyCreditController extends CController
         }
 
         if ($modelMethodPay->max > 0 && $_GET['amount'] > $modelMethodPay->max || $modelMethodPay->min > 0 && $_GET['amount'] < $modelMethodPay->min) {
-            $error = Yii::t('app', 'The minimum amount is') . ' ' . Yii::$app->session['currency'] . ' ' . $modelMethodPay->min;
-            $error .= ' ' . Yii::t('app', 'and') . ' ' . Yii::t('app', 'The maximum amount is') . ' ' . Yii::$app->session['currency'] . ' ' . $modelMethodPay->max;
+            $error = Yii::t('zii', 'The minimum amount is') . ' ' . Yii::$app->session['currency'] . ' ' . $modelMethodPay->min;
+            $error .= ' ' . Yii::t('zii', 'and') . ' ' . Yii::t('zii', 'The maximum amount is') . ' ' . Yii::$app->session['currency'] . ' ' . $modelMethodPay->max;
         }
 
         if (isset($error)) {
@@ -224,7 +222,7 @@ class BuyCreditController extends CController
             }
 
             if ($_POST['ServicesUse']['id_method'] < 1) {
-                $model->addError('id_method', Yii::t('app', 'Group no allow for agent users'));
+                $model->addError('id_method', Yii::t('zii', 'Group no allow for agent users'));
             } else {
 
                 if (isset($_GET['id_service_use'])) {

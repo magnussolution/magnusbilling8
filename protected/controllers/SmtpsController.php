@@ -93,7 +93,7 @@ class SmtpsController extends CController
                 echo json_encode([
                     'success' => false,
                     'rows'    => [],
-                    'errors'  => Yii::t('app', 'Do you already have a SMTP'),
+                    'errors'  => Yii::t('zii', 'Do you already have a SMTP'),
                 ]);
                 exit;
             }

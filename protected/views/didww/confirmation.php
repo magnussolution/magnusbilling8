@@ -24,6 +24,6 @@ echo "MONTHLY PRICE:   " . Yii::$app->session['currency'] . ' ' . Yii::$app->ses
 
 <?php echo $form->hiddenField($did, 'confirmation', array('value' => 1)); ?>
 
-<?php echo CHtml::submitButton(Yii::t('app', 'Confirm'), array('class' => 'button')); ?>
+<?php echo CHtml::submitButton(Yii::t('zii', 'Confirm'), array('class' => 'button')); ?>
 <?php echo CHtml::button('Cancel', array('class' => 'button', 'onclick' => 'js:document.location.href="add"')); ?>
 <?php $this->endWidget(); ?>

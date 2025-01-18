@@ -43,7 +43,7 @@ class CallOnLineController extends CController
     {
         $this->instanceModel = new CallOnLine;
         $this->abstractModel = CallOnLine::find();
-        $this->titleReport   = Yii::t('app', 'Calls Online');
+        $this->titleReport   = Yii::t('zii', 'Calls Online');
         $this->attributeOrder = $this->instanceModel::tableName() . '.duration DESC, ' . $this->instanceModel::tableName() . '.status ASC';
         parent::init();
 

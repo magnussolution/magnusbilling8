@@ -37,7 +37,7 @@ class PrefixController extends CController
     {
         $this->instanceModel = new Prefix;
         $this->abstractModel = Prefix::find();
-        $this->titleReport   = Yii::t('app', 'Prefix');
+        $this->titleReport   = Yii::t('zii', 'Prefix');
 
         $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();
@@ -78,7 +78,7 @@ class PrefixController extends CController
             if (preg_match("/$checkDelimiter/", $row[0])) {
                 echo json_encode([
                     $this->nameSuccess => false,
-                    'errors'           => Yii::t('app', 'ERROR: CSV delimiter, please select ( ' . $checkDelimiter . ' ) on the import form'),
+                    'errors'           => Yii::t('zii', 'ERROR: CSV delimiter, please select ( ' . $checkDelimiter . ' ) on the import form'),
                 ]);
                 exit;
             }

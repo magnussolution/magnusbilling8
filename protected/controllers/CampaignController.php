@@ -62,7 +62,7 @@ class CampaignController extends CController
         $this->abstractModel        = Campaign::find();
         $this->abstractModelRelated = CampaignPhonebook::find();
         $this->instanceModelRelated = new CampaignPhonebook;
-        $this->titleReport          = Yii::t('app', 'Campaign');
+        $this->titleReport          = Yii::t('zii', 'Campaign');
         $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();
     }
@@ -80,7 +80,7 @@ class CampaignController extends CController
                     echo json_encode([
                         'success' => false,
                         'rows'    => [],
-                        'errors'  => ['frequency' => [Yii::t('app', 'The call limit need be less than') . ' ', $this->config['global']['campaign_user_limit']]],
+                        'errors'  => ['frequency' => [Yii::t('zii', 'The call limit need be less than') . ' ', $this->config['global']['campaign_user_limit']]],
                     ]);
                     exit;
                 }
@@ -92,7 +92,7 @@ class CampaignController extends CController
                     echo json_encode([
                         'success' => false,
                         'rows'    => [],
-                        'errors'  => ['frequency' => [Yii::t('app', 'The call limit need be less than') . ' ', $modelCampaign->max_frequency]],
+                        'errors'  => ['frequency' => [Yii::t('zii', 'The call limit need be less than') . ' ', $modelCampaign->max_frequency]],
                     ]);
                     exit;
                 }

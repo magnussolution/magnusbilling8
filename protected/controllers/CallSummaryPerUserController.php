@@ -54,7 +54,7 @@ class CallSummaryPerUserController extends CController
         }
         $this->instanceModel = new CallSummaryPerUser;
         $this->abstractModel = CallSummaryPerUser::find();
-        $this->titleReport   = Yii::t('app', 'Summary Day User');
+        $this->titleReport   = Yii::t('zii', 'Summary Day User');
         $this->attributeOrder = $this->instanceModel::tableName() . '.id_user DESC';
         parent::init();
     }
@@ -169,7 +169,7 @@ class CallSummaryPerUserController extends CController
         fseek($f, 0);
 
         header('Content-Type: text/csv');
-        header('Content-Disposition: attachment; filename="' . Yii::t('app', 'Summary Day User') . '_' . date('Y-m-d') . '.csv"');
+        header('Content-Disposition: attachment; filename="' . Yii::t('zii', 'Summary Day User') . '_' . date('Y-m-d') . '.csv"');
 
         fpassthru($f);
     }

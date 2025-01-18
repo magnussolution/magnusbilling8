@@ -38,7 +38,7 @@ class QueueMemberDashBoardController extends CController
     {
         $this->instanceModel = new QueueMemberDashBoard;
         $this->abstractModel = QueueMemberDashBoard::find();
-        $this->titleReport   = Yii::t('app', 'Queue Member DashBoard');
+        $this->titleReport   = Yii::t('zii', 'Queue Member DashBoard');
 
         $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();

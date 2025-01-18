@@ -57,7 +57,7 @@ class CallSummaryDayUserController extends CController
         }
         $this->instanceModel = new CallSummaryDayUser;
         $this->abstractModel = CallSummaryDayUser::find();
-        $this->titleReport   = Yii::t('app', 'Summary Day User');
+        $this->titleReport   = Yii::t('zii', 'Summary Day User');
         $this->attributeOrder = $this->instanceModel::tableName() . '.day DESC';
         $this->joinWith         = 'idUser';
         parent::init();

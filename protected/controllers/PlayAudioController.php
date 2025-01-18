@@ -46,7 +46,7 @@ class PlayAudioController extends CController
         }
 
         if (! file_exists($file_name)) {
-            exit('<center><br>' . Yii::t('app', 'File not found') . '</center>');
+            exit('<center><br>' . Yii::t('zii', 'File not found') . '</center>');
         }
         if (preg_match('/gsm/', $file_name)) {
             header("Cache-Control: public");

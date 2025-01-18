@@ -44,7 +44,7 @@ class PhoneNumberController extends CController
     {
         $this->instanceModel = new PhoneNumber;
         $this->abstractModel = PhoneNumber::find();
-        $this->titleReport   = Yii::t('app', 'Phonenumber');
+        $this->titleReport   = Yii::t('zii', 'Phonenumber');
         $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();
     }

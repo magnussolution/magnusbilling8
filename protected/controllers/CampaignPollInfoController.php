@@ -41,7 +41,7 @@ class CampaignPollInfoController extends CController
     {
         $this->instanceModel = new CampaignPollInfo;
         $this->abstractModel = CampaignPollInfo::find();
-        $this->titleReport   = Yii::t('app', 'Poll Info');
+        $this->titleReport   = Yii::t('zii', 'Poll Info');
         $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();
     }

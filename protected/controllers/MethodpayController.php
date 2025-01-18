@@ -64,7 +64,7 @@ class MethodpayController extends CController
     {
         $this->instanceModel = new Methodpay;
         $this->abstractModel = Methodpay::find();
-        $this->titleReport   = Yii::t('app', 'Payment Methods');
+        $this->titleReport   = Yii::t('zii', 'Payment Methods');
         $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();
     }

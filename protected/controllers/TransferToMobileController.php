@@ -58,7 +58,7 @@ class TransferToMobileController extends CController
         if (isset($_POST['TransferToMobile']['method'])) {
 
             if ($_POST['TransferToMobile']['method'] == '') {
-                $modelTransferToMobile->addError('method', Yii::t('app', 'Please select a method'));
+                $modelTransferToMobile->addError('method', Yii::t('zii', 'Please select a method'));
 
                 $this->render('index', array(
                     'modelTransferToMobile' => $modelTransferToMobile,

@@ -36,7 +36,7 @@ class TemplateMailController extends CController
 
         $this->instanceModel = new TemplateMail;
         $this->abstractModel = TemplateMail::find();
-        $this->titleReport   = Yii::t('app', 'Emails');
+        $this->titleReport   = Yii::t('zii', 'Emails');
 
         if (Yii::$app->session['isAdmin']) {
             $this->relationFilter['idUser'] = [

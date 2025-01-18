@@ -48,7 +48,7 @@ class OfferCdrController extends CController
     {
         $this->instanceModel = new OfferCdr;
         $this->abstractModel = OfferCdr::find();
-        $this->titleReport   = Yii::t('app', 'Offer') . ' CDR';
+        $this->titleReport   = Yii::t('zii', 'Offer') . ' CDR';
 
         if (Yii::$app->session['isAdmin']) {
             $this->relationFilter['idOffer'] = [

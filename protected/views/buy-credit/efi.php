@@ -53,13 +53,13 @@ AppAsset::register($this);
 
     $modelUser->doc = preg_replace("/-|\.|\//", "", $modelUser->doc);
     if (!isset($modelUser->email) || strlen($modelUser->email) < 10 || !preg_match("/@/", $modelUser->email)) {
-        echo "<div id='load' > " . Yii::t('app', 'Invalid Email') . "</div> ";
+        echo "<div id='load' > " . Yii::t('zii', 'Invalid Email') . "</div> ";
         return;
     }
 
 
     if (!isset($modelUser->doc) || strlen($modelUser->doc) < 10) {
-        echo "<div id='load' > " . Yii::t('app', 'Invalid DOC') . "</div> ";
+        echo "<div id='load' > " . Yii::t('zii', 'Invalid DOC') . "</div> ";
         die();
     }
 
@@ -152,7 +152,7 @@ AppAsset::register($this);
     header('Location: ' . $response['data']['payment_url']);
 
     ?>
-    <div id='load'><?php echo Yii::t('app', 'Please wait while loading...') ?></div>
+    <div id='load'><?php echo Yii::t('zii', 'Please wait while loading...') ?></div>
 
     ?>
     <?php $this->endBody() ?>

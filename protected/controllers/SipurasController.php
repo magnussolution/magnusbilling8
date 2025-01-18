@@ -35,7 +35,7 @@ class SipurasController extends CController
     {
         $this->instanceModel = new Sipuras;
         $this->abstractModel = Sipuras::find();
-        $this->titleReport   = Yii::t('app', 'ATA Linksys');
+        $this->titleReport   = Yii::t('zii', 'ATA Linksys');
         $this->attributeOrder = $this->instanceModel::tableName() . '.fultmov DESC';
         parent::init();
     }

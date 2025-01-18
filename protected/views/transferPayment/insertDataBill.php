@@ -13,29 +13,29 @@ $form = $this->beginWidget('CActiveForm', array(
 <br>
 
 <div class="field">
-    <?php echo $form->labelEx($modelTransferToMobile, Yii::t('app', 'Method')) ?>
+    <?php echo $form->labelEx($modelTransferToMobile, Yii::t('zii', 'Method')) ?>
     <?php echo $form->textField($modelTransferToMobile, 'method', array('class' => 'input', 'readonly' => true)) ?>
     <?php echo $form->error($modelTransferToMobile, 'method') ?>
 </div>
 
 
 <div class="field">
-    <?php echo $form->labelEx($modelTransferToMobile, Yii::t('app', 'Country')) ?>
+    <?php echo $form->labelEx($modelTransferToMobile, Yii::t('zii', 'Country')) ?>
     <?php echo $form->textField($modelTransferToMobile, 'country', array('class' => 'input', 'id' => 'country', 'readonly' => true)) ?>
     <?php echo $form->error($modelTransferToMobile, 'country') ?>
 </div>
 
 <div class="field">
-    <?php echo $form->labelEx($modelTransferToMobile, Yii::t('app', 'Type')) ?>
+    <?php echo $form->labelEx($modelTransferToMobile, Yii::t('zii', 'Type')) ?>
     <?php echo $form->textField($modelTransferToMobile, 'type', array('class' => 'input', 'readonly' => true)) ?>
     <?php echo $form->error($modelTransferToMobile, 'type') ?>
 </div>
 
 <div class="field">
-    <?php echo $form->labelEx($modelTransferToMobile, Yii::t('app', 'Mobile number')) ?>
+    <?php echo $form->labelEx($modelTransferToMobile, Yii::t('zii', 'Mobile number')) ?>
     <?php echo $form->textField($modelTransferToMobile, 'phone', array('class' => 'input')) ?>
     <?php echo $form->error($modelTransferToMobile, 'phone') ?>
-    <p class="hint"><?php echo Yii::t('app', 'Enter your') . ' ' . Yii::t('app', 'Mobile number') ?></p>
+    <p class="hint"><?php echo Yii::t('zii', 'Enter your') . ' ' . Yii::t('zii', 'Mobile number') ?></p>
 </div>
 
 
@@ -47,32 +47,32 @@ $form = $this->beginWidget('CActiveForm', array(
 <?php if ($modelTransferToMobile->country == 'Senegal'): ?>
     <?php echo $form->hiddenField($modelTransferToMobile, 'zipcode', array('value' => '')); ?>
     <div class="field">
-        <?php echo $form->labelEx($modelTransferToMobile, Yii::t('app', 'Bill no')) ?>
+        <?php echo $form->labelEx($modelTransferToMobile, Yii::t('zii', 'Bill no')) ?>
         <?php echo $form->textField($modelTransferToMobile, 'number', array('class' => 'input')) ?>
         <?php echo $form->error($modelTransferToMobile, 'number') ?>
-        <p class="hint"><?php echo Yii::t('app', 'Enter your') . ' ' . Yii::t('app', 'Contract no') ?></p>
+        <p class="hint"><?php echo Yii::t('zii', 'Enter your') . ' ' . Yii::t('zii', 'Contract no') ?></p>
     </div>
 <?php else: ?>
 
     <div class="field">
-        <?php echo $form->labelEx($modelTransferToMobile, Yii::t('app', 'Contract no')) ?>
+        <?php echo $form->labelEx($modelTransferToMobile, Yii::t('zii', 'Contract no')) ?>
         <?php echo $form->textField($modelTransferToMobile, 'number', array('class' => 'input')) ?>
         <?php echo $form->error($modelTransferToMobile, 'number') ?>
-        <p class="hint"><?php echo Yii::t('app', 'Enter your') . ' ' . Yii::t('app', 'Contract no') ?></p>
+        <p class="hint"><?php echo Yii::t('zii', 'Enter your') . ' ' . Yii::t('zii', 'Contract no') ?></p>
     </div>
 
     <div class="field">
-        <?php echo $form->labelEx($modelTransferToMobile, Yii::t('app', 'Distribution code')) ?>
+        <?php echo $form->labelEx($modelTransferToMobile, Yii::t('zii', 'Distribution code')) ?>
         <?php echo $form->textField($modelTransferToMobile, 'zipcode', array('class' => 'input')) ?>
         <?php echo $form->error($modelTransferToMobile, 'zipcode') ?>
-        <p class="hint"><?php echo Yii::t('app', 'Enter your') . ' ' . Yii::t('app', 'Distribution code') ?></p>
+        <p class="hint"><?php echo Yii::t('zii', 'Enter your') . ' ' . Yii::t('zii', 'Distribution code') ?></p>
     </div>
 <?php endif ?>
 
 
 
 <div class="field">
-    <?php echo $form->labelEx($modelTransferToMobile, Yii::t('app', 'Bill Date:')) ?>
+    <?php echo $form->labelEx($modelTransferToMobile, Yii::t('zii', 'Bill Date:')) ?>
     <?php
     $this->widget(
         'ext.jui.EJuiDateTimePicker',
@@ -116,7 +116,7 @@ $form = $this->beginWidget('CActiveForm', array(
 
 
 <div class="controls" id="sendButton" style="display: none">
-    <?php echo CHtml::submitButton(Yii::t('app', 'Next'), array(
+    <?php echo CHtml::submitButton(Yii::t('zii', 'Next'), array(
         'class'   => 'button',
         'onclick' => "return button2(event)",
         'id'      => 'secondButton'

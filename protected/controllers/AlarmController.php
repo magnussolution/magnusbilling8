@@ -43,7 +43,7 @@ class AlarmController extends CController
     {
         $this->instanceModel = new Alarm;
         $this->abstractModel = Alarm::find();
-        $this->titleReport   = Yii::t('app', 'Alarm');
+        $this->titleReport   = Yii::t('zii', 'Alarm');
         $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();
     }

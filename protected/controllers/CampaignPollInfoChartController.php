@@ -34,7 +34,7 @@ class CampaignPollInfoChartController extends CController
     {
         $this->instanceModel = new CampaignPollInfo;
         $this->abstractModel = CampaignPollInfo::find();
-        $this->titleReport   = Yii::t('app', 'CampaignPollInfo');
+        $this->titleReport   = Yii::t('zii', 'CampaignPollInfo');
 
         $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();
@@ -118,11 +118,11 @@ class CampaignPollInfoChartController extends CController
             $totalVotes = CampaignPollInfo::find($this->filter, $this->paramsFilter)->count();;
 
             for ($i = 0; $i < count($records); $i++) {
-                $records[$i]['percentage']    = Yii::t('app', 'Votes') . ': ' . $records[$i]['sumresposta'] . ' - ' . number_format(($records[$i]['sumresposta'] * 100) / $totalVotes, 2) . '%';
+                $records[$i]['percentage']    = Yii::t('zii', 'Votes') . ': ' . $records[$i]['sumresposta'] . ' - ' . number_format(($records[$i]['sumresposta'] * 100) / $totalVotes, 2) . '%';
                 $records[$i]['resposta_name'] = $total_poll == 1 && strlen($model[0]['option' . $records[$i]['resposta2']]) > 0 ? $model[0]['option' . $records[$i]['resposta2']] : $records[$i]['resposta2'];
-                $records[$i]['total_votos']   = '<b>' . Yii::t('app', 'Answered') . ':</b>' . $modelPhoneNumber;
-                $records[$i]['total_votos'] .= '<br><b>' . Yii::t('app', 'Votes') . ':</b>' . $totalVotes;
-                $records[$i]['total_votos'] .= '<br><b>' . Yii::t('app', 'Voted') . ': </b>' . number_format(($totalVotes * 100) / $modelPhoneNumber, 2) . '%';
+                $records[$i]['total_votos']   = '<b>' . Yii::t('zii', 'Answered') . ':</b>' . $modelPhoneNumber;
+                $records[$i]['total_votos'] .= '<br><b>' . Yii::t('zii', 'Votes') . ':</b>' . $totalVotes;
+                $records[$i]['total_votos'] .= '<br><b>' . Yii::t('zii', 'Voted') . ': </b>' . number_format(($totalVotes * 100) / $modelPhoneNumber, 2) . '%';
             }
         } else {
         }

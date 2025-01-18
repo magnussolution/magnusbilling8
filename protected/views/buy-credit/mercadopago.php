@@ -42,7 +42,7 @@ AppAsset::register($this);
 
 <body class="d-flex flex-column h-100">
     <?php $this->beginBody() ?>
-    <div id="load"><?php echo Yii::t('app', 'Please wait while loading...') ?></div>
+    <div id="load"><?php echo Yii::t('zii', 'Please wait while loading...') ?></div>
 
     <?php
     if (Yii::$app->session['currency'] == 'U$S') {
@@ -80,7 +80,7 @@ AppAsset::register($this);
     </script>
     <div id="load">
         <a id='link' href="<?php echo $preference['response']['init_point']; ?>">
-            <?php echo Yii::t('app', 'Pay Now') ?>
+            <?php echo Yii::t('zii', 'Pay Now') ?>
         </a>
 
     </div>

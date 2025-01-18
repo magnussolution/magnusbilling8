@@ -35,7 +35,7 @@ class RateCallshopController extends CController
     {
         $this->instanceModel = new RateCallshop;
         $this->abstractModel = RateCallshop::find();
-        $this->titleReport   = Yii::t('app', 'Rates') . ' ' . Yii::t('app', 'CallShop');
+        $this->titleReport   = Yii::t('zii', 'Rates') . ' ' . Yii::t('zii', 'CallShop');
         $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();
     }

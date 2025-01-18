@@ -33,7 +33,7 @@ class StatusSystemController extends CController
     {
         $this->instanceModel = new StatusSystem;
         $this->abstractModel = StatusSystem::find();
-        $this->titleReport   = Yii::t('app', 'Status system');
+        $this->titleReport   = Yii::t('zii', 'Status system');
         $this->attributeOrder = $this->instanceModel::tableName() . '.id DESC';
         parent::init();
 

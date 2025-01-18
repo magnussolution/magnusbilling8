@@ -44,7 +44,7 @@ class ProviderCNLController extends CController
     {
         $this->instanceModel = new ProviderCNL;
         $this->abstractModel = ProviderCNL::find();
-        $this->titleReport   = Yii::t('app', 'Provider CNL');
+        $this->titleReport   = Yii::t('zii', 'Provider CNL');
         $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();
     }

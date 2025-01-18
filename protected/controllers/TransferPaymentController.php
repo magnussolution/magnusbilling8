@@ -204,29 +204,29 @@ class TransferPaymentController extends CController
 
         if (strlen($_POST['TransferToMobile']['phone']) < 5) {
 
-            $this->modelTransferToMobile->addError('phone', Yii::t('app', 'Phone is required'));
+            $this->modelTransferToMobile->addError('phone', Yii::t('zii', 'Phone is required'));
         }
 
         if (strlen($_POST['TransferToMobile']['number']) < 5) {
 
-            $this->modelTransferToMobile->addError('number', Yii::t('app', 'Contract is required'));
+            $this->modelTransferToMobile->addError('number', Yii::t('zii', 'Contract is required'));
         }
 
         if ($this->modelTransferToMobile->country != 'Senegal') {
 
             if (strlen($_POST['TransferToMobile']['zipcode']) < 2) {
 
-                $this->modelTransferToMobile->addError('zipcode', Yii::t('app', 'Distribution code required'));
+                $this->modelTransferToMobile->addError('zipcode', Yii::t('zii', 'Distribution code required'));
             }
 
             if (strlen($_POST['TransferToMobile']['zipcode']) < 2) {
 
-                $this->modelTransferToMobile->addError('zipcode', Yii::t('app', 'Distribution code required'));
+                $this->modelTransferToMobile->addError('zipcode', Yii::t('zii', 'Distribution code required'));
             }
         }
 
         if (! is_numeric($_POST['TransferToMobile']['bill_amount']) || $_POST['TransferToMobile']['bill_amount'] < 1) {
-            $this->modelTransferToMobile->addError('bill_amount', Yii::t('app', 'Bill amount need be numeric > 1'));
+            $this->modelTransferToMobile->addError('bill_amount', Yii::t('zii', 'Bill amount need be numeric > 1'));
         }
 
         if (count($this->modelTransferToMobile->getErrors())) {

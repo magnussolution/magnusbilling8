@@ -44,7 +44,7 @@ class ServersController extends CController
     {
         $this->instanceModel        = new Servers;
         $this->abstractModel        = Servers::find();
-        $this->titleReport          = Yii::t('app', 'CallerID');
+        $this->titleReport          = Yii::t('zii', 'CallerID');
         $this->abstractModelRelated = ServersServers::find();
         $this->instanceModelRelated = new ServersServers;
         $this->attributeOrder = $this->instanceModel::tableName() . '.id';

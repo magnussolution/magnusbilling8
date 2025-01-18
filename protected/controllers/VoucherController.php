@@ -51,7 +51,7 @@ class VoucherController extends CController
     {
         $this->instanceModel = new Voucher;
         $this->abstractModel = Voucher::find();
-        $this->titleReport   = Yii::t('app', 'Voucher');
+        $this->titleReport   = Yii::t('zii', 'Voucher');
         $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();
     }
@@ -91,7 +91,7 @@ class VoucherController extends CController
                 UserCreditManager::releaseUserCredit(Yii::$app->session['id_user'], $modelVoucher->credit, 'Voucher ' . $values['voucher']);
             } else {
                 $this->success = false;
-                $this->msg     = Yii::t('app', 'Voucher inexistente or already used');
+                $this->msg     = Yii::t('zii', 'Voucher inexistente or already used');
                 $this->nameMsg = 'errors';
             }
 

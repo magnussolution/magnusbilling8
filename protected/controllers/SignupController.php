@@ -152,7 +152,7 @@ class SignupController extends CController
                 unset($_POST['Signup']['password']);
             } else {
                 if ($_POST['Signup']['password'] != $_POST['Signup']['password2']) {
-                    $signup->addError('id_plan', Yii::t('app', 'Password'));
+                    $signup->addError('id_plan', Yii::t('zii', 'Password'));
                 }
             }
 
@@ -176,7 +176,7 @@ class SignupController extends CController
 
             if ($modelPlan->signup != 1) {
                 //error if invalid plan(tampered data)
-                $signup->addError('id_plan', Yii::t('app', 'Invalid plan used to signup'));
+                $signup->addError('id_plan', Yii::t('zii', 'Invalid plan used to signup'));
             } else {
                 $success = $signup->save();
 
@@ -208,7 +208,7 @@ class SignupController extends CController
                         echo json_encode(array(
                             'success'  => 'true',
                             'username' => $signup->username,
-                            'msg'      => Yii::t('app', 'Your account was created. Please check your email'),
+                            'msg'      => Yii::t('zii', 'Your account was created. Please check your email'),
                         ));
 
                         $mail = new Mail(Mail::$TYPE_SIGNUP, $signup->id);

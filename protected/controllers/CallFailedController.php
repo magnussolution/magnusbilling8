@@ -85,7 +85,7 @@ class CallFailedController extends CController
     {
         $this->instanceModel = new CallFailed;
         $this->abstractModel = CallFailed::find();
-        $this->titleReport   = Yii::t('app', 'Call Failed');
+        $this->titleReport   = Yii::t('zii', 'Call Failed');
 
         $this->attributeOrder = $this->instanceModel::tableName() . '.id DESC';
         parent::init();

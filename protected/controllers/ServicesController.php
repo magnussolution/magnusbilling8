@@ -42,7 +42,7 @@ class ServicesController extends CController
     {
         $this->instanceModel        = new Services;
         $this->abstractModel        = Services::find();
-        $this->titleReport          = Yii::t('app', 'Services');
+        $this->titleReport          = Yii::t('zii', 'Services');
         $this->abstractModelRelated = ServicesModule::find();
         $this->instanceModelRelated = new ServicesModule;
         $this->attributeOrder = $this->instanceModel::tableName() . '.id';

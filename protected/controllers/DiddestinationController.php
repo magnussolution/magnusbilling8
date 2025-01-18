@@ -80,7 +80,7 @@ class DiddestinationController extends CController
     {
         $this->instanceModel = new Diddestination;
         $this->abstractModel = Diddestination::find();
-        $this->titleReport   = Yii::t('app', 'DID Destination');
+        $this->titleReport   = Yii::t('zii', 'DID Destination');
         $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();
     }
@@ -101,7 +101,7 @@ class DiddestinationController extends CController
                 echo json_encode([
                     'success' => false,
                     'rows'    => '[]',
-                    'errors'  => Yii::t('app', 'You only can set DID to CLIENTS'),
+                    'errors'  => Yii::t('zii', 'You only can set DID to CLIENTS'),
                 ]);
                 exit;
             }
@@ -114,7 +114,7 @@ class DiddestinationController extends CController
                     echo json_encode([
                         'success' => false,
                         'rows'    => '[]',
-                        'errors'  => Yii::t('app', 'Customer not have credit for buy DID') . ' - ' . $did->did,
+                        'errors'  => Yii::t('zii', 'Customer not have credit for buy DID') . ' - ' . $did->did,
                     ]);
                     exit;
                 }
@@ -317,7 +317,7 @@ class DiddestinationController extends CController
                             UserCreditManager::releaseUserCredit(
                                 $model->id_user,
                                 $modelDid->connection_charge,
-                                Yii::t('app', 'Activation DID') . '' . $modelDid->did,
+                                Yii::t('zii', 'Activation DID') . '' . $modelDid->did,
                                 0
                             );
                         }
@@ -325,7 +325,7 @@ class DiddestinationController extends CController
                         UserCreditManager::releaseUserCredit(
                             $model->id_user,
                             $modelDid->fixrate,
-                            Yii::t('app', 'Monthly payment DID') . '' . $modelDid->did,
+                            Yii::t('zii', 'Monthly payment DID') . '' . $modelDid->did,
                             0
                         );
 

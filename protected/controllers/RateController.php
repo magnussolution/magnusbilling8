@@ -102,7 +102,7 @@ class RateController extends CController
             $this->abstractModel = Rate::find();
         }
 
-        $this->titleReport = Yii::t('app', 'Tariffs');
+        $this->titleReport = Yii::t('zii', 'Tariffs');
 
         $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();
@@ -203,7 +203,7 @@ class RateController extends CController
             } catch (Exception $e) {
                 echo json_encode([
                     $this->nameSuccess => false,
-                    'errors'           => Yii::t('app', 'MYSQL message.') . "\n\n" . print_r($e, true),
+                    'errors'           => Yii::t('zii', 'MYSQL message.') . "\n\n" . print_r($e, true),
                 ]);
                 exit;
             }
@@ -217,7 +217,7 @@ class RateController extends CController
         if (! isset($_FILES['file']['tmp_name']) || strlen($_FILES['file']['tmp_name']) < 10) {
             echo json_encode([
                 $this->nameSuccess => false,
-                'errors'           => Yii::t('app', 'Please select a CSV file'),
+                'errors'           => Yii::t('zii', 'Please select a CSV file'),
             ]);
             exit;
         }
@@ -232,7 +232,7 @@ class RateController extends CController
         if (count($firstLine) < 3) {
             echo json_encode([
                 $this->nameSuccess => false,
-                'errors'           => Yii::t('app', 'CSV format invalid, please check your CSV file and than try again.') . "\n\n" . $firstLine[0],
+                'errors'           => Yii::t('zii', 'CSV format invalid, please check your CSV file and than try again.') . "\n\n" . $firstLine[0],
             ]);
             exit;
         }
@@ -258,7 +258,7 @@ class RateController extends CController
             } catch (Exception $e) {
                 echo json_encode([
                     $this->nameSuccess => false,
-                    'errors'           => Yii::t('app', 'MYSQL message.') . "\n\n" . print_r($e, true),
+                    'errors'           => Yii::t('zii', 'MYSQL message.') . "\n\n" . print_r($e, true),
                 ]);
                 exit;
             }
@@ -279,7 +279,7 @@ class RateController extends CController
             } catch (Exception $e) {
                 echo json_encode([
                     $this->nameSuccess => false,
-                    'errors'           => Yii::t('app', 'MYSQL message.') . "\n\n" . print_r($e, true),
+                    'errors'           => Yii::t('zii', 'MYSQL message.') . "\n\n" . print_r($e, true),
                 ]);
                 exit;
             }
@@ -302,7 +302,7 @@ class RateController extends CController
 
                 echo json_encode([
                     $this->nameSuccess => false,
-                    'errors'           => Yii::t('app', 'MYSQL message.') . "\n\n" . print_r($e, true),
+                    'errors'           => Yii::t('zii', 'MYSQL message.') . "\n\n" . print_r($e, true),
                 ]);
                 exit;
             }
@@ -323,7 +323,7 @@ class RateController extends CController
                     } catch (Exception $e) {
                         echo json_encode([
                             $this->nameSuccess => false,
-                            'errors'           => Yii::t('app', 'MYSQL message.') . "\n\n" . print_r($e, true),
+                            'errors'           => Yii::t('zii', 'MYSQL message.') . "\n\n" . print_r($e, true),
                         ]);
                         exit;
                     }
@@ -337,7 +337,7 @@ class RateController extends CController
                     Yii::$app->db->createCommand($sql)->execute();
                     echo json_encode([
                         $this->nameSuccess => false,
-                        'errors'           => Yii::t('app', 'MYSQL message.') . "\n\n" . print_r($e, true),
+                        'errors'           => Yii::t('zii', 'MYSQL message.') . "\n\n" . print_r($e, true),
                     ]);
                     exit;
                 }
@@ -349,7 +349,7 @@ class RateController extends CController
             } catch (Exception $e) {
                 echo json_encode([
                     $this->nameSuccess => false,
-                    'errors'           => Yii::t('app', 'MYSQL message.') . "\n\n" . print_r($e, true),
+                    'errors'           => Yii::t('zii', 'MYSQL message.') . "\n\n" . print_r($e, true),
                 ]);
                 exit;
             }

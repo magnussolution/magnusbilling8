@@ -41,7 +41,7 @@ class ServicesUseController extends CController
     {
         $this->instanceModel = new ServicesUse;
         $this->abstractModel = ServicesUse::find();
-        $this->titleReport   = Yii::t('app', 'Services Use');
+        $this->titleReport   = Yii::t('zii', 'Services Use');
 
         $sql = "UPDATE pkg_services_use SET next_due_date = date_add(`reservationdate`, interval`month_payed`month)";
         Yii::$app->db->createCommand($sql)->execute();

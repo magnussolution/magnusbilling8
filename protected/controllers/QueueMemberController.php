@@ -47,7 +47,7 @@ class QueueMemberController extends CController
     {
         $this->instanceModel = new QueueMember;
         $this->abstractModel = QueueMember::find();
-        $this->titleReport   = Yii::t('app', 'Queue Member');
+        $this->titleReport   = Yii::t('zii', 'Queue Member');
         $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();
     }

@@ -20,7 +20,7 @@ class FirewallController extends CController
     {
         $this->instanceModel = new Firewall;
         $this->abstractModel = Firewall::find();
-        $this->titleReport   = Yii::t('app', 'Firewall');
+        $this->titleReport   = Yii::t('zii', 'Firewall');
         $this->attributeOrder = $this->instanceModel::tableName() . '.date DESC';
 
         echo json_encode([

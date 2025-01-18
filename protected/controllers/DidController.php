@@ -161,7 +161,7 @@ class DidController extends CController
         $this->uploaddir     = $this->magnusFilesDirectory . 'sounds/';
         $this->instanceModel = new Did;
         $this->abstractModel = Did::find();
-        $this->titleReport   = Yii::t('app', 'DID');
+        $this->titleReport   = Yii::t('zii', 'DID');
 
         if (Yii::$app->session['isClient']) {
             $this->attributeOrder = 't.id_user DESC';
@@ -274,14 +274,14 @@ class DidController extends CController
             {
                 //adiciona a recarga e pagamento do 1º mes
                 $credit      = $modelDid->fixrate;
-                $description = Yii::t('app', 'Monthly payment DID') . ' ' . $modelDid->did;
+                $description = Yii::t('zii', 'Monthly payment DID') . ' ' . $modelDid->did;
 
                 UserCreditManager::releaseUserCredit($id_user, $credit, $description, 0);
 
                 //adiciona a recarga e pagamento do custo de ativaçao
                 if ($modelDid->connection_charge > 0) {
                     $credit      = $modelDid->connection_charge;
-                    $description = Yii::t('app', 'Activation DID') . ' ' . $modelDid->did;
+                    $description = Yii::t('zii', 'Activation DID') . ' ' . $modelDid->did;
                     UserCreditManager::releaseUserCredit($id_user, $credit, $description, 0);
                 }
 
@@ -293,7 +293,7 @@ class DidController extends CController
             }
         }
         $success          = true;
-        $this->msgSuccess = Yii::t('app', 'The DID has been activated for you.');
+        $this->msgSuccess = Yii::t('zii', 'The DID has been activated for you.');
 
         echo json_encode([
             $this->nameSuccess => $success,
@@ -314,9 +314,9 @@ class DidController extends CController
         $totalDid = $modelDid->fixrate + $modelDid->connection_charge;
 
         if ($modelUser->credit < $totalDid) {
-            $this->msgSuccess = Yii::t('app', 'You not have enough credit to buy the DID');
+            $this->msgSuccess = Yii::t('zii', 'You not have enough credit to buy the DID');
         } elseif ($modelDid->reserved == 1) {
-            $this->msgSuccess = Yii::t('app', 'The DID has already been activated for another user.');
+            $this->msgSuccess = Yii::t('zii', 'The DID has already been activated for another user.');
         } else {
             if ($modelUser->id_user == 1) //se for cliente do master
             {
@@ -349,14 +349,14 @@ class DidController extends CController
                 {
                     //adiciona a recarga e pagamento do 1º mes
                     $credit      = $modelDid->fixrate;
-                    $description = Yii::t('app', 'Monthly payment DID') . ' ' . $modelDid->did;
+                    $description = Yii::t('zii', 'Monthly payment DID') . ' ' . $modelDid->did;
 
                     UserCreditManager::releaseUserCredit($id_user, $credit, $description, 0);
 
                     //adiciona a recarga e pagamento do custo de ativaçao
                     if ($modelDid->connection_charge > 0) {
                         $credit      = $modelDid->connection_charge;
-                        $description = Yii::t('app', 'Activation DID') . ' ' . $modelDid->did;
+                        $description = Yii::t('zii', 'Activation DID') . ' ' . $modelDid->did;
 
                         UserCreditManager::releaseUserCredit($id_user, $credit, $description, 0);
                     }
@@ -369,9 +369,9 @@ class DidController extends CController
                 }
 
                 $success          = true;
-                $this->msgSuccess = Yii::t('app', 'The DID has been activated for you.');
+                $this->msgSuccess = Yii::t('zii', 'The DID has been activated for you.');
             } else {
-                $this->msgSuccess = Yii::t('app', 'Not allowed');
+                $this->msgSuccess = Yii::t('zii', 'Not allowed');
             }
         }
 

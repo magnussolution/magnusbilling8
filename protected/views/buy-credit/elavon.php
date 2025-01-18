@@ -46,7 +46,7 @@ AppAsset::register($this);
   $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on' ? 'https://' : 'http://';
   ?>
 
-  <div id="load"><?php echo Yii::t('app', 'Please wait while loading...') ?></div>
+  <div id="load"><?php echo Yii::t('zii', 'Please wait while loading...') ?></div>
 
   <script languaje="JavaScript">
     window.onload = function() {

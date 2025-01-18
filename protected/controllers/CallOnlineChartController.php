@@ -39,7 +39,7 @@ class CallOnlineChartController extends CController
 
         $this->instanceModel = new CallOnlineChart;
         $this->abstractModel = CallOnlineChart::find();
-        $this->titleReport   = Yii::t('app', 'CallOnlineChart');
+        $this->titleReport   = Yii::t('zii', 'CallOnlineChart');
         $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();
     }

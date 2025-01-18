@@ -14,47 +14,47 @@ $form = $this->beginWidget('CActiveForm', array(
 <br />
 
 <div class="field">
-    <?php echo $form->labelEx($modelTransferToMobile, Yii::t('app', 'Method')) ?>
+    <?php echo $form->labelEx($modelTransferToMobile, Yii::t('zii', 'Method')) ?>
     <?php echo $form->textField($modelTransferToMobile, 'method', array('class' => 'input', 'readonly' => true)) ?>
     <?php echo $form->error($modelTransferToMobile, 'method') ?>
 </div>
 
 
 <div class="field">
-    <?php echo $form->labelEx($modelTransferToMobile, Yii::t('app', 'Country')) ?>
+    <?php echo $form->labelEx($modelTransferToMobile, Yii::t('zii', 'Country')) ?>
     <?php echo $form->textField($modelTransferToMobile, 'country', array('class' => 'input', 'readonly' => true)) ?>
     <?php echo $form->error($modelTransferToMobile, 'country') ?>
 </div>
 
 <div class="field">
-    <?php echo $form->labelEx($modelTransferToMobile, Yii::t('app', 'Type')) ?>
+    <?php echo $form->labelEx($modelTransferToMobile, Yii::t('zii', 'Type')) ?>
     <?php echo $form->textField($modelTransferToMobile, 'type', array('class' => 'input', 'readonly' => true)) ?>
     <?php echo $form->error($modelTransferToMobile, 'type') ?>
 </div>
 
 <div class="field">
-    <?php echo $form->labelEx($modelTransferToMobile, Yii::t('app', 'Amount')) ?>
+    <?php echo $form->labelEx($modelTransferToMobile, Yii::t('zii', 'Amount')) ?>
     <?php echo $form->textField($modelTransferToMobile, 'amountValuesBDT', array('class' => 'input', 'readonly' => true)) ?>
     <?php echo $form->error($modelTransferToMobile, 'amountValuesBDT') ?>
 </div>
 
 <div class="field">
-    <?php echo $form->labelEx($modelTransferToMobile, Yii::t('app', 'Meter')) ?>
+    <?php echo $form->labelEx($modelTransferToMobile, Yii::t('zii', 'Meter')) ?>
     <?php echo $form->textField($modelTransferToMobile, 'meter', array('class' => 'input', 'readonly' => true)) ?>
     <?php echo $form->error($modelTransferToMobile, 'meter') ?>
 </div>
 
 
 <div class="field">
-    <?php echo $form->labelEx($modelTransferToMobile, Yii::t('app', 'Phone Number')) ?>
+    <?php echo $form->labelEx($modelTransferToMobile, Yii::t('zii', 'Phone Number')) ?>
     <?php echo $form->textField($modelTransferToMobile, 'number', array('class' => 'input')) ?>
     <?php echo $form->error($modelTransferToMobile, 'number') ?>
-    <p class="hint"><?php echo Yii::t('app', 'Enter your') . ' ' . Yii::t('app', 'Phone Number') ?></p>
+    <p class="hint"><?php echo Yii::t('zii', 'Enter your') . ' ' . Yii::t('zii', 'Phone Number') ?></p>
 </div>
 
 
 <div class="controls" id="sendButton">
-    <?php echo CHtml::submitButton(Yii::t('app', 'Next'), array(
+    <?php echo CHtml::submitButton(Yii::t('zii', 'Next'), array(
         'class'   => 'button',
         'onclick' => "return button2(event)",
         'id'      => 'secondButton'

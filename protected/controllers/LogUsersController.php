@@ -48,7 +48,7 @@ class LogUsersController extends CController
     {
         $this->instanceModel = new LogUsers;
         $this->abstractModel = LogUsers::find();
-        $this->titleReport   = Yii::t('app', 'Log Users');
+        $this->titleReport   = Yii::t('zii', 'Log Users');
         $this->attributeOrder = $this->instanceModel::tableName() . '.date DESC';
         parent::init();
     }
@@ -57,7 +57,7 @@ class LogUsersController extends CController
     {
         echo json_encode([
             $this->nameSuccess   => false,
-            $this->nameMsgErrors => Yii::t('app', 'Not allowed delete in this module'),
+            $this->nameMsgErrors => Yii::t('zii', 'Not allowed delete in this module'),
         ]);
         exit;
     }

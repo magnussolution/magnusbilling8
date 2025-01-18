@@ -122,7 +122,7 @@ class CallAppController extends CController
         $modelUser = User::find()->where(['username' => $this->user])->one();
 
         if (! isset($modelUser->id)) {
-            $error_msg = Yii::t('app', 'Error : User no Found!');
+            $error_msg = Yii::t('zii', 'Error : User no Found!');
             echo $error_msg;
             exit;
         }

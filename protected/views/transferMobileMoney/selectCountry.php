@@ -23,10 +23,10 @@ $fieldOption = array('class' => 'input');
 
 
 <div class="field">
-    <?php echo $form->labelEx($modelTransferToMobile, Yii::t('app', 'Method')) ?>
+    <?php echo $form->labelEx($modelTransferToMobile, Yii::t('zii', 'Method')) ?>
     <?php echo $form->textField($modelTransferToMobile, 'method', array('class' => 'input', 'readonly' => true)) ?>
     <?php echo $form->error($modelTransferToMobile, 'method') ?>
-    <p class="hint"><?php echo Yii::t('app', 'Enter your') . ' ' . Yii::t('app', 'Method') ?></p>
+    <p class="hint"><?php echo Yii::t('zii', 'Enter your') . ' ' . Yii::t('zii', 'Method') ?></p>
 </div>
 
 
@@ -44,14 +44,14 @@ $country = CHtml::listData($modelSendCreditProduct, 'country', 'country');
 
 <?php if (count($country) > 0): ?>
     <div class="field">
-        <?php echo $form->labelEx($modelTransferToMobile, Yii::t('app', 'Country')) ?>
+        <?php echo $form->labelEx($modelTransferToMobile, Yii::t('zii', 'Country')) ?>
         <div class="styled-select">
             <?php echo $form->dropDownList(
                 $modelTransferToMobile,
                 'country',
                 $country,
                 array(
-                    'prompt'   => Yii::t('app', 'Select a country'),
+                    'prompt'   => Yii::t('zii', 'Select a country'),
                     'onchange' => "this.form.submit()",
                 )
             ); ?>

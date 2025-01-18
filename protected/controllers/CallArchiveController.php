@@ -87,7 +87,7 @@ class CallArchiveController extends CController
     {
         $this->instanceModel = new CallArchive;
         $this->abstractModel = CallArchive::find();
-        $this->titleReport   = Yii::t('app', 'Calls');
+        $this->titleReport   = Yii::t('zii', 'Calls');
 
         $this->attributeOrder = $this->instanceModel::tableName() . '.id DESC';
         parent::init();

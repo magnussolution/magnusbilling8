@@ -36,7 +36,7 @@ class CampaignRestrictPhoneController extends CController
     {
         $this->instanceModel = new CampaignRestrictPhone;
         $this->abstractModel = CampaignRestrictPhone::find();
-        $this->titleReport   = Yii::t('app', 'Campaign Restrict Phone');
+        $this->titleReport   = Yii::t('zii', 'Campaign Restrict Phone');
         $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();
     }

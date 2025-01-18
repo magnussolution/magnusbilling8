@@ -40,7 +40,7 @@ AppAsset::register($this);
 
 <body class="d-flex flex-column h-100">
     <?php $this->beginBody() ?>
-    <div id="load"><?php echo Yii::t('app', 'Please wait while loading...') ?></div>
+    <div id="load"><?php echo Yii::t('zii', 'Please wait while loading...') ?></div>
     <script languaje="JavaScript">
         window.onload = function() {
             var form = document.getElementById("buyForm");
@@ -70,7 +70,7 @@ AppAsset::register($this);
         <input type="hidden" name="returnurl" value="http://<?php echo $_SERVER['HTTP_HOST'] ?>/mbilling/index.php/molPay">
     </form>
 
-    
+
     <?php $this->endBody() ?>
 </body>
 

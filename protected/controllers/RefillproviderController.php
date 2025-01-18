@@ -45,7 +45,7 @@ class RefillproviderController extends CController
     {
         $this->instanceModel = new Refillprovider;
         $this->abstractModel = Refillprovider::find();
-        $this->titleReport   = Yii::t('app', 'Refill Providers');
+        $this->titleReport   = Yii::t('zii', 'Refill Providers');
 
         $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();
@@ -56,7 +56,7 @@ class RefillproviderController extends CController
         if ($this->isNewRecord) {
             $resultProvider     = Provider::findOne((int) $model->id_provider);
             $creditOld          = $resultProvider->credit;
-            $model->description = $model->description . ', ' . Yii::t('app', 'Old credit') . ' ' . round($creditOld, 2);
+            $model->description = $model->description . ', ' . Yii::t('zii', 'Old credit') . ' ' . round($creditOld, 2);
 
             //add credit
             $resultProvider->credit = $model->credit > 0 ? $resultProvider->credit + $model->credit : $resultProvider->credit - ($model->credit * -1);

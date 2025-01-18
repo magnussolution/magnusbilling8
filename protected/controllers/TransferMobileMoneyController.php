@@ -103,7 +103,7 @@ class TransferMobileMoneyController extends CController
                 || strlen($this->number) < 8
                 || preg_match('/ /', $this->number)
             ) {
-                $this->modelTransferToMobile->addError('number', Yii::t('app', 'Number invalid, try again'));
+                $this->modelTransferToMobile->addError('number', Yii::t('zii', 'Number invalid, try again'));
             }
         }
 
@@ -131,7 +131,7 @@ class TransferMobileMoneyController extends CController
             $this->modelTransferToMobile->amountValuesBDT = $_POST['TransferToMobile']['amountValuesBDT'];
 
             if (preg_match('/[A-Z][a-z]/', $_POST['TransferToMobile']['amountValuesBDT'])) {
-                $this->modelTransferToMobile->addError('amountValuesBDT', Yii::t('app', 'Invalid amount'));
+                $this->modelTransferToMobile->addError('amountValuesBDT', Yii::t('zii', 'Invalid amount'));
             }
 
             if (!count($this->modelTransferToMobile->getErrors())) {
@@ -178,7 +178,7 @@ class TransferMobileMoneyController extends CController
         if (isset($_POST['TransferToMobile']['method']) && $_POST['TransferToMobile']['method'] != 'Mobile Credit') {
 
             if ($_POST['TransferToMobile']['method'] == '') {
-                $this->modelTransferToMobile->addError('method', Yii::t('app', 'Please select a method'));
+                $this->modelTransferToMobile->addError('method', Yii::t('zii', 'Please select a method'));
             }
 
             $this->modelTransferToMobile->method = $_POST['TransferToMobile']['method'];

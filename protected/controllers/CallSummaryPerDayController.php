@@ -30,7 +30,7 @@ class CallSummaryPerDayController extends CController
 
         $this->instanceModel = new CallSummaryPerDay;
         $this->abstractModel = CallSummaryPerDay::find();
-        $this->titleReport   = Yii::t('app', 'Summary per Day');
+        $this->titleReport   = Yii::t('zii', 'Summary per Day');
         $this->attributeOrder = $this->instanceModel::tableName() . '.day DESC';
         parent::init();
     }

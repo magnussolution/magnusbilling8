@@ -39,7 +39,7 @@ class ConfigurationController extends CController
     {
         $this->instanceModel = new Configuration;
         $this->abstractModel = Configuration::find();
-        $this->titleReport   = Yii::t('app', 'Config');
+        $this->titleReport   = Yii::t('zii', 'Config');
         $this->attributeOrder = $this->instanceModel::tableName() . '.config_group_title DESC';
         parent::init();
     }

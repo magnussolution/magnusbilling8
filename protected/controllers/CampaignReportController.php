@@ -32,7 +32,7 @@ class CampaignReportController extends CController
     {
         $this->instanceModel = new Campaign;
         $this->abstractModel = Campaign::find();
-        $this->titleReport   = Yii::t('app', 'Campaign Report');
+        $this->titleReport   = Yii::t('zii', 'Campaign Report');
         $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();
     }

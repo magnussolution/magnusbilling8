@@ -47,7 +47,7 @@ class RefillController extends CController
     {
         $this->instanceModel = new Refill;
         $this->abstractModel = Refill::find();
-        $this->titleReport   = Yii::t('app', 'Refill');
+        $this->titleReport   = Yii::t('zii', 'Refill');
 
         if (Yii::$app->session['isAdmin']) {
 
@@ -92,7 +92,7 @@ class RefillController extends CController
                 echo json_encode([
                     'success' => false,
                     'rows'    => [],
-                    'errors'  => Yii::t('app', 'You cannot add credit to yourself'),
+                    'errors'  => Yii::t('zii', 'You cannot add credit to yourself'),
                 ]);
                 exit;
             }
@@ -116,7 +116,7 @@ class RefillController extends CController
                     echo json_encode([
                         'success' => false,
                         'rows'    => [],
-                        'errors'  => Yii::t('app', 'Limit refill exceeded, your limit is') . ' ' . $maximunCredit . '. ' . Yii::t('app', 'You have') . ' ' . $limite . ' ' . Yii::t('app', 'to refill'),
+                        'errors'  => Yii::t('zii', 'Limit refill exceeded, your limit is') . ' ' . $maximunCredit . '. ' . Yii::t('zii', 'You have') . ' ' . $limite . ' ' . Yii::t('zii', 'to refill'),
                     ]);
                     exit;
                 }

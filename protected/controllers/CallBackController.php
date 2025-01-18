@@ -39,7 +39,7 @@ class CallBackController extends CController
     {
         $this->instanceModel = new CallBack;
         $this->abstractModel = CallBack::find();
-        $this->titleReport   = Yii::t('app', 'CallBack');
+        $this->titleReport   = Yii::t('zii', 'CallBack');
         $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();
     }

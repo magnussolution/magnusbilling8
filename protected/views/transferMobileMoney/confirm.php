@@ -42,7 +42,7 @@ $form = $this->beginWidget('CActiveForm', array(
 
 
 <div class="controls" id="sendButton">
-	<?php echo CHtml::submitButton(Yii::t('app', 'CONFIRM'), array(
+	<?php echo CHtml::submitButton(Yii::t('zii', 'CONFIRM'), array(
 		'class'   => 'button',
 		'onclick' => "button2(event)",
 		'id'      => 'confirmButton'

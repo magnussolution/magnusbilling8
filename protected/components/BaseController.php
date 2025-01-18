@@ -158,16 +158,16 @@ class BaseController extends Controller
 
         $this->getSessionParams();
 
-        $this->subTitleReport         = Yii::t('app', 'Report');
-        $this->msgSuccess             = Yii::t('app', 'Operation was successful.');
-        $this->msgSuccessLot          = Yii::t('app', 'Records updated with success.');
-        $this->msgRecordNotFound      = Yii::t('app', 'Record not found.');
-        $this->msgRecordAlreadyExists = Yii::t('app', 'Record already exists.');
-        $this->msgError               = Yii::t('app', 'Disallowed action');
+        $this->subTitleReport         = Yii::t('zii', 'Report');
+        $this->msgSuccess             = Yii::t('zii', 'Operation was successful.');
+        $this->msgSuccessLot          = Yii::t('zii', 'Records updated with success.');
+        $this->msgRecordNotFound      = Yii::t('zii', 'Record not found.');
+        $this->msgRecordAlreadyExists = Yii::t('zii', 'Record already exists.');
+        $this->msgError               = Yii::t('zii', 'Disallowed action');
         $this->mapErrorsMySql         = [
-            1451 => Yii::t('app', 'Record to be deleted is related to another. Technical information: '),
-            1452 => Yii::t('app', 'Record to be listed there. Technical information: '),
-            0    => Yii::t('app', 'Technical information: '),
+            1451 => Yii::t('zii', 'Record to be deleted is related to another. Technical information: '),
+            1452 => Yii::t('zii', 'Record to be listed there. Technical information: '),
+            0    => Yii::t('zii', 'Technical information: '),
         ];
         $startSession = strlen(session_id()) < 1 ? session_start() : null;
 

@@ -45,7 +45,7 @@ class RestrictedPhonenumberController extends CController
 
         $this->instanceModel = new RestrictedPhonenumber;
         $this->abstractModel = RestrictedPhonenumber::find();
-        $this->titleReport   = Yii::t('app', 'Refill Providers');
+        $this->titleReport   = Yii::t('zii', 'Refill Providers');
         $this->attributeOrder = $this->instanceModel::tableName() . '.id';
 
         parent::init();

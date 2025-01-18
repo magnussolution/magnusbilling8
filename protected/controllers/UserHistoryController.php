@@ -38,7 +38,7 @@ class UserHistoryController extends CController
     {
         $this->instanceModel = new UserHistory;
         $this->abstractModel = UserHistory::find();
-        $this->titleReport   = Yii::t('app', 'User History');
+        $this->titleReport   = Yii::t('zii', 'User History');
 
         $this->attributeOrder = $this->instanceModel::tableName() . '.date DESC';
         parent::init();

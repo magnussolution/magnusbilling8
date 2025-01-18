@@ -34,7 +34,7 @@ class CallShopController extends CController
     {
         $this->instanceModel = new CallShop;
         $this->abstractModel = CallShop::find();
-        $this->titleReport   = Yii::t('app', 'CallShop');
+        $this->titleReport   = Yii::t('zii', 'CallShop');
         $this->attributeOrder = $this->instanceModel::tableName() . '.callerid';
         parent::init();
     }

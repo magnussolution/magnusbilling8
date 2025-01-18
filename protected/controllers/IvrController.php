@@ -45,7 +45,7 @@ class IvrController extends CController
         $this->uploaddir     = $this->magnusFilesDirectory . 'sounds/';
         $this->instanceModel = new Ivr;
         $this->abstractModel = Ivr::find();
-        $this->titleReport   = Yii::t('app', 'IVR');
+        $this->titleReport   = Yii::t('zii', 'IVR');
         $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();
     }
@@ -90,7 +90,7 @@ class IvrController extends CController
         if ($values['id_user'] != $model_id_user) {
 
             $key = $i == 10 ? substr($key, -2) : substr($key, -1);
-            $msg = $model_id_user == 0 ? [$name . ' ' . Yii::t('app', 'cannot be blank')] : [$name . ' ' . Yii::t('app', 'must belong to the IVR owner')];
+            $msg = $model_id_user == 0 ? [$name . ' ' . Yii::t('zii', 'cannot be blank')] : [$name . ' ' . Yii::t('zii', 'must belong to the IVR owner')];
             echo json_encode([
                 'success' => false,
                 'rows'    => [],

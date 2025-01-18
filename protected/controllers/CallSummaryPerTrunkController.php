@@ -45,7 +45,7 @@ class CallSummaryPerTrunkController extends CController
 
         $this->instanceModel = new CallSummaryPerTrunk;
         $this->abstractModel = CallSummaryPerTrunk::find();
-        $this->titleReport   = Yii::t('app', 'Summary per Trunk');
+        $this->titleReport   = Yii::t('zii', 'Summary per Trunk');
         $this->attributeOrder = $this->instanceModel::tableName() . '.id_trunk DESC';
         parent::init();
     }

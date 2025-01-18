@@ -42,7 +42,7 @@ class DidUseController extends CController
 
         $this->instanceModel = new DidUse;
         $this->abstractModel = DidUse::find();
-        $this->titleReport   = Yii::t('app', 'DIDs Use');
+        $this->titleReport   = Yii::t('zii', 'DIDs Use');
 
         $sql = "UPDATE pkg_did_use SET next_due_date = date_add(`reservationdate`, interval`month_payed`month)";
         Yii::$app->db->createCommand($sql)->execute();

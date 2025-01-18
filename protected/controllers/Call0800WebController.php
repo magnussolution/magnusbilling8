@@ -66,7 +66,7 @@ class Call0800WebController extends CController
 
                 $model = Iax::find()->where(['name' => $user])->one();
                 if (! isset($model->id)) {
-                    $error_msg = Yii::t('app', 'Error : User no Found!');
+                    $error_msg = Yii::t('zii', 'Error : User no Found!');
                     echo $error_msg;
                     exit;
                 } else {
@@ -142,7 +142,7 @@ class Call0800WebController extends CController
 
                     //VERIFICA SE O AGENT TEM CREDITO
                     if ($modelUserAgent->credit <= 0) {
-                        echo Yii::t('app', 'You don t have enough credit to call');
+                        echo Yii::t('zii', 'You don t have enough credit to call');
                         exit;
                     }
                 }
@@ -198,7 +198,7 @@ class Call0800WebController extends CController
                 }
 
                 if (! is_array($callTrunk) || ! count($callTrunk)) {
-                    echo Yii::t('app', 'Prefix not found to you number');
+                    echo Yii::t('zii', 'Prefix not found to you number');
                     exit;
                 }
 
@@ -207,7 +207,7 @@ class Call0800WebController extends CController
                 $callTrunkDestination = $SearchTariff->find($destination, $modelSip->idUser->id_plan, $modelSip->idUser->id);
 
                 if (! is_array($callTrunkDestination) || count($callTrunkDestination) == 0) {
-                    echo Yii::t('app', 'Prefix not found to destination');
+                    echo Yii::t('zii', 'Prefix not found to destination');
 
                     exit;
                 }
@@ -283,7 +283,7 @@ class Call0800WebController extends CController
                 }
 
                 AsteriskAccess::generateCallFile($call, 5);
-                echo Yii::t('app', 'CallBack Success');
+                echo Yii::t('zii', 'CallBack Success');
             }
         }
     }

@@ -28,7 +28,7 @@ class CallSummaryPerMonthController extends CController
     {
         $this->instanceModel = new CallSummaryPerMonth;
         $this->abstractModel = CallSummaryPerMonth::find();
-        $this->titleReport   = Yii::t('app', 'Summary per Month');
+        $this->titleReport   = Yii::t('zii', 'Summary per Month');
 
         $this->attributeOrder = $this->instanceModel::tableName() . '.month DESC';
         parent::init();

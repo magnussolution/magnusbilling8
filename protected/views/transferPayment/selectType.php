@@ -31,15 +31,15 @@ $fieldOption = array('class' => 'input');
 ?>
 
 <div class="field">
-    <?php echo $form->labelEx($modelTransferToMobile, Yii::t('app', 'Method')) ?>
+    <?php echo $form->labelEx($modelTransferToMobile, Yii::t('zii', 'Method')) ?>
     <?php echo $form->textField($modelTransferToMobile, 'method', array('class' => 'input', 'readonly' => true)) ?>
     <?php echo $form->error($modelTransferToMobile, 'method') ?>
-    <p class="hint"><?php echo Yii::t('app', 'Enter your') . ' ' . Yii::t('app', 'Method') ?></p>
+    <p class="hint"><?php echo Yii::t('zii', 'Enter your') . ' ' . Yii::t('zii', 'Method') ?></p>
 </div>
 
 
 <div class="field">
-    <?php echo $form->labelEx($modelTransferToMobile, Yii::t('app', 'Country')) ?>
+    <?php echo $form->labelEx($modelTransferToMobile, Yii::t('zii', 'Country')) ?>
     <?php echo $form->textField($modelTransferToMobile, 'country', array('class' => 'input', 'readonly' => true)) ?>
     <?php echo $form->error($modelTransferToMobile, 'country') ?>
 </div>
@@ -47,7 +47,7 @@ $fieldOption = array('class' => 'input');
 
 
 <div class="field">
-    <?php echo $form->labelEx($modelTransferToMobile, Yii::t('app', 'Type')) ?>
+    <?php echo $form->labelEx($modelTransferToMobile, Yii::t('zii', 'Type')) ?>
     <div class="styled-select">
         <?php
         echo $form->dropDownList(
@@ -55,7 +55,7 @@ $fieldOption = array('class' => 'input');
             'type',
             $types,
             array(
-                'empty'    => Yii::t('app', 'Select the operator'),
+                'empty'    => Yii::t('zii', 'Select the operator'),
                 'onchange' => "this.form.submit()",
             )
         ); ?>
@@ -76,7 +76,7 @@ $fieldOption = array('class' => 'input');
 </div>
 
 <div class="controls" id="sendButton">
-    <?php echo CHtml::submitButton(Yii::t('app', $buttonName), array(
+    <?php echo CHtml::submitButton(Yii::t('zii', $buttonName), array(
         'class' => 'button',
         'id'    => 'secondButton'
     ));

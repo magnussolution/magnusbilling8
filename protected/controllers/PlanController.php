@@ -37,7 +37,7 @@ class PlanController extends CController
     {
         $this->instanceModel = new Plan();
         $this->abstractModel = Plan::find();
-        $this->titleReport   = Yii::t('app', 'Plan');
+        $this->titleReport   = Yii::t('zii', 'Plan');
         $this->attributeOrder = $this->instanceModel::tableName() . '.name';
         parent::init();
     }

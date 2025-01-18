@@ -66,12 +66,20 @@ $config = [
         ],
         'i18n' => [
             'translations' => [
-                '*' => [
+                'zii*' => [
                     'class' => 'yii\i18n\PhpMessageSource',
                     'basePath' => '/Library/WebServer/Documents/html/mbilling_8_dev/resources/locale/php',
                     'forceTranslation' => true,
                     'fileMap' => [
                         'app' => 'zii.php',
+                    ],
+                ],
+                'yii*' => [
+                    'class' => 'yii\i18n\PhpMessageSource',
+                    'basePath' => '/Library/WebServer/Documents/html/mbilling_8_dev/resources/locale/php',
+                    'forceTranslation' => true,
+                    'fileMap' => [
+                        'app' => 'yii.php',
                     ],
                 ],
             ],

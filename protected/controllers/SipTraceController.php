@@ -36,7 +36,7 @@ class SipTraceController extends CController
     {
         $this->instanceModel = new SipTrace;
         $this->abstractModel = SipTrace::find();
-        $this->titleReport   = Yii::t('app', 'SipTrace');
+        $this->titleReport   = Yii::t('zii', 'SipTrace');
         $this->attributeOrder = $this->instanceModel::tableName() . '.id ASC';
         parent::init();
     }
@@ -430,7 +430,7 @@ class SipTraceController extends CController
         if (isset($modelTrace->id)) {
             echo json_encode([
                 $this->nameSuccess => false,
-                $this->nameMsg     => Yii::t('app', 'Exist a filter active or in use. Wait or click in Stop Capture button.'),
+                $this->nameMsg     => Yii::t('zii', 'Exist a filter active or in use. Wait or click in Stop Capture button.'),
             ]);
             exit;
         }
@@ -444,7 +444,7 @@ class SipTraceController extends CController
 
         echo json_encode([
             $this->nameSuccess => true,
-            $this->nameMsg     => Yii::t('app', 'Reload this module to see the packets'),
+            $this->nameMsg     => Yii::t('zii', 'Reload this module to see the packets'),
         ]);
     }
 

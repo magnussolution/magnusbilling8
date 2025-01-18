@@ -37,7 +37,7 @@ class CallSummaryMonthDidController extends CController
     {
         $this->instanceModel = new CallSummaryMonthDid;
         $this->abstractModel = CallSummaryMonthDid::find();
-        $this->titleReport   = Yii::t('app', 'Summary Month DID');
+        $this->titleReport   = Yii::t('zii', 'Summary Month DID');
         $this->attributeOrder = $this->instanceModel::tableName() . '.month DESC';
         parent::init();
     }

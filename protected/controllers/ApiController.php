@@ -44,7 +44,7 @@ class ApiController extends CController
     {
         $this->instanceModel = new Api;
         $this->abstractModel = Api::find();
-        $this->titleReport   = Yii::t('app', 'API');
+        $this->titleReport   = Yii::t('zii', 'API');
         $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();
     }

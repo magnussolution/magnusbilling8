@@ -81,7 +81,7 @@ if (isset($_POST['TransferToMobile']['metric']) && strlen($_POST['TransferToMobi
 
 
 <div class="controls" id="sendButton">
-	<?php echo CHtml::submitButton(Yii::t('app', 'CONFIRM'), array(
+	<?php echo CHtml::submitButton(Yii::t('zii', 'CONFIRM'), array(
 		'class'   => 'button',
 		'onclick' => "return button2(event)",
 		'id'      => 'confirmButton'

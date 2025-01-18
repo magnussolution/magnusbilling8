@@ -49,7 +49,7 @@ class CalleridController extends CController
     {
         $this->instanceModel = new Callerid;
         $this->abstractModel = Callerid::find();
-        $this->titleReport   = Yii::t('app', 'CallerID');
+        $this->titleReport   = Yii::t('zii', 'CallerID');
         $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();
     }

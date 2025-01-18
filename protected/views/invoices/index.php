@@ -13,7 +13,7 @@
 $modelUser = User::find()->orderBy(['username' => SORT_ASC])->all();
 $users = CHtml::listData($modelUser, 'id', 'username'); ?>
 <div class="field">
-    <?php echo $form->labelEx($model, Yii::t('app', 'Select a user')) ?>
+    <?php echo $form->labelEx($model, Yii::t('zii', 'Select a user')) ?>
     <div class="styled-select">
         <?php echo $form->dropDownList($model, 'id', $users); ?>
     </div>
@@ -22,7 +22,7 @@ $users = CHtml::listData($modelUser, 'id', 'username'); ?>
 
 
 
-<?php echo CHtml::submitButton(Yii::t('app', 'Filter'), array('class' => 'button')); ?>
+<?php echo CHtml::submitButton(Yii::t('zii', 'Filter'), array('class' => 'button')); ?>
 
 <?php $this->endWidget(); ?>
 use app\models\User;

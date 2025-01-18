@@ -600,7 +600,7 @@ class AuthenticationController extends CController
                 if ($key == $_GET['key']) {
                     $modelUser->credit_notification = '-1';
                     $modelUser->save();
-                    echo '<br><center><font color=green>' . Yii::t('app', "Success") . '</font></center>';
+                    echo '<br><center><font color=green>' . Yii::t('zii', "Success") . '</font></center>';
                 }
             }
         }
@@ -641,7 +641,7 @@ class AuthenticationController extends CController
             Yii::$app->session->get('logged', false);
             echo json_encode([
                 'success' => false,
-                'msg'     => Yii::t('app', "IP blocked after 3 failing attempts.") . "<br><b>" . Yii::t('app', "Wait 5 minutes and try again.") . "</b>" . "<br> IP: " . $_SERVER['REMOTE_ADDR'],
+                'msg'     => Yii::t('zii', "IP blocked after 3 failing attempts.") . "<br><b>" . Yii::t('zii', "Wait 5 minutes and try again.") . "</b>" . "<br> IP: " . $_SERVER['REMOTE_ADDR'],
             ]);
             $nameMsg = $this->nameMsg;
 

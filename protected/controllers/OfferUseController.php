@@ -49,7 +49,7 @@ class OfferUseController extends CController
     {
         $this->instanceModel = new OfferUse;
         $this->abstractModel = OfferUse::find();
-        $this->titleReport   = Yii::t('app', 'Offer Use');
+        $this->titleReport   = Yii::t('zii', 'Offer Use');
 
         if (Yii::$app->session['isAdmin']) {
             $this->relationFilter['idUser'] = [

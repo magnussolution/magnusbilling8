@@ -78,8 +78,11 @@ class  Configuration extends Model
         //validation values
 
         if ($this->config_key == 'base_language') {
-            $valuesAllow        = [['es'], 'en', 'pt_BR', 'it'];
+            $valuesAllow        = ['es', 'en', 'pt_BR', 'it'];
             $this->config_value = $this->config_value == 'br' ? 'pt_BR' : $this->config_value;
+
+
+
             if (! in_array($this->config_value, $valuesAllow)) {
                 $error = true;
             }
@@ -138,6 +141,7 @@ class  Configuration extends Model
                 $sql .= "UPDATE pkg_configuration SET config_title = '" . Yii::t('yii', 'config_title_' . $config->config_key) . "', config_description = '" . Yii::t('yii', 'config_desc_' . $config->config_key) . "' WHERE  config_key = '" . $config->config_key . "';";
             }
         }
+
         if (strlen($sql) > 10) {
             Yii::$app->db->createCommand($sql)->execute();
         }

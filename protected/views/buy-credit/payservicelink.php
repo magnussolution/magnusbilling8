@@ -70,7 +70,7 @@ AppAsset::register($this);
 	<br />
 
 	<?php if (isset($message)):
-		echo Yii::t('app', $message);
+		echo Yii::t('zii', $message);
 	?>
 	<?php else: ?>
 
@@ -80,14 +80,14 @@ AppAsset::register($this);
 
 
 		<div class="field">
-			<?php echo $form->labelEx($model, Yii::t('app', 'Method pay')) ?>
+			<?php echo $form->labelEx($model, Yii::t('zii', 'Method pay')) ?>
 			<div class="styled-select" style="width: 380px">
 				<?php echo $form->dropDownList(
 					$model,
 					'id_method',
 					$modelMethodPay,
 					array(
-						'prompt' => Yii::t('app', 'Select a method'),
+						'prompt' => Yii::t('zii', 'Select a method'),
 					)
 				); ?>
 			</div>
@@ -98,7 +98,7 @@ AppAsset::register($this);
 			<?php $totalPrice += $modelServicesUse[$i]->idServices->price ?>
 			<div class="field">
 
-				<?php echo $form->labelEx($model, Yii::t('app', 'Service') . ' ' . $modelServicesUse[$i]->idServices->name) ?>
+				<?php echo $form->labelEx($model, Yii::t('zii', 'Service') . ' ' . $modelServicesUse[$i]->idServices->name) ?>
 				<?php echo $form->textField($model, 'service0', array(
 					'class'    => 'input',
 					'value'    => $currency . ' ' . number_format($modelServicesUse[$i]->idServices->price, 2),
@@ -116,16 +116,16 @@ AppAsset::register($this);
 
 		<?php if ($modelServicesUse[0]->idUser->credit > 0): ?>
 			<div class="field">
-				<?php echo $form->labelEx($model, Yii::t('app', 'Your credit')) ?>
+				<?php echo $form->labelEx($model, Yii::t('zii', 'Your credit')) ?>
 				<?php echo $form->checkBox($model, 'use_credit', array('checked' => false)); ?>
-				<?php echo ' ' . $currency . ' ' . number_format($modelServicesUse[0]->idUser->credit, 2) . ' ' . Yii::t('app', 'Use that') ?>
+				<?php echo ' ' . $currency . ' ' . number_format($modelServicesUse[0]->idUser->credit, 2) . ' ' . Yii::t('zii', 'Use that') ?>
 
 			</div>
 		<?php endif; ?>
 		<br><br><br>
 
 		<div class="field">
-			<?php echo $form->labelEx($model, Yii::t('app', 'Total Price')) ?>
+			<?php echo $form->labelEx($model, Yii::t('zii', 'Total Price')) ?>
 			<?php echo $form->textField($model, 'total', array(
 				'class'    => 'input',
 				'value'    => $currency . ' ' . number_format($totalPrice, 2),
@@ -134,13 +134,13 @@ AppAsset::register($this);
 			<p>&nbsp;</p>
 		</div>
 
-		<?php echo CHtml::submitButton(Yii::t('app', 'Pay Now'), array('class' => 'button')); ?>
+		<?php echo CHtml::submitButton(Yii::t('zii', 'Pay Now'), array('class' => 'button')); ?>
 	<?php endif; ?>
 	<?php $this->endWidget(); ?>
 
 
 	?>
-    <?php $this->endBody() ?>
+	<?php $this->endBody() ?>
 </body>
 
 </html>

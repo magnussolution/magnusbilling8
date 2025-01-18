@@ -36,9 +36,9 @@ AppAsset::register($this);
 
 	<?php if (count($plan) > 1): ?>
 		<div class="field">
-			<?php echo $form->labelEx($signup, Yii::t('app', 'Plan')) ?>
+			<?php echo $form->labelEx($signup, Yii::t('zii', 'Plan')) ?>
 			<div class="styled-select">
-				<?php echo $form->dropDownList($signup, 'id_plan', $plans, array('prompt' => Yii::t('app', 'Select a plan'))); ?>
+				<?php echo $form->dropDownList($signup, 'id_plan', $plans, array('prompt' => Yii::t('zii', 'Select a plan'))); ?>
 			</div>
 		</div>
 		<br>
@@ -46,7 +46,7 @@ AppAsset::register($this);
 		<?php echo $form->field($signup, 'id_plan')->hiddenInput(['value' => $plan[0]->id])->label(false); ?>
 
 	<?php elseif (count($plan) == 0): ?>
-		<?php exit(Yii::t('app', 'No plans available for signup')) ?>
+		<?php exit(Yii::t('zii', 'No plans available for signup')) ?>
 	<?php endif; ?>
 
 	<?php echo $form->field($signup, 'ini_credit')->hiddenInput(['value' => $plan[0]->ini_credit])->label(false); ?>
@@ -57,24 +57,24 @@ AppAsset::register($this);
 	<?php if ($autoUser == 0): ?>
 		<div class="field">
 			<?php echo $form->field($signup, 'username')->textInput(['class' => 'input']) ?>
-			<p class="hint"><?php echo Yii::t('app', 'Enter your') . ' ' . Yii::t('app', 'Username') ?></p>
+			<p class="hint"><?php echo Yii::t('zii', 'Enter your') . ' ' . Yii::t('zii', 'Username') ?></p>
 		</div>
 	<?php endif; ?>
 	<div class="field">
 		<?php echo $form->field($signup, 'email')->textInput(['class' => 'input']) ?>
-		<p class="hint"><?php echo Yii::t('app', 'Enter your') . ' ' . Yii::t('app', 'Email') ?></p>
+		<p class="hint"><?php echo Yii::t('zii', 'Enter your') . ' ' . Yii::t('zii', 'Email') ?></p>
 	</div>
 
 	<?php if (strlen($autoPassword) < 6): ?>
 		<div class="field">
 			<p>&nbsp;</p>
 			<?php echo $form->field($signup, 'password')->passwordInput(['class' => 'input']) ?>
-			<p class="hint"><?php echo Yii::t('app', 'Enter your') . ' ' . Yii::t('app', 'Password') ?></p>
+			<p class="hint"><?php echo Yii::t('zii', 'Enter your') . ' ' . Yii::t('zii', 'Password') ?></p>
 		</div>
 
 		<div class="field">
 			<?php echo $form->field($signup, 'password2')->passwordInput(['class' => 'input']) ?>
-			<p class="hint"><?php echo Yii::t('app', 'Confirm your password') ?></p>
+			<p class="hint"><?php echo Yii::t('zii', 'Confirm your password') ?></p>
 			<p>&nbsp;</p>
 		</div>
 	<?php else: ?>
@@ -85,27 +85,27 @@ AppAsset::register($this);
 
 	<div class="field">
 		<?php echo $form->field($signup, 'firstname')->textInput(['class' => 'input']) ?>
-		<p class="hint"><?php echo Yii::t('app', 'Enter your') . ' ' . Yii::t('app', 'First name') ?></p>
+		<p class="hint"><?php echo Yii::t('zii', 'Enter your') . ' ' . Yii::t('zii', 'First name') ?></p>
 	</div>
 	<div class="field">
 		<?php echo $form->field($signup, 'lastname')->textInput(['class' => 'input']) ?>
-		<p class="hint"><?php echo Yii::t('app', 'Enter your') . ' ' . Yii::t('app', 'Last name') ?></p>
+		<p class="hint"><?php echo Yii::t('zii', 'Enter your') . ' ' . Yii::t('zii', 'Last name') ?></p>
 	</div>
 	<div class="field">
 		<?php echo $form->field($signup, 'zipcode')->textInput(['class' => 'input']) ?>
-		<p class="hint"><?php echo Yii::t('app', 'Enter your') . ' ' . Yii::t('app', 'Zip code') ?></p>
+		<p class="hint"><?php echo Yii::t('zii', 'Enter your') . ' ' . Yii::t('zii', 'Zip code') ?></p>
 	</div>
 	<div class="field">
 		<?php echo $form->field($signup, 'address')->textInput(['class' => 'input']) ?>
-		<p class="hint"><?php echo Yii::t('app', 'Enter your') . ' ' . Yii::t('app', 'Address') ?></p>
+		<p class="hint"><?php echo Yii::t('zii', 'Enter your') . ' ' . Yii::t('zii', 'Address') ?></p>
 	</div>
 	<div class="field">
 		<?php echo $form->field($signup, 'city')->textInput(['class' => 'input']) ?>
-		<p class="hint"><?php echo Yii::t('app', 'Enter your') . ' ' . Yii::t('app', 'City') ?></p>
+		<p class="hint"><?php echo Yii::t('zii', 'Enter your') . ' ' . Yii::t('zii', 'City') ?></p>
 	</div>
 	<div class="field">
 		<?php echo $form->field($signup, 'neighborhood')->textInput(['class' => 'input']) ?>
-		<p class="hint"><?php echo Yii::t('app', 'Enter your') . ' ' . Yii::t('app', 'Neighborhood') ?></p>
+		<p class="hint"><?php echo Yii::t('zii', 'Enter your') . ' ' . Yii::t('zii', 'Neighborhood') ?></p>
 	</div>
 
 	<?php if ($language == 'pt_BR'): ?>
@@ -113,36 +113,36 @@ AppAsset::register($this);
 			<?php $modelEstados = Estados::find()->all(); ?>
 			<?php $estados = \yii\helpers\ArrayHelper::map($modelEstados, 'sigla', 'nome'); ?>
 
-			<?php echo $form->field($signup, 'state')->dropDownList($estados, ['prompt' => Yii::t('app', 'Select a state')]); ?>
+			<?php echo $form->field($signup, 'state')->dropDownList($estados, ['prompt' => Yii::t('zii', 'Select a state')]); ?>
 		</div>
 	<?php else: ?>
 		<div class="field">
 			<?php echo $form->field($signup, 'state')->textInput(['class' => 'input']) ?>
-			<p class="hint"><?php echo Yii::t('app', 'Enter your') . ' ' . Yii::t('app', 'State') ?></p>
+			<p class="hint"><?php echo Yii::t('zii', 'Enter your') . ' ' . Yii::t('zii', 'State') ?></p>
 		</div>
 	<?php endif; ?>
 
 	<div class="field">
 		<?php echo $form->field($signup, 'phone')->textInput(['class' => 'input']) ?>
-		<p class="hint"><?php echo Yii::t('app', 'Enter your') . ' ' . Yii::t('app', 'Phone') ?></p>
+		<p class="hint"><?php echo Yii::t('zii', 'Enter your') . ' ' . Yii::t('zii', 'Phone') ?></p>
 	</div>
 	<div class="field">
 		<?php echo $form->field($signup, 'mobile')->textInput(['class' => 'input']) ?>
-		<p class="hint"><?php echo Yii::t('app', 'Enter your') . ' ' . Yii::t('app', 'Mobile') ?></p>
+		<p class="hint"><?php echo Yii::t('zii', 'Enter your') . ' ' . Yii::t('zii', 'Mobile') ?></p>
 	</div>
 	<div class="field">
 		<?php echo $form->field($signup, 'doc')->textInput(['class' => 'input']) ?>
-		<p class="hint"><?php echo Yii::t('app', 'Enter your') . ' ' . Yii::t('app', 'CPF/CNPJ') ?></p>
+		<p class="hint"><?php echo Yii::t('zii', 'Enter your') . ' ' . Yii::t('zii', 'CPF/CNPJ') ?></p>
 	</div>
 
 	<?php if ($language == 'pt_BR'): ?>
 		<div class="field">
 			<?php echo $form->field($signup, 'company_name')->textInput(['class' => 'input']) ?>
-			<p class="hint"><?php echo Yii::t('app', 'Enter your') . ' ' . Yii::t('app', 'Company name') ?></p>
+			<p class="hint"><?php echo Yii::t('zii', 'Enter your') . ' ' . Yii::t('zii', 'Company name') ?></p>
 		</div>
 		<div class="field">
 			<?php echo $form->field($signup, 'state_number')->textInput(['class' => 'input']) ?>
-			<p class="hint"><?php echo Yii::t('app', 'Enter your') . ' ' . Yii::t('app', 'State number') ?></p>
+			<p class="hint"><?php echo Yii::t('zii', 'Enter your') . ' ' . Yii::t('zii', 'State number') ?></p>
 		</div>
 	<?php endif; ?>
 
@@ -155,19 +155,19 @@ AppAsset::register($this);
 
 	<div class="field">
 		<?php echo $form->field($signup, 'captcha')->widget(\yii\captcha\Captcha::class) ?>
-		<p class="hint"><?php echo Yii::t('app', 'Enter the verification code') ?></p>
+		<p class="hint"><?php echo Yii::t('zii', 'Enter the verification code') ?></p>
 	</div>
 
 
 	<div class="field">
-		<?php echo $form->field($signup, 'accept_terms')->checkbox(['label' => Yii::t('app', 'I accept the terms')]); ?>
-		<p class="hint"><?php echo Yii::t('app', 'You must accept the terms to proceed') ?></p>
+		<?php echo $form->field($signup, 'accept_terms')->checkbox(['label' => Yii::t('zii', 'I accept the terms')]); ?>
+		<p class="hint"><?php echo Yii::t('zii', 'You must accept the terms to proceed') ?></p>
 	</div>
 	<br>
-	<center><a href="<?php echo $termsLink ?>" target='_blank'><?php echo Yii::t('app', 'Terms') ?></a></center>
+	<center><a href="<?php echo $termsLink ?>" target='_blank'><?php echo Yii::t('zii', 'Terms') ?></a></center>
 	<br>
 	<div class="form-group">
-		<?php echo Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-primary']); ?>
+		<?php echo Html::submitButton(Yii::t('zii', 'Save'), ['class' => 'btn btn-primary']); ?>
 	</div>
 
 	<?php ActiveForm::end(); ?>

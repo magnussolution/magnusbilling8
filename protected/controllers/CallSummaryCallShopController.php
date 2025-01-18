@@ -70,7 +70,7 @@ class CallSummaryCallShopController extends CController
     {
         $this->instanceModel = new CallSummaryCallShop;
         $this->abstractModel = CallSummaryCallShop::find();
-        $this->titleReport   = Yii::t('app', 'Summary per Day');
+        $this->titleReport   = Yii::t('zii', 'Summary per Day');
 
         $this->attributeOrder = $this->instanceModel::tableName() . '.day DESC';
 

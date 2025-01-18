@@ -17,7 +17,7 @@ if (Yii::$app->session['isAdmin'] == 1):
   $modelUser = User::find()->all();
   $users     = CHtml::listData($modelUser, 'id', 'username'); ?>
   <div class="field">
-    <?php echo $form->labelEx($model, Yii::t('app', 'Select a user')) ?>
+    <?php echo $form->labelEx($model, Yii::t('zii', 'Select a user')) ?>
     <div class="styled-select">
       <?php echo $form->dropDownList(
         $model,
@@ -32,7 +32,7 @@ if (Yii::$app->session['isAdmin'] == 1):
 
 
 <div class="field">
-  <?php echo $form->labelEx($model, Yii::t('app', 'From date')) ?>
+  <?php echo $form->labelEx($model, Yii::t('zii', 'From date')) ?>
 
   <?php
   $this->widget(
@@ -51,7 +51,7 @@ if (Yii::$app->session['isAdmin'] == 1):
 
   ?>
   <?php echo $form->error($model, 'date') ?>
-  <p class="hint"><?php echo Yii::t('app', 'Enter your') . ' ' . Yii::t('app', 'date') ?></p>
+  <p class="hint"><?php echo Yii::t('zii', 'Enter your') . ' ' . Yii::t('zii', 'date') ?></p>
 
 </div>
 
@@ -75,13 +75,13 @@ if (Yii::$app->session['isAdmin'] == 1):
 </div>
 
 <div class="field">
-  <?php echo $form->labelEx($model, Yii::t('app', 'Number')) ?>
+  <?php echo $form->labelEx($model, Yii::t('zii', 'Number')) ?>
   <?php echo $form->textField($model, 'number', array('class' => 'input')) ?>
   <?php echo $form->error($model, 'number') ?>
 </div>
 
 <div class="field">
-  <?php echo $form->labelEx($model, Yii::t('app', 'Service')) ?>
+  <?php echo $form->labelEx($model, Yii::t('zii', 'Service')) ?>
   <?php
   echo $form->dropDownList($model, 'service', array(
     'all'           => 'All',
@@ -95,7 +95,7 @@ if (Yii::$app->session['isAdmin'] == 1):
 
 
 <br>
-<?php echo CHtml::submitButton(Yii::t('app', 'Filter'), array('class' => 'button')); ?>
+<?php echo CHtml::submitButton(Yii::t('zii', 'Filter'), array('class' => 'button')); ?>
 <?php $this->endWidget(); ?>
 
 

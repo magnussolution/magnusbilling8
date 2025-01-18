@@ -34,7 +34,7 @@ class HolidaysController extends CController
     {
         $this->instanceModel = new Holidays;
         $this->abstractModel = Holidays::find();
-        $this->titleReport   = Yii::t('app', 'Holidays');
+        $this->titleReport   = Yii::t('zii', 'Holidays');
         $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();
     }

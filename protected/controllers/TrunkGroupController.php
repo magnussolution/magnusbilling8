@@ -41,7 +41,7 @@ class TrunkGroupController extends CController
         $this->abstractModel        = TrunkGroup::find();
         $this->abstractModelRelated = TrunkGroupTrunk::find();
         $this->instanceModelRelated = new TrunkGroupTrunk;
-        $this->titleReport          = Yii::t('app', 'Trunk Groups');
+        $this->titleReport          = Yii::t('zii', 'Trunk Groups');
 
         $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();

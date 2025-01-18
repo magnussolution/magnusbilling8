@@ -36,7 +36,7 @@ class CallSummaryDayAgentController extends CController
     {
         $this->instanceModel = new CallSummaryDayAgent;
         $this->abstractModel = CallSummaryDayAgent::find();
-        $this->titleReport   = Yii::t('app', 'Summary Day Agent');
+        $this->titleReport   = Yii::t('zii', 'Summary Day Agent');
         $this->attributeOrder = $this->instanceModel::tableName() . '.day DESC';
         parent::init();
     }

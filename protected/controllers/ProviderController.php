@@ -36,7 +36,7 @@ class ProviderController extends CController
     {
         $this->instanceModel = new Provider;
         $this->abstractModel = Provider::find();
-        $this->titleReport   = Yii::t('app', 'Provider');
+        $this->titleReport   = Yii::t('zii', 'Provider');
         $this->attributeOrder = $this->instanceModel::tableName() . '.id';
         parent::init();
     }

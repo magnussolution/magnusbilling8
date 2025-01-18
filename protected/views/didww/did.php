@@ -17,9 +17,9 @@
 
 <?php if (count($dids) > 1): ?>
     <div class="field">
-        <?php echo $form->labelEx($did, Yii::t('app', 'DID')) ?>
+        <?php echo $form->labelEx($did, Yii::t('zii', 'DID')) ?>
         <div class="styled-select">
-            <?php echo $form->dropDownList($did, 'did', $dids, array('prompt' => Yii::t('app', 'Select a number'))); ?>
+            <?php echo $form->dropDownList($did, 'did', $dids, array('prompt' => Yii::t('zii', 'Select a number'))); ?>
         </div>
     </div>
 
@@ -29,7 +29,7 @@
 
 
 
-<?php echo CHtml::submitButton(Yii::t('app', 'Next'), array('class' => 'button')); ?>
+<?php echo CHtml::submitButton(Yii::t('zii', 'Next'), array('class' => 'button')); ?>
 <?php echo CHtml::button('Cancel', array('class' => 'button', 'onclick' => 'js:document.location.href="add"')); ?>
 
 <?php $this->endWidget(); ?>

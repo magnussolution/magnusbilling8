@@ -17,7 +17,7 @@ class CampaignLogController extends CController
     {
         $this->instanceModel = new CampaignLog;
         $this->abstractModel = CampaignLog::find();
-        $this->titleReport   = Yii::t('app', 'CampaignLog');
+        $this->titleReport   = Yii::t('zii', 'CampaignLog');
         $this->attributeOrder = $this->instanceModel::tableName() . '.date DESC';
         parent::init();
     }

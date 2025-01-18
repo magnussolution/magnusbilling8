@@ -60,16 +60,26 @@ class AuthenticationController extends CController
         $modelUser = User::find()->where(['username' => $user])->one();
 
         if (isset($modelUser->idGroup->idUserType->id) && $modelUser->idGroup->idUserType->id == 1) {
-
-            $condition = "username COLLATE utf8_bin = :user AND UPPER(password) COLLATE utf8_bin = :pass ";
+            $condition = ['username' => $user, 'password' => $password];
         } else {
-            $condition = "((username COLLATE utf8_bin = :user OR email LIKE :user) AND (password COLLATE utf8_bin = :pass OR UPPER(SHA1(password)) COLLATE utf8_bin = :pass))  ";
+            $condition = [
+                'or',
+                ['and', ['username' => $user], ['password' => $password]],
+                ['and', ['email' => $user], ['password' => $password]],
+                ['and', ['username' => $user], ['UPPER(SHA1(password))' => strtoupper(sha1($password))]],
+                ['and', ['email' => $user], ['UPPER(SHA1(password))' => strtoupper(sha1($password))]],
+            ];
             if ($this->config['global']['sipuser_login'] == 1) {
-                $condition .= " OR (id = (SELECT id_user FROM pkg_sip WHERE name COLLATE utf8_bin = :user AND UPPER(SHA1(secret)) COLLATE utf8_bin = :pass) )";
+                $condition[] = [
+                    'id' => (new \yii\db\Query())
+                        ->select('id_user')
+                        ->from('pkg_sip')
+                        ->where(['name' => $user, 'UPPER(SHA1(secret))' => strtoupper(sha1($password))])
+                ];
             }
         }
 
-
+        $modelUser = User::find()->where($condition)->one();
 
         $loginkey = isset($_POST['loginkey']) ? $_POST['loginkey'] : false;
 

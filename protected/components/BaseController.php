@@ -114,10 +114,13 @@ class BaseController extends Controller
         if (isset(Yii::$app->controller->id)) {
             $this->controllerName = Yii::$app->controller->id;
         } else {
-            $this->controllerName = 'site';
+            $routeParts = explode('/', Yii::$app->requestedRoute);
+            if (strlen($routeParts[0]) > 0) {
+                $this->controllerName = $routeParts[0];
+            } else {
+                $this->controllerName = 'site';
+            }
         }
-
-
         if (isset($_SERVER['HTTP_SIGN']) && isset($_SERVER['HTTP_KEY'])) {
             $api = new ApiAccess();
             $api->checkAuthentication($this);
@@ -135,17 +138,22 @@ class BaseController extends Controller
         $this->homeUrl    = Yii::$app->getHomeUrl();
         $this->actionName = $this->getCurrentAction();
 
+
         if ($this->getOverrideModel()) {
             $model = explode("/", $this->controllerName);
-            $model = ucfirst(isset($model[1]) ? $model[1] : $model[0] . 'OR');
-            $modelClass = 'app\models\overrides\\' . $model;
+
+            $model = ucfirst(isset($model[1]) ? $model[1] : $model[0] . 'Override');
+            $modelClass = '\app\models\overrides\\' . $model;
+
             $this->instanceModel = new $modelClass;
             $this->abstractModel = $modelClass::find();
         }
 
         if ($this->getOverride()) {
+
             $this->paramsToSession();
-            $this->redirect(['overrides/' . $this->controllerName . 'OR/' . $this->actionName]);
+            header('Location: ../overrides/' . $this->controllerName . '-override/' . $this->actionName);
+            exit();
         }
 
         $this->getSessionParams();
@@ -259,7 +267,6 @@ class BaseController extends Controller
         if (! file_exists('protected/config/overrides.php')) {
             return false;
         }
-
         include_once 'protected/config/overrides.php';
         return isset($GLOBALS['overrides']['controllers'][$this->controllerName])
             && in_array($this->actionName, $GLOBALS['overrides']['controllers'][$this->controllerName]);
@@ -478,10 +485,10 @@ class BaseController extends Controller
     private function showAdminLog()
     {
         if (Yii::$app->session['isAdmin'] == true && isset($_GET['log'])) {
-            echo '<pre>';
-            print_r($this->paramsFilter);
 
-            echo $sql = "SELECT $this->select FROM  " . $this->instanceModel::tableName() . " $this->join WHERE $this->filter GROUP BY $this->group LIMIT $this->limit";
+
+
+            $sql = "SELECT $this->select FROM  " . $this->instanceModel::tableName() . " $this->join WHERE $this->filter GROUP BY $this->group LIMIT $this->limit";
             try {
                 $command = Yii::$app->db->createCommand($sql);
                 if (is_array($this->paramsFilter)) {

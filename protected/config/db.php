@@ -9,7 +9,10 @@ return [
     'username' => $array['dbuser'],
     'password' => $array['dbpass'],
     'charset'  => 'utf8',
-
+    'attributes'       => [
+        PDO::MYSQL_ATTR_LOCAL_INFILE => true,
+    ],
+    'enableSchemaCache' => false,
     // Schema cache options (for production environment)
     //'enableSchemaCache' => true,
     //'schemaCacheDuration' => 60,

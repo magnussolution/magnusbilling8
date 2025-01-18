@@ -1,5 +1,6 @@
 <?php
 
+
 $params = require __DIR__ . '/params.php';
 $db     = require __DIR__ . '/db.php';
 
@@ -8,10 +9,13 @@ $config = [
     'basePath'   => dirname(__DIR__),
     'name'       => 'MagnusBilling',
     'bootstrap'  => ['log'],
+    'language' => 'zh',
     'aliases'    => [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
     ],
+
+
     'components' => [
         'urlManager'   => [
             'class'           => 'yii\web\UrlManager',
@@ -35,6 +39,7 @@ $config = [
         ],
         'cache'        => [
             'class' => 'yii\caching\FileCache',
+
         ],
         'user'         => [
             'identityClass'   => 'app\models\User',
@@ -56,6 +61,18 @@ $config = [
                 [
                     'class'  => 'yii\log\FileTarget',
                     'levels' => ['error', 'warning'],
+                ],
+            ],
+        ],
+        'i18n' => [
+            'translations' => [
+                '*' => [
+                    'class' => 'yii\i18n\PhpMessageSource',
+                    'basePath' => '/Library/WebServer/Documents/html/mbilling_8_dev/resources/locale/php',
+                    'forceTranslation' => true,
+                    'fileMap' => [
+                        'app' => 'zii.php',
+                    ],
                 ],
             ],
         ],
